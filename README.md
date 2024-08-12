@@ -35,3 +35,11 @@ TODO
 
 # Kedro
 TODO
+
+# TODO:
+- Everything docstringed!
+- Unit tests
+- Coding style tests (flake8, black, isort and mypy)
+- Test for duplicate typing
+- Github tasks (automatic tests, push to pypi pipeline)
+- Finish examples (and a function that can spawn the examples in the working dir)
