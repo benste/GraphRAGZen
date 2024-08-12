@@ -45,7 +45,7 @@ TODO
 - Test for duplicate typing
 - Github tasks (automatic tests, push to pypi pipeline)
 - Finish examples (and a function that can spawn the examples in the working dir)
-- make automatic documentation that updates when new version is pushed to pypi
+- make automatic documentation that updates when new version is pushed to pypi (portray?)
 
 ## Needed for full version
 - community detection
