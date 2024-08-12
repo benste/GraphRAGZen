@@ -39,6 +39,7 @@ TODO
 # TODO:
 ## necasary for v0.1.0
 - Everything docstringed!
+- test with GPU
 - Unit tests
 - Coding style tests (flake8, black, isort and mypy)
 - Test for duplicate typing
