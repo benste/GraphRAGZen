@@ -31,8 +31,6 @@ def loop_extraction(
     """
     llm_raw_output = []
     for doc in tqdm(documents, position=1):
-        # print(f"\n-->processing chunk {i+1} of {len(documents)}")
-
         prompts_formatting.input_text = doc
 
         # First entity extraction
@@ -43,12 +41,7 @@ def loop_extraction(
         chat = llm.format_chat([("model", raw_output)], chat)
 
         # Extract more entities LLM might have missed first time around
-        for _ in tqdm(range(max_gleans), total=max_gleans, position=0):
-            # Get more entities
-            # print(
-            #     f"---->trying to get more entities out of chunk {len(llm_raw_output)} (attempt {g+1} / max {max_gleans})"  # noqa: E501
-            # )
-
+        for _ in range(max_gleans):
             chat = llm.format_chat([("user", prompts.continue_prompt)], chat)
             raw_output = llm.run_chat(chat).removesuffix(prompts_formatting.completion_delimiter)
             llm_raw_output[-1] += prompts_formatting.record_delimiter + raw_output or ""

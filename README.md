@@ -1,7 +1,7 @@
 # GraphRAGZen
-the logic given by GraphRAG in a functional, non-nonsense library.
+Logic of GraphRAG in a functional, non-nonsense library.
 
-Thank you to the team at microsoft that created [GraphRAG](https://github.com/microsoft/graphrag), which is the foundation for this project.
+A big thank you to the team at microsoft that created [GraphRAG](https://github.com/microsoft/graphrag), which is the foundation for this project.
 
 # Motivation
 [GraphRAG from Microsoft](https://github.com/microsoft/graphrag) makes it easy to get started with automated RAG using Graphs.

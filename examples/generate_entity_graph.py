@@ -28,38 +28,29 @@ def entity_graph_pipeline() -> nx.Graph:
 
     # Split documents into chunks based on tokens
     print("Chunking documents")
-    chunk_config = preprocessing.ChunkConfig(
+    chunked_documents = preprocessing.chunk_documents(
+        raw_documents,
+        llm,
         window_size=400,
-        overlap=100,
     )
-    chunked_documents = preprocessing.chunk_documents(raw_documents, llm, config=chunk_config)
 
     # Extract entities from the chunks
     print("Extracting raw entities")
     prompt_config = entity_extraction.EntityExtractionPromptConfig()
-    entity_extraction_config = entity_extraction.EntityExtractionConfig(max_gleans=3)
     raw_entities = entity_extraction.extract_raw_entities(
-        chunked_documents, llm, prompt_config, config=entity_extraction_config
+        chunked_documents, llm, prompt_config, max_gleans=3
     )
 
     # Create a graph from the raw extracted entities
     print("Creating graph from raw entities")
-    entity_to_graph_config = (
-        entity_extraction.RawEntitiesToGraphConfig()
-    )  # let's use default parameters
-    entity_graph = entity_extraction.raw_entities_to_graph(
-        raw_entities, prompt_config.formatting, config=entity_to_graph_config
-    )
+    entity_graph = entity_extraction.raw_entities_to_graph(raw_entities, prompt_config.formatting)
 
     # Each node could be found multiple times in the documents and thus have multiple descriptions.
     # We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
     prompt_config = description_summarization.DescriptionSummarizationPromptConfig()
-    summarization_config = (
-        description_summarization.DescriptionSummarizationConfig()
-    )  # let's use default parameters
     entity_graph = description_summarization.summarize_graph_descriptions(
-        entity_graph, llm, prompt_config, config=summarization_config
+        entity_graph, llm, prompt_config
     )
 
     # Let's clusted the nodes and assign the cluster ID as a property to each node

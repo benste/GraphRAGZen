@@ -43,30 +43,37 @@ def create_entity_extraction_prompt() -> str:
     chunked_documents = preprocessing.chunk_documents(raw_documents, llm, config=chunk_config)
 
     # Let's not use all documents, that's not neccessary and too slow
+    print("Sampling documents")
     chunks = chunked_documents.chunk.tolist()
     sampled_documents = sample(chunks, min([len(chunks), 15]))
 
     # Get the domain representing the documents
+    print("Generating domain")
     domain = prompt_tuning.generate_domain(llm, sampled_documents)
 
     # Get the persona representing the documents
+    print("Generating persona")
     persona = prompt_tuning.generate_persona(llm, domain)
 
     # Get the entity types present the documents
+    print("Generating entity types")
     entity_types = prompt_tuning.generate_entity_types(llm, sampled_documents, domain, persona)
 
     # Generate some entity relationship examples
+    print("Generating entity relationship examples")
     config = prompt_tuning.GenerateEntityRelationshipExamplesConfig(max_examples=3)
     entity_relationship_examples = prompt_tuning.generate_entity_relationship_examples(
         llm, sampled_documents, persona, entity_types, config=config
     )
 
     # Create the actual entity extraction prompt
+    print("Generating entity extraction prompt")
     entity_extraction_prompt = prompt_tuning.create_entity_extraction_prompt(
         llm, entity_types, entity_relationship_examples
     )
 
     # Also create a prompt to summarize the descriptions of the entities
+    print("Generating description summarization prompt")
     description_summarization_prompt = prompt_tuning.create_description_summarization_prompt(
         persona
     )
