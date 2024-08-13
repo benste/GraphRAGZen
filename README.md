@@ -37,9 +37,21 @@ TODO
 TODO
 
 # TODO:
+## necasary for v0.1.0
 - Everything docstringed!
+- test with GPU
 - Unit tests
 - Coding style tests (flake8, black, isort and mypy)
 - Test for duplicate typing
 - Github tasks (automatic tests, push to pypi pipeline)
 - Finish examples (and a function that can spawn the examples in the working dir)
+- make automatic documentation that updates when new version is pushed to pypi (portray?)
+
+## Needed for full version
+- community detection
+- graph embeddings (node2vwc, text embeddings)
+- graph querying 
+
+## quality improvements
+- OpenAI communication 
+- Async
