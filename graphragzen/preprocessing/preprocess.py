@@ -87,14 +87,14 @@ def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.Data
 
 
 def chunk(inp: Sequence, **kwargs: Any) -> tuple[list, list]:
-    """Chunk an iterable using a sliding window
+    """Chunk an sequence using a sliding window
 
     Args:
         inp (Iterable): Iterable to chunk
 
     Kwargs:
-        window_size (int): size of the chunk window
-        overlap (int): overlap between windows
+        window_size (int, optional): size of the chunk window. Defaults to 300.
+        overlap (int, optional): overlap between windows. Defaults to 100.
 
     Returns:
         tuple[list, list]: (chunks, chunk lengths)
