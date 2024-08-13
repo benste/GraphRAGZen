@@ -10,14 +10,22 @@ from graphragzen.preprocessing.utils import clean_str
 from graphragzen.llm.base_llm import LLM
 
 
-def raw_entity_extraction(dataframe: pd.DataFrame, llm: LLM, prompt_config: EntityExtractionPromptConfig, config: EntityExtractionConfig) -> tuple:
+def raw_entity_extraction(dataframe: pd.DataFrame, llm: LLM, prompt_config: EntityExtractionPromptConfig, **kwargs: EntityExtractionConfig) -> tuple:
+    config = EntityExtractionConfig(**kwargs)
+    
     """Let the LLM extract entities that is however just strings, output still needs to be parsed to extract structured data.
 
     Args:
         dataframe (pd.DataFrame)
         llm (LLM)
-        config (EntityExtractionConfig)
-        prompt_config (EntityExtractionPromptConfig)
+        prompt_config (EntityExtractionPromptConfig): see `graphragzen.typing.EntityExtractionPromptConfig`
+        
+    Kwargs:
+         max_gleans (int, optional): How often the LLM should be asked if all entities have been extracted
+            from a single text. Defaults to 5.
+        column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract entities
+            from. Defaults to 'chunk'.
+        results_column (str, optional): Column to write the output of the LLM to. Defaults to 'raw_entities'.
 
     Returns:
         pd.DataFrame: Input document with new column containing the raw entities extracted
@@ -35,19 +43,29 @@ def raw_entity_extraction(dataframe: pd.DataFrame, llm: LLM, prompt_config: Enti
 def raw_entities_to_graph(
         dataframe: pd.DataFrame,
         prompt_formatting: EntityExtractionPromptFormatting,
-        config: RawEntitiesToGraphConfig,
+        **kwargs: RawEntitiesToGraphConfig,
     ) -> nx.Graph:
-    """Parse the result string to create an undirected unipartite graph.
+    """Parse the result from raw entity extraction to create an undirected unipartite graph.
 
     Args:
         dataframe (pd.DataFrame): Should contain a column with raw extracted entities
         prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity extraction.
-            Should at least contain `prompt_formatting.tuple_delimiter` and `prompt_formatting.record_delimiter`
-        config (RawEntitiesToGraphConfig)
+            See `graphragzen.typing.EntityExtractionPromptFormatting`.
+        
+    Kwargs:
+        raw_entities_column (str, optional): Column in a DataFrame that contains the output of entity extraction.
+            Defaults to 'raw_entities'.
+        reference_column (str, optional): Value from this column in the DataFrame will be added to the edged and nodes.
+            This allows to reference to the source where entities were extracted from when quiring the graph. 
+            Defaults to 'chunk_id'.
+        feature_delimiter (str, optional): When the same node or edge is found multiple times, features are concatenated
+            using this demiliter. Defaults to '\n'.
 
     Returns:
-        str:  unipartite graph in graphML format
+        nx.Graph
     """
+    config = RawEntitiesToGraphConfig(**kwargs)
+    
     graph = nx.Graph()
     for extracted_data, source_id in zip(*(dataframe[config.raw_entities_column], dataframe[config.reference_column])):
         

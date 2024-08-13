@@ -9,7 +9,7 @@ def chunk_tokens(text: str, llm: LLM, window_size: int, overlap: int) -> tuple[l
 
     Args:
         text (str): to tokenize and subsequently chunk
-        llm (LLM): should have `LLM.tokenize` defined
+        llm (LLM): should have the method `LLM.tokenize` defined
         window_size (int): size of the chunk window
         overlap (int): overlap between windows
 

@@ -20,7 +20,7 @@ class LLM:
             established_chat (List[dict], optional): Already established chat to append to. Defaults to [].
 
         Returns:
-            List[dict]: _description_
+            List[dict]: [{"role": ..., "content": ...}, {"role": ..., "content": ...}]
         """
         
         # Make sure we don't change the input variable
@@ -46,6 +46,15 @@ class LLM:
         pass
     
     def print_streamed(self, stream: Iterator, timeit: bool = False) -> str:
+        """Streams the generated tokens to the terminal and returns the full generated text.
+
+        Args:
+            stream (Iterator)
+            timeit (bool, optional): If True display the number of tokens generated / sec. Defaults to False.
+
+        Returns:
+            str: Generated text
+        """
         full_text = ""
         start = datetime.now()
         num_tokens = 0

@@ -4,7 +4,19 @@ from graphragzen.llm.base_llm import LLM
 from graphragzen.typing import EntityExtractionPrompts, EntityExtractionPromptFormatting
     
 def loop_extraction(documents: List[str], prompts: EntityExtractionPrompts, prompts_formatting: EntityExtractionPromptFormatting, llm: LLM, max_gleans: int = 5) -> List[str]:
+    """Extract entities in a loop, asking a few times if all entities are extracted using the correct prompts.
 
+    Args:
+        documents (List[str]): Documents to extract entities from
+        prompts (EntityExtractionPrompts): Base prompts. See `graphragzen.typing.EntityExtractionPrompts`
+        prompts_formatting (EntityExtractionPromptFormatting): Values used to format the entity extraction prompt.
+            See `graphragzen.typing.EntityExtractionPromptFormatting`.
+        llm (LLM)
+        max_gleans (int, optional): How often the LLM should be asked if all entities have been extracted. Defaults to 5.
+
+    Returns:
+        List[str]: Per document raw description of extracted entities.
+    """
     llm_raw_output = []
     for doc in documents:
         print(f"\n-->processing chunk {len(llm_raw_output)+1} of {len(documents)}")
