@@ -98,7 +98,9 @@ Output:
 Entity_types: {entity_types}
 Text: {input_text}
 ######################
-Output:"""
+Output:"""  # noqa: E501
 
-CONTINUE_PROMPT = "MANY entities were missed in the last extraction.  Add them below using the same format:\n"
-LOOP_PROMPT = "It appears some entities may have still been missed.  Answer YES | NO if there are still entities that need to be added.\n"
+CONTINUE_PROMPT = (
+    "MANY entities were missed in the last extraction.  Add them below using the same format:\n"
+)
+LOOP_PROMPT = "It appears some entities may have still been missed.  Answer YES | NO if there are still entities that need to be added.\n"  # noqa: E501

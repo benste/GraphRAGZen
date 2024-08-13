@@ -36,4 +36,4 @@ Format each relationship as ("relationship"{{tuple_delimiter}}<source_entity>{{t
 entity_types: [{entity_types}]
 text: {{input_text}}
 ######################
-output:"""
+output:"""  # noqa: E501

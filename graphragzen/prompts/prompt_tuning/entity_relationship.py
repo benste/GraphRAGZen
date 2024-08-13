@@ -34,7 +34,7 @@ entity_types: {entity_types}
 text: {input_text}
 ######################
 output:
-"""
+"""  # noqa: E501
 
 EXAMPLE_EXTRACTION_TEMPLATE = """
 Example {n}:
@@ -47,4 +47,4 @@ output:
 {output}
 #############################
 
-"""
+"""  # noqa: E501

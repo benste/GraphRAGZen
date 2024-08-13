@@ -4,77 +4,98 @@ import numbers
 import pandas as pd
 import networkx as nx
 
-from graphragzen.typing import EntityExtractionConfig, EntityExtractionPromptConfig, EntityExtractionPromptFormatting, RawEntitiesToGraphConfig
+from graphragzen.typing import (
+    EntityExtractionConfig,
+    EntityExtractionPromptConfig,
+    EntityExtractionPromptFormatting,
+    RawEntitiesToGraphConfig,
+)
 from graphragzen.entity_extraction.utils import loop_extraction
 from graphragzen.preprocessing.utils import clean_str
 from graphragzen.llm.base_llm import LLM
 
 
-def raw_entity_extraction(dataframe: pd.DataFrame, llm: LLM, prompt_config: EntityExtractionPromptConfig, **kwargs: EntityExtractionConfig) -> tuple:
+def raw_entity_extraction(
+    dataframe: pd.DataFrame,
+    llm: LLM,
+    prompt_config: EntityExtractionPromptConfig,
+    **kwargs: EntityExtractionConfig,
+) -> tuple:
     config = EntityExtractionConfig(**kwargs)
-    
-    """Let the LLM extract entities that is however just strings, output still needs to be parsed to extract structured data.
+
+    """Let the LLM extract entities that is however just strings, output still needs to be parsed
+        to extract structured data.
 
     Args:
         dataframe (pd.DataFrame)
         llm (LLM)
-        prompt_config (EntityExtractionPromptConfig): see `graphragzen.typing.EntityExtractionPromptConfig`
-        
+        prompt_config (EntityExtractionPromptConfig): See
+            `graphragzen.typing.EntityExtractionPromptConfig`
+
     Kwargs:
-         max_gleans (int, optional): How often the LLM should be asked if all entities have been extracted
-            from a single text. Defaults to 5.
-        column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract entities
-            from. Defaults to 'chunk'.
-        results_column (str, optional): Column to write the output of the LLM to. Defaults to 'raw_entities'.
+         max_gleans (int, optional): How often the LLM should be asked if all entities have been
+            extracted from a single text. Defaults to 5.
+        column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
+            entities from. Defaults to 'chunk'.
+        results_column (str, optional): Column to write the output of the LLM to.
+            Defaults to 'raw_entities'.
 
     Returns:
         pd.DataFrame: Input document with new column containing the raw entities extracted
     """
     dataframe.reset_index(inplace=True, drop=True)
-    
-    llm_raw_output = loop_extraction(dataframe[config.column_to_extract], prompt_config.prompts, prompt_config.formatting, llm, config.max_gleans)
-    
+
+    llm_raw_output = loop_extraction(
+        dataframe[config.column_to_extract],
+        prompt_config.prompts,
+        prompt_config.formatting,
+        llm,
+        config.max_gleans,
+    )
+
     # Map LLM output to correct df column for intermediate saving
     dataframe[config.results_column] = [llm_raw_output[id] for id in dataframe.chunk_id.tolist()]
-        
+
     return dataframe
-   
+
 
 def raw_entities_to_graph(
-        dataframe: pd.DataFrame,
-        prompt_formatting: EntityExtractionPromptFormatting,
-        **kwargs: RawEntitiesToGraphConfig,
-    ) -> nx.Graph:
+    dataframe: pd.DataFrame,
+    prompt_formatting: EntityExtractionPromptFormatting,
+    **kwargs: RawEntitiesToGraphConfig,
+) -> nx.Graph:
     """Parse the result from raw entity extraction to create an undirected unipartite graph.
 
     Args:
         dataframe (pd.DataFrame): Should contain a column with raw extracted entities
-        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity extraction.
-            See `graphragzen.typing.EntityExtractionPromptFormatting`.
-        
+        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
+            extraction. See `graphragzen.typing.EntityExtractionPromptFormatting`.
+
     Kwargs:
-        raw_entities_column (str, optional): Column in a DataFrame that contains the output of entity extraction.
-            Defaults to 'raw_entities'.
-        reference_column (str, optional): Value from this column in the DataFrame will be added to the edged and nodes.
-            This allows to reference to the source where entities were extracted from when quiring the graph. 
-            Defaults to 'chunk_id'.
-        feature_delimiter (str, optional): When the same node or edge is found multiple times, features are concatenated
-            using this demiliter. Defaults to '\n'.
+        raw_entities_column (str, optional): Column in a DataFrame that contains the output of
+            entity extraction. Defaults to 'raw_entities'.
+        reference_column (str, optional): Value from this column in the DataFrame will be added to
+            the edged and nodes. This allows to reference to the source where entities were
+            extracted from when quiring the graph. Defaults to 'chunk_id'.
+        feature_delimiter (str, optional): When the same node or edge is found multiple times,
+            features are concatenated using this demiliter. Defaults to '\n'.
 
     Returns:
         nx.Graph
     """
     config = RawEntitiesToGraphConfig(**kwargs)
-    
+
     graph = nx.Graph()
-    for extracted_data, source_id in zip(*(dataframe[config.raw_entities_column], dataframe[config.reference_column])):
-        
+    for extracted_data, source_id in zip(
+        *(dataframe[config.raw_entities_column], dataframe[config.reference_column])
+    ):
+
         records = extracted_data.split(prompt_formatting.record_delimiter)
         for record in records:
             # Some light cleaning
             record = re.sub(r"^\(|\)$", "", record.strip())
             record_attributes = record.split(prompt_formatting.tuple_delimiter)
-            
+
             # Check if attribute is a node
             if record_attributes[0] == '"entity"' and len(record_attributes) >= 4:
                 # Some cleaning
@@ -87,9 +108,7 @@ def raw_entities_to_graph(
                     node = graph.nodes[entity_name]
                     node["description"] += config.feature_delimiter + entity_description
                     node["source_id"] += config.feature_delimiter + str(source_id)
-                    node["entity_type"] = (
-                        entity_type if entity_type != "" else node["entity_type"]
-                    )
+                    node["entity_type"] = entity_type if entity_type != "" else node["entity_type"]
                 else:
                     graph.add_node(
                         entity_name,
@@ -99,10 +118,7 @@ def raw_entities_to_graph(
                     )
 
             # Check if attribute is an edge
-            if (
-                record_attributes[0] == '"relationship"'
-                and len(record_attributes) >= 5
-            ):
+            if record_attributes[0] == '"relationship"' and len(record_attributes) >= 5:
                 # Some cleaning
                 source = clean_str(record_attributes[1].upper())
                 target = clean_str(record_attributes[2].upper())
@@ -133,9 +149,13 @@ def raw_entities_to_graph(
                     edge_data = graph.get_edge_data(source, target)
                     if edge_data is not None:
                         weight += edge_data["weight"]
-                        edge_description = edge_data['description'] + config.feature_delimiter + edge_description
-                        edge_source_id = edge_data['source_id'] + config.feature_delimiter + edge_source_id
-                        
+                        edge_description = (
+                            edge_data["description"] + config.feature_delimiter + edge_description
+                        )
+                        edge_source_id = (
+                            edge_data["source_id"] + config.feature_delimiter + edge_source_id
+                        )
+
                 graph.add_edge(
                     source,
                     target,
@@ -143,5 +163,5 @@ def raw_entities_to_graph(
                     description=edge_description,
                     source_id=edge_source_id,
                 )
-          
+
     return graph

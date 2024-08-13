@@ -6,4 +6,4 @@ Given a sample text, help the user by assigning a descriptive domain that summar
 Example domains are: "Social studies", "Algorithmic analysis", "Medical science", among others.
 
 Text: {input_text}
-Domain:"""
+Domain:"""  # noqa: E501

@@ -19,4 +19,4 @@ If no answer is possible, or the description is empty, only convey information t
 Entities: {{entity_name}}
 Description List: {{description_list}}
 #######
-Output:"""
+Output:"""  # noqa: E501

@@ -10,4 +10,4 @@ Use a format similar to the following:
 You are an expert {{role}}. You are skilled at {{relevant skills}}. You are adept at helping people with {{specific task}}.
 
 task: Identify the relations and structure of the community of interest, specifically within the {domain} domain.
-persona description:"""
+persona description:"""  # noqa: E501

@@ -3,9 +3,10 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel
 
+
 class MappedBaseModel(BaseModel, Mapping):
     """Extension of pydantic BaseModel to allow unpacking
-    
+
     example:
     ```
     class Car(MappedBaseModel):
@@ -15,7 +16,7 @@ class MappedBaseModel(BaseModel, Mapping):
 
     def describe_car(**kwargs):
         print(kwargs)
-        
+
     my_car = Car(
         num_wheels = 3,
         horsepower = 10,
@@ -25,6 +26,7 @@ class MappedBaseModel(BaseModel, Mapping):
     ```
 
     """
+
     def __init__(self, /, **data: Any) -> None:
         # Handle:
         # 1. dict input: data = {arg1: value1, arg2: value2, arg3:...}
@@ -43,7 +45,7 @@ class MappedBaseModel(BaseModel, Mapping):
 
         __tracebackhide__ = True
         self.__pydantic_validator__.validate_python(merged_data, self_instance=self)
-        
+
     def __getitem__(self, key):
         return getattr(self, key)
 

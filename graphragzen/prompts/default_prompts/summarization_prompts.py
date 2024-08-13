@@ -13,4 +13,4 @@ Entities: {entity_name}
 Description List: {description_list}
 #######
 Output:
-"""
+"""  # noqa: E501

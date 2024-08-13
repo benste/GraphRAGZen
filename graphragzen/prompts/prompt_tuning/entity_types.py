@@ -44,4 +44,4 @@ Task: Identify the relations and structure of the community of interest, specifi
 Text: {input_text}
 RESPONSE:
 {{<entity_types>}}
-"""
+"""  # noqa: E501

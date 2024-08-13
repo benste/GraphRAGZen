@@ -1,1 +1,1 @@
-from .leiden import *
+from .leiden import leiden  # noqa: F401
