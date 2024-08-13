@@ -1,7 +1,11 @@
-from pydantic import BaseModel
+from .MappedBaseModel import MappedBaseModel
 
-class ClusterConfig(BaseModel):
-    """Config for loading local LLM"""
-    max_comm_size: int = 10  # maximum number of nodes in one cluster
+class ClusterConfig(MappedBaseModel):
+    """Config for clustering nodes
+
+    Args:
+        max_comm_size (int, optional): Maximum number of nodes in one cluster. Defaults to 10.
+    """
+    max_comm_size: int = 10 
 
 

@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from .MappedBaseModel import MappedBaseModel
     
-class RawDocumentsConfig(BaseModel):
+class RawDocumentsConfig(MappedBaseModel):
     """Config for raw document loading
 
     Args:
@@ -13,13 +13,13 @@ class RawDocumentsConfig(BaseModel):
     raw_documents_folder: str
     raw_content_column: Optional[str] = 'content'
     
-class ChunkConfig(BaseModel):
+class ChunkConfig(MappedBaseModel):
     """Config for chunking documents
 
     Args:
         column_to_chunk (str, optional): Column to chunk, Defaults to 'content'.
         results_column (str, optional): Column to write chunks to, Defaults to 'chunk'.
-        id_column (str, optional): column with which to later refence the source text, Defaults to 'chunk_id'.
+        id_column (str, optional): Column with which to later refence the source chunk, Defaults to 'chunk_id'.
         window_size (str, optional): Number of tokens in each chunk, Defaults to 300.
         overlap (str, optional): Number of tokens chunks overlap, Defaults to 100.
     """
@@ -29,11 +29,11 @@ class ChunkConfig(BaseModel):
     window_size: Optional[int] = 300
     overlap: Optional[int] = 100
     
-class PreprocessConfig(BaseModel):
+class PreprocessConfig(MappedBaseModel):
     """Config for preprocessing raw documents
 
     Args:
-        BaseModel (RawDocumentsConfig)
+        MappedBaseModel (RawDocumentsConfig)
         chunk (ChunkConfig)
     """
     raw_documents: RawDocumentsConfig
