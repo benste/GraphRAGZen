@@ -39,6 +39,7 @@ TODO
 # TODO:
 ## necasary for v0.1.0
 ✔ Everything docstringed!
+
 ✔ Coding style tests (flake8, black, isort and mypy)
 - Unit tests
 - Make functions more 'functional' and move typing out of the big typing folder
