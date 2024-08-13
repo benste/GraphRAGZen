@@ -1,12 +1,14 @@
+from typing import Any
+
 import leidenalg as la
 import igraph as ig
 import networkx as nx
 import numpy as np
 
-from graphragzen.typing import ClusterConfig
+from .typing import ClusterConfig
 
 
-def leiden(graph: nx.Graph, **kwargs: ClusterConfig) -> nx.Graph:
+def leiden(graph: nx.Graph, **kwargs: Any) -> nx.Graph:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
     Args:

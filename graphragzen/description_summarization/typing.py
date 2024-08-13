@@ -1,5 +1,5 @@
 from typing import List, Optional
-from .MappedBaseModel import MappedBaseModel
+from ..typing.MappedBaseModel import MappedBaseModel
 
 from graphragzen.prompts.default_prompts import summarization_prompts
 
@@ -41,8 +41,8 @@ class DescriptionSummarizationConfig(MappedBaseModel):
             found multiple times, features were concatenated using this delimiter.
                 We will make a list of descriptions by splitting on this delimiter.
                 Defaults to '\n'.
-        max_input_tokens (int, optional): Maximum input tokens until a summarization is made.
-            Remaining descriptions will be appended to the summarization until max_input_tokens is
+        max_input_tokens (int, optional): Maximum input tokens until a summary is made.
+            Remaining descriptions will be appended to the summary until max_input_tokens is
             reached again or no descriptions are left. Defaults to 4000.
         max_output_tokens (int, optional): Maximum number of tokens a summary can have.
             Defaults to 500.

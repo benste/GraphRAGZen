@@ -1,19 +1,19 @@
-from typing import List
+from typing import List, Any
 from functools import partial
 
 import networkx as nx
 
 
-from graphragzen.typing import DescriptionSummarizationPromptConfig, DescriptionSummarizationConfig
+from .typing import DescriptionSummarizationPromptConfig, DescriptionSummarizationConfig
 from graphragzen.llm.base_llm import LLM
 from .utils import _num_tokens_from_string
 
 
-def summarize_descriptions(
+def summarize_graph_descriptions(
     graph: nx.Graph,
     llm: LLM,
     prompt: DescriptionSummarizationPromptConfig,
-    **kwargs: DescriptionSummarizationConfig,
+    **kwargs: Any,
 ) -> nx.Graph:
     """Summarize lists of descriptions for each node or edge
 
@@ -28,8 +28,8 @@ def summarize_descriptions(
         feature_delimiter (str, optional): When during entity extraction the same node or edge was
             found multiple times, features were concatenated using this delimiter. We will make a
             list of descriptions by splitting on this delimiter. Defaults to '\n'.
-        max_input_tokens (int, optional): Maximum input tokens until a summarization is made.
-            Remaining descriptions will be appended to the summarization until max_input_tokens is
+        max_input_tokens (int, optional): Maximum input tokens until a summary is made.
+            Remaining descriptions will be appended to the summary until max_input_tokens is
             reached again or no descriptions are left. Defaults to 4000.
         max_output_tokens (int, optional): Maximum number of tokens a summary can have.
             Defaults to 500.
@@ -40,7 +40,7 @@ def summarize_descriptions(
     config = DescriptionSummarizationConfig(**kwargs)  # type: ignore
 
     item_summarizer = partial(
-        _summarize_item,
+        summarize_descriptions,
         llm=llm,
         prompt=prompt,
         max_input_tokens=config.max_input_tokens,
@@ -70,13 +70,12 @@ def summarize_descriptions(
     return graph
 
 
-def _summarize_item(
+def summarize_descriptions(
     entity_name: str,
     descriptions: List[str],
     llm: LLM,
     prompt: DescriptionSummarizationPromptConfig,
-    max_input_tokens: int = 4000,
-    max_output_tokens: int = 500,
+    **kwargs: Any,
 ) -> str:
     """Summarize a list of descriptions for a single node or edge
 
@@ -86,8 +85,10 @@ def _summarize_item(
         llm (LLM)
         prompt (DescriptionSummarizationPromptConfig): See
             graphragzen.typing.DescriptionSummarizationPromptConfig
-        max_input_tokens (int, optional): Maximum input tokens until a summarization is made.
-            Remaining descriptions will be appended to the summarization until max_input_tokens is
+
+    Kwargs:
+        max_input_tokens (int, optional): Maximum input tokens until a summary is made.
+            Remaining descriptions will be appended to the summary until max_input_tokens is
             reached again or no descriptions are left. Defaults to 4000.
         max_output_tokens (int, optional): Maximum number of tokens a summary can have.
             Defaults to 500.
@@ -95,7 +96,9 @@ def _summarize_item(
     Returns:
         str: summary
     """
-    usable_tokens = max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
+    config = DescriptionSummarizationConfig(**kwargs)
+
+    usable_tokens = config.max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
 
     descriptions_collected = []
     for description in descriptions:
@@ -107,14 +110,14 @@ def _summarize_item(
             # Calculate result (final or partial)
             prompt.formatting.entity_name = entity_name
             prompt.formatting.description_list = descriptions_collected
-            summarized = _summarize(llm, prompt, max_output_tokens)
+            summarized = _summarize(llm, prompt, config.max_output_tokens)
 
             # Add summarization to 'descriptions' to be part of the next possible loop
             descriptions_collected = [summarized]
 
             # reset values for a possible next loop
             usable_tokens = (
-                max_input_tokens
+                config.max_input_tokens
                 - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
                 - _num_tokens_from_string(summarized, llm.tokenizer)
             )
@@ -126,7 +129,7 @@ def _summarize_item(
     prompt.formatting.entity_name = entity_name
     prompt.formatting.description_list = descriptions_collected
 
-    return _summarize(llm, prompt, max_output_tokens)
+    return _summarize(llm, prompt, config.max_output_tokens)
 
 
 def _summarize(

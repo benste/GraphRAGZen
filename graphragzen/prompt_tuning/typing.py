@@ -1,7 +1,7 @@
 from typing import Optional, List
 from pydantic import field_validator
 
-from .MappedBaseModel import MappedBaseModel
+from ..typing.MappedBaseModel import MappedBaseModel
 
 from graphragzen.prompts.prompt_tuning import (
     domain,
@@ -75,12 +75,12 @@ class GenerateEntityRelationshipExamplesConfig(MappedBaseModel):
         example_template (str, optional): The template of example extracted entities that will
             be formatted using, among others, the entity relationships extracted using the
             prompt. Defaults to graphragzen.prompts.prompt_tuning.entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE`
-        max_examples (int, optional): Number of examples to create.
+        max_examples (int, optional): Number of examples to create. Defaults to 5.
     """  # noqa: E501
 
     prompt: str = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT
     example_template: str = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
-    max_examples: int = 3
+    max_examples: int = 5
 
     @field_validator("prompt", mode="before")
     def set_prompt(cls, prompt: Optional[str]) -> str:
@@ -109,7 +109,7 @@ class CreateEntityExtractionPromptConfig(MappedBaseModel):
         return prompt_template or entity_extraction.ENTITY_EXTRACTION_TEMPLATE
 
 
-class CreateEntitySummarizationPromptConfig(MappedBaseModel):
+class CreateDescriptionSummarizationPromptConfig(MappedBaseModel):
     """Config for generating a prompt that can be used to summarize entities
 
     Args:

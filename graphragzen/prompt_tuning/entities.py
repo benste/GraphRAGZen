@@ -1,69 +1,14 @@
-from typing import List
+from typing import List, Any
 
 from tqdm import tqdm
 
-from graphragzen.typing import (
+from .typing import (
     GenerateEntityRelationshipExamplesConfig,
-    GenerateDomainConfig,
-    GeneratePersonaConfig,
     GenerateEntityTypesConfig,
     CreateEntityExtractionPromptConfig,
-    CreateEntitySummarizationPromptConfig,
 )
 from graphragzen.llm.base_llm import LLM
 from graphragzen.description_summarization import _num_tokens_from_string
-
-
-def generate_domain(llm: LLM, documents: List[str], **kwargs: GenerateDomainConfig) -> str:
-    """Generate a domain to use for GraphRAG prompts.
-
-    Args:
-        llm (LLM)
-        documents (List[str]): Sample of documents that later will be used to create a graph.
-            You likely want this to be chunks of the whole documents.
-
-    Kwargs:
-        prompt (str, optional): Prompt to use for generating a domain.
-            If `domain` is not specified this will be used to infer the domain.
-            Defaults to `graphragzen.prompts.prompt_tuning.domain.GENERATE_DOMAIN_PROMPT`.
-        domain (str, optional): The domain relevant to a set of documents.
-            If not specified, the `prompt` will be used to infer the domain. Defaults to None.
-
-    Returns:
-        str: domain
-    """
-    config = GenerateDomainConfig(**kwargs)  # type: ignore
-
-    if config.domain:
-        # User provided a domain, no need to generate one
-        return config.domain
-
-    docs_str = "\n".join(documents)
-    domain_prompt = config.prompt.format(input_text=docs_str)
-    chat = llm.format_chat([("user", domain_prompt)])
-    return llm.run_chat(chat)
-
-
-def generate_persona(llm: LLM, domain: str, **kwargs: GeneratePersonaConfig) -> str:
-    """Generate a persona relevant to a domain to use for GraphRAG prompts.
-
-    Args:
-        llm (LLM)
-        domain (str): To base the persona on
-
-    Kwargs:
-        prompt (str, optional): Prompt to use for generating a persona.
-            Defaults to `graphragzen.prompts.prompt_tuning.persona.GENERATE_PERSONA_PROMPT`.
-
-    Returns:
-        str: persona
-    """
-    config = GeneratePersonaConfig(**kwargs)  # type: ignore
-
-    persona_prompt = config.prompt.format(domain=domain)
-
-    chat = llm.format_chat([("user", persona_prompt)])
-    return llm.run_chat(chat)
 
 
 def generate_entity_types(
@@ -71,7 +16,7 @@ def generate_entity_types(
     documents: List[str],
     domain: str,
     persona: str,
-    **kwargs: GenerateEntityTypesConfig,
+    **kwargs: Any,
 ) -> str | list[str]:
     """Generate entity type categories from a given set of (small) documents.
 
@@ -112,7 +57,7 @@ def generate_entity_relationship_examples(
     documents: List[str],
     persona: str,
     entity_types: list[str],
-    **kwargs: GenerateEntityRelationshipExamplesConfig,
+    **kwargs: Any,
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity
         extraction prompt.
@@ -132,7 +77,7 @@ def generate_entity_relationship_examples(
         example_template (str, optional): The template of example extracted entities that will
             be formatted using, among others, the entity relationships extracted using the
             prompt. Defaults to graphragzen.prompts.prompt_tuning.entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE`
-        max_examples (int, optional): Number of examples to create.
+        max_examples (int, optional): Number of examples to create. Defaults to 5.
 
     Returns:
         list[str]: examples
@@ -166,7 +111,7 @@ def create_entity_extraction_prompt(
     llm: LLM,
     entity_types: List[str],
     entity_relationship_examples: List[str],
-    **kwargs: CreateEntityExtractionPromptConfig,
+    **kwargs: Any,
 ) -> str:
     """
     Create a prompt for entity extraction.
@@ -216,23 +161,3 @@ def create_entity_extraction_prompt(
 
     # Format prompt and return
     return prompt.format(entity_types=entity_types, examples=examples_prompt)
-
-
-def create_entity_summarization_prompt(
-    persona: str, **kwargs: CreateEntitySummarizationPromptConfig
-) -> str:
-    """Create a prompt for entity summarization.
-
-     Args:
-        persona (str): Relevant to the domain
-
-    Kwargs:
-        prompt_template (str, optional): The template that will be formatted using a persona.
-            Defaults to `graphragzen.prompts.prompt_tuning.entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE`
-
-    Returns:
-        str: Prompt to use for entity summarization
-    """  # noqa: E501
-    config = CreateEntitySummarizationPromptConfig(**kwargs)  # type: ignore
-
-    return config.prompt_template.format(persona=persona)

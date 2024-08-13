@@ -3,7 +3,8 @@ from typing import List
 from llama_cpp import Llama, LlamaCache
 from transformers import AutoTokenizer
 
-from graphragzen.llm.base_llm import LLM, ChatNames
+from graphragzen.llm.base_llm import LLM
+from .typing import ChatNames
 
 
 class Gemma2GGUF(LLM):

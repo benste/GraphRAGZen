@@ -1,25 +1,26 @@
 import re
 import numbers
+from typing import Any
 
 import pandas as pd
 import networkx as nx
 
-from graphragzen.typing import (
+from .typing import (
     EntityExtractionConfig,
     EntityExtractionPromptConfig,
     EntityExtractionPromptFormatting,
     RawEntitiesToGraphConfig,
 )
-from graphragzen.entity_extraction.utils import loop_extraction
-from graphragzen.preprocessing.utils import clean_str
+from .utils import loop_extraction
+from graphragzen.preprocessing import clean_str
 from graphragzen.llm.base_llm import LLM
 
 
-def raw_entity_extraction(
+def extract_raw_entities(
     dataframe: pd.DataFrame,
     llm: LLM,
     prompt_config: EntityExtractionPromptConfig,
-    **kwargs: EntityExtractionConfig,
+    **kwargs: Any,
 ) -> tuple:
     config = EntityExtractionConfig(**kwargs)  # type: ignore
 
@@ -62,7 +63,7 @@ def raw_entity_extraction(
 def raw_entities_to_graph(
     dataframe: pd.DataFrame,
     prompt_formatting: EntityExtractionPromptFormatting,
-    **kwargs: RawEntitiesToGraphConfig,
+    **kwargs: Any,
 ) -> nx.Graph:
     """Parse the result from raw entity extraction to create an undirected unipartite graph.
 

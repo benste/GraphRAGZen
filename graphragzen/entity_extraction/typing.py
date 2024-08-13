@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .MappedBaseModel import MappedBaseModel
+from ..typing.MappedBaseModel import MappedBaseModel
 
 from graphragzen.prompts.default_prompts import entity_extraction_prompts
 

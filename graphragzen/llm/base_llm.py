@@ -3,7 +3,7 @@ from datetime import datetime
 from copy import deepcopy
 import warnings
 
-from graphragzen.typing.llm import ChatNames
+from .typing import ChatNames
 
 
 class LLM:

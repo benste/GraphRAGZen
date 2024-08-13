@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .MappedBaseModel import MappedBaseModel
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class LoadTextDocumentsConfig(MappedBaseModel):
@@ -26,6 +26,8 @@ class ChunkConfig(MappedBaseModel):
             Defaults to 'chunk_id'.
         window_size (str, optional): Number of tokens in each chunk, Defaults to 300.
         overlap (str, optional): Number of tokens chunks overlap, Defaults to 100.
+        method (str, optional): What to chunk. Currently only 'tokens' is implemented meaning
+            column_to_chunk is first tokenized and the tokens are chunked.
     """
 
     column_to_chunk: str = "content"
@@ -33,15 +35,4 @@ class ChunkConfig(MappedBaseModel):
     id_column: str = "chunk_id"
     window_size: int = 300
     overlap: int = 100
-
-
-class PreprocessConfig(MappedBaseModel):
-    """Config for preprocessing raw documents
-
-    Args:
-        MappedBaseModel (RawDocumentsConfig)
-        chunk (ChunkConfig)
-    """
-
-    raw_documents: LoadTextDocumentsConfig
-    chunk: ChunkConfig
+    method: str = "tokens"

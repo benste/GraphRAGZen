@@ -1,8 +1,10 @@
+from typing import Any
+
 from graphragzen.llm.gemma2 import Gemma2GGUF
-from graphragzen.typing import LlmLoadingConfig
+from .typing import LlmLoadingConfig
 
 
-def load_gemma2_gguf(**kwargs: LlmLoadingConfig) -> Gemma2GGUF:
+def load_gemma2_gguf(**kwargs: Any) -> Gemma2GGUF:
     """Load gguf version of Gemma 2
 
     Kwargs:

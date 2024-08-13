@@ -3,7 +3,7 @@ from typing import List
 from tqdm import tqdm
 
 from graphragzen.llm.base_llm import LLM
-from graphragzen.typing import EntityExtractionPrompts, EntityExtractionPromptFormatting
+from .typing import EntityExtractionPrompts, EntityExtractionPromptFormatting
 
 
 def loop_extraction(

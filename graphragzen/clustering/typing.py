@@ -1,4 +1,4 @@
-from .MappedBaseModel import MappedBaseModel
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class ClusterConfig(MappedBaseModel):

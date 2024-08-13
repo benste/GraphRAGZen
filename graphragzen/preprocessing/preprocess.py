@@ -1,14 +1,16 @@
 import os
 from collections import defaultdict
+import re
+from typing import Sequence, Any
 
+import html
 import pandas as pd
 
 from graphragzen.llm.base_llm import LLM
-from graphragzen.preprocessing import utils
-from graphragzen.typing import preprocessing
+from .typing import LoadTextDocumentsConfig, ChunkConfig
 
 
-def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.DataFrame:
+def load_text_documents(**kwargs: Any) -> pd.DataFrame:
     """loads files from folder path and subfolders.
 
     Kwargs:
@@ -18,7 +20,7 @@ def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.D
     Returns:
         pd.DataFrame: Includes the columns 'document_path' and 'document_id'
     """
-    config = preprocessing.LoadTextDocumentsConfig(**kwargs)  # type: ignore
+    config = LoadTextDocumentsConfig(**kwargs)  # type: ignore
 
     # Walk the folder path, find text files and load them
     folder_path = config.raw_documents_folder
@@ -35,9 +37,7 @@ def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.D
     return pd.DataFrame(df)
 
 
-def chunk_documents(
-    dataframe: pd.DataFrame, llm: LLM, **kwargs: preprocessing.ChunkConfig
-) -> pd.DataFrame:
+def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.DataFrame:
     """Chunk documents based on number of tokens
 
     Args:
@@ -56,21 +56,27 @@ def chunk_documents(
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
             allowing referencing
     """
-    config = preprocessing.ChunkConfig(**kwargs)  # type: ignore
+    config = ChunkConfig(**kwargs)  # type: ignore
 
     results_column: str = config.results_column
     len_column: str = results_column + "_len"
     id_column: str = results_column + "_id"
 
-    # Apply chunking per document, also saving the number of tokens in each chunk
+    # Method of chunking
+    if config.method == "tokens":
+        to_chunk = dataframe[config.column_to_chunk].apply(llm.tokenize)
+
+    # Apply chunking per document, also saving the length of each chunk
     dataframe[results_column], dataframe[len_column] = zip(
-        *dataframe[config.column_to_chunk].apply(
-            lambda c: utils.chunk_tokens(c, llm, config.window_size, config.overlap)
-        )
+        *to_chunk.apply(lambda c: chunk(c, **config))
     )
 
     # Map each chunk back to the correct row
     dataframe = dataframe.explode([results_column, len_column])
+
+    # 'untokenize' if required
+    if config.method == "tokens":
+        dataframe[results_column] = dataframe[results_column].apply(llm.untokenize)
 
     # Give each chunk a unique ID
     dataframe[id_column] = list(range(len(dataframe)))
@@ -78,3 +84,42 @@ def chunk_documents(
     # TODO: drop content column to save space?
 
     return dataframe
+
+
+def chunk(inp: Sequence, **kwargs: Any) -> tuple[list, list]:
+    """Chunk an iterable using a sliding window
+
+    Args:
+        inp (Iterable): Iterable to chunk
+
+    Kwargs:
+        window_size (int): size of the chunk window
+        overlap (int): overlap between windows
+
+    Returns:
+        tuple[list, list]: (chunks, chunk lengths)
+    """
+    config = ChunkConfig(**kwargs)  # type: ignore
+
+    chunks = []
+    chunk_lengths = []
+    for start_index in range(0, len(inp), config.window_size - config.overlap):
+        chunk = inp[start_index : start_index + config.window_size]
+        chunks.append(chunk)
+        chunk_lengths.append(len(chunk))
+
+    return chunks, chunk_lengths
+
+
+def clean_str(input: Any) -> str:
+    """Clean an input string by removing HTML escapes, control characters, and other unwanted
+    characters.
+    """
+    # If we get non-string input, just give it back
+    if not isinstance(input, str):
+        return input
+
+    result = html.unescape(input.strip())
+    result = result.lstrip('"').rstrip('"')
+    # https://stackoverflow.com/questions/4324790/removing-control-characters-from-a-string-in-python  # noqa: E501
+    return re.sub(r"[\x00-\x1f\x7f-\x9f]", "", result)
