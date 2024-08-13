@@ -1,4 +1,5 @@
 from ..typing.MappedBaseModel import MappedBaseModel
+from pydantic import ConfigDict
 
 
 class ChatNames(MappedBaseModel):
@@ -21,6 +22,8 @@ class LlmLoadingConfig(MappedBaseModel):
         tokenizer_URI (str): URI for the tokenizer
         context_size (int, optional): Size of the context window in tokens. Defaults to 8192
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     model_storage_path: str
     tokenizer_URI: str
