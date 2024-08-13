@@ -22,6 +22,7 @@ class Gemma2GGUF(LLM):
         llm_input = self.tokenizer.apply_chat_template(
             chat, tokenize=False, add_generation_prompt=True
         )
+        llm_input = llm_input.removeprefix("<bos>")
         results = self.model(
             llm_input,
             stop=["<eos>"],
