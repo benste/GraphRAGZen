@@ -2,20 +2,20 @@
 
 import networkx as nx
 
-from graphragzen.llm import load_llm
+from graphragzen.llm import load_gemma2_gguf
 from graphragzen import preprocessing
 from graphragzen import entity_extraction
 from graphragzen import description_summarization
-from graphragzen import typing
 from graphragzen import clustering
 
 
-def entity_extraction_pipeline() -> nx.Graph:
-    # Note: Each config loaded from `typing` has sane defaults but can be overwritten as seen fit
+def entity_graph_pipeline() -> nx.Graph:
+    # Note: Each config has sane defaults but can be overwritten as seen fit at instantiation of
+    # the config
 
     # Load an LLM locally
     print("Loading LLM")
-    llm = load_llm.load_gemma2_gguf(
+    llm = load_gemma2_gguf(
         model_storage_path="/home/bens/projects/DemystifyGraphRAG/models/gemma-2-2b-it-Q4_K_M.gguf",
         tokenizer_URI="google/gemma-2-2b-it",
     )
@@ -28,20 +28,25 @@ def entity_extraction_pipeline() -> nx.Graph:
 
     # Split documents into chunks based on tokens
     print("Chunking documents")
-    chunk_config = typing.ChunkConfig()  # let's use default parameters
+    chunk_config = preprocessing.ChunkConfig(
+        window_size=400,
+        overlap=100,
+    )
     chunked_documents = preprocessing.chunk_documents(raw_documents, llm, config=chunk_config)
 
     # Extract entities from the chunks
     print("Extracting raw entities")
-    prompt_config = typing.EntityExtractionPromptConfig()
-    entity_extraction_config = typing.EntityExtractionConfig()  # let's use default parameters
-    raw_entities = entity_extraction.raw_entity_extraction(
+    prompt_config = entity_extraction.EntityExtractionPromptConfig()
+    entity_extraction_config = entity_extraction.EntityExtractionConfig(max_gleans=3)
+    raw_entities = entity_extraction.extract_raw_entities(
         chunked_documents, llm, prompt_config, config=entity_extraction_config
     )
 
     # Create a graph from the raw extracted entities
     print("Creating graph from raw entities")
-    entity_to_graph_config = typing.RawEntitiesToGraphConfig()  # let's use default parameters
+    entity_to_graph_config = (
+        entity_extraction.RawEntitiesToGraphConfig()
+    )  # let's use default parameters
     entity_graph = entity_extraction.raw_entities_to_graph(
         raw_entities, prompt_config.formatting, config=entity_to_graph_config
     )
@@ -49,9 +54,11 @@ def entity_extraction_pipeline() -> nx.Graph:
     # Each node could be found multiple times in the documents and thus have multiple descriptions.
     # We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
-    prompt_config = typing.DescriptionSummarizationPromptConfig()
-    summarization_config = typing.DescriptionSummarizationConfig()  # let's use default parameters
-    entity_graph = description_summarization.summarize_descriptions(
+    prompt_config = description_summarization.DescriptionSummarizationPromptConfig()
+    summarization_config = (
+        description_summarization.DescriptionSummarizationConfig()
+    )  # let's use default parameters
+    entity_graph = description_summarization.summarize_graph_descriptions(
         entity_graph, llm, prompt_config, config=summarization_config
     )
 
@@ -63,20 +70,4 @@ def entity_extraction_pipeline() -> nx.Graph:
     return entity_graph
 
 
-entity_graph = entity_extraction_pipeline()
-1 + 1
-# def create_entity_extraction_prompt():
-#     """
-#     Create a prompt for entity extraction.
-#     1. Domain: We fist ask the LLM to create the domains that the documents span
-#     2. Persona: with the domains the LLM can create a persona (e.g. You are an expert {{role}}.
-#           You are skilled at {{relevant skills}})
-#     3. Entity types: using the domain and persona we ask the LLM to extract from the documents
-#           the types of entities a node could get (e.g. person, school of thought, ML)
-#     4. Examples: Using all of the above we ask the LLM to create some example document->entities
-#           extracted
-#     5. Entity extraction prompt: We merge all of the above information in a prompt that can be
-#           used to extract entities
-#     """
-#     # TODO
-#     pass
+entity_graph = entity_graph_pipeline()
