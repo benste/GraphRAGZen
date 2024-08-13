@@ -65,7 +65,8 @@ class LLM:
 
         if len(formatted_chat) == 0 and chat[0][0] != "user":
             # First role MUST be user
-            warnings.warn("Chat did not start with 'user', adding `'user': ' '` to the chat")
+            # TODO: only show warnings if requested
+            # warnings.warn("Chat did not start with 'user', adding `'user': ' '` to the chat")
             chat = [("user", " ")] + chat
 
         for role, content in chat:
