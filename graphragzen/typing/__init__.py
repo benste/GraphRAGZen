@@ -6,7 +6,7 @@ from .entity_extraction import (  # noqa: F401
     EntityExtractionPromptFormatting,
 )
 from .llm import ChatNames, LlmLoadingConfig  # noqa: F401
-from .preprocessing import PreprocessConfig, RawDocumentsConfig, ChunkConfig  # noqa: F401
+from .preprocessing import PreprocessConfig, LoadTextDocumentsConfig, ChunkConfig  # noqa: F401
 from .description_summarization import (  # noqa: F401
     DescriptionSummarizationConfig,
     DescriptionSummarizationPromptConfig,

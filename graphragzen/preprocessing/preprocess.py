@@ -8,7 +8,7 @@ from graphragzen.preprocessing import utils
 from graphragzen.typing import preprocessing
 
 
-def raw_documents(**kwargs: preprocessing.RawDocumentsConfig) -> pd.DataFrame:
+def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.DataFrame:
     """loads files from folder path and subfolders.
 
     Kwargs:
@@ -18,7 +18,7 @@ def raw_documents(**kwargs: preprocessing.RawDocumentsConfig) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Includes the columns 'document_path' and 'document_id'
     """
-    config = preprocessing.RawDocumentsConfig(**kwargs)
+    config = preprocessing.LoadTextDocumentsConfig(**kwargs)
 
     # Walk the folder path, find text files and load them
     folder_path = config.raw_documents_folder

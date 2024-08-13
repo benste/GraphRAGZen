@@ -3,7 +3,7 @@ from typing import Optional
 from .MappedBaseModel import MappedBaseModel
 
 
-class RawDocumentsConfig(MappedBaseModel):
+class LoadTextDocumentsConfig(MappedBaseModel):
     """Config for raw document loading
 
     Args:
