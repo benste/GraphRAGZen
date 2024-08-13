@@ -41,8 +41,9 @@ TODO
 ✔ Everything docstringed!
 
 ✔ Coding style tests (flake8, black, isort and mypy)
+
+✔ Make functions more 'functional' and move typing out of the big typing folder
 - Unit tests
-- Make functions more 'functional' and move typing out of the big typing folder
 - Github tasks (automatic tests, push to pypi pipeline)
 - Finish examples (and a function that can spawn the examples in the working dir)
 - make automatic documentation that updates when new version is pushed to pypi (portray?)
