@@ -38,10 +38,9 @@ TODO
 
 # TODO:
 ## necasary for v0.1.0
-- Everything docstringed!
-- test with GPU
+✔ Everything docstringed!
+✔ Coding style tests (flake8, black, isort and mypy)
 - Unit tests
-- Coding style tests (flake8, black, isort and mypy)
 - Test for duplicate typing
 - Github tasks (automatic tests, push to pypi pipeline)
 - Finish examples (and a function that can spawn the examples in the working dir)
@@ -49,8 +48,10 @@ TODO
 
 ## Needed for full version
 - community detection
-- graph embeddings (node2vwc, text embeddings)
+- graph embeddings (node2vec, text embeddings)
+    - Find semantically similar nodes and combine them
 - graph querying 
+- test with GPU
 
 ## quality improvements
 - OpenAI communication 
