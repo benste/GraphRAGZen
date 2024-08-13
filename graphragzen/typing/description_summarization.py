@@ -28,7 +28,9 @@ class DescriptionSummarizationPromptConfig(MappedBaseModel):
     """
 
     prompt: str = summarization_prompts.SUMMARIZE_PROMPT
-    formatting: DescriptionSummarizationPromptFormatting
+    formatting: DescriptionSummarizationPromptFormatting = (
+        DescriptionSummarizationPromptFormatting()
+    )
 
 
 class DescriptionSummarizationConfig(MappedBaseModel):
