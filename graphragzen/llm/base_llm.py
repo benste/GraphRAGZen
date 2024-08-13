@@ -1,7 +1,6 @@
 from typing import List, Iterator, Any
 from datetime import datetime
 from copy import deepcopy
-import warnings
 
 from .typing import ChatNames
 
