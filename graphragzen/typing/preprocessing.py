@@ -28,11 +28,11 @@ class ChunkConfig(MappedBaseModel):
         overlap (str, optional): Number of tokens chunks overlap, Defaults to 100.
     """
 
-    column_to_chunk: Optional[str] = "content"
-    results_column: Optional[str] = "chunk"
-    id_column: Optional[str] = "chunk_id"
-    window_size: Optional[int] = 300
-    overlap: Optional[int] = 100
+    column_to_chunk: str = "content"
+    results_column: str = "chunk"
+    id_column: str = "chunk_id"
+    window_size: int = 300
+    overlap: int = 100
 
 
 class PreprocessConfig(MappedBaseModel):
@@ -43,5 +43,5 @@ class PreprocessConfig(MappedBaseModel):
         chunk (ChunkConfig)
     """
 
-    raw_documents: RawDocumentsConfig
+    raw_documents: LoadTextDocumentsConfig
     chunk: ChunkConfig

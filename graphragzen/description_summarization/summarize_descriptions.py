@@ -37,7 +37,7 @@ def summarize_descriptions(
     Returns:
         nx.Graph
     """
-    config = DescriptionSummarizationConfig(**kwargs)
+    config = DescriptionSummarizationConfig(**kwargs)  # type: ignore
 
     item_summarizer = partial(
         _summarize_item,
@@ -115,7 +115,7 @@ def _summarize_item(
             # reset values for a possible next loop
             usable_tokens = (
                 max_input_tokens
-                - _num_tokens_from_string(prompt, llm.tokenizer)
+                - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
                 - _num_tokens_from_string(summarized, llm.tokenizer)
             )
 
@@ -144,6 +144,6 @@ def _summarize(
     Returns:
         str: summary
     """
-    prompt = prompt.prompt.format(**prompt.formatting.model_dump())
+    prompt = prompt.prompt.format(**prompt.formatting.model_dump())  # type: ignore
     chat = llm.format_chat([("user", prompt)])
     return llm.run_chat(chat, max_tokens=max_output_tokens)

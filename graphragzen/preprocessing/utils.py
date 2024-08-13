@@ -5,7 +5,7 @@ import html
 from graphragzen.llm.base_llm import LLM
 
 
-def chunk_tokens(text: str, llm: LLM, window_size: int, overlap: int) -> tuple[list]:
+def chunk_tokens(text: str, llm: LLM, window_size: int, overlap: int) -> tuple[list, list]:
     """Tokenize a text and chunk it using a sliding window
 
     Args:

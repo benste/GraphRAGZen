@@ -13,7 +13,7 @@ def load_gemma2_gguf(**kwargs: LlmLoadingConfig) -> Gemma2GGUF:
     Returns:
         Gemma2GGUF: see `graphragzen.llm.gemma2.Gemma2GGUF`
     """
-    config = LlmLoadingConfig(**kwargs)
+    config = LlmLoadingConfig(**kwargs)  # type: ignore
 
     return Gemma2GGUF(
         model_path=config.model_storage_path,
@@ -22,9 +22,11 @@ def load_gemma2_gguf(**kwargs: LlmLoadingConfig) -> Gemma2GGUF:
     )
 
 
-def load_gemma2_huggingface():
+def load_gemma2_huggingface() -> None:
+    # TODO: implement
     pass
 
 
-def load_openAI():
+def load_openAI() -> None:
+    # TODO: implement
     pass

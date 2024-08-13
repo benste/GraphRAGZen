@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Any, Generator
+from typing_extensions import Self
 from collections.abc import Mapping
 
 from pydantic import BaseModel
@@ -27,7 +28,7 @@ class MappedBaseModel(BaseModel, Mapping):
 
     """
 
-    def __init__(self, /, **data: Any) -> None:
+    def __init__(self: Self, /, **data: Any) -> None:
         # Handle:
         # 1. dict input: data = {arg1: value1, arg2: value2, arg3:...}
         # 2. self input: data = self
@@ -35,7 +36,7 @@ class MappedBaseModel(BaseModel, Mapping):
 
         # Find values in data that are already this class (case 2 and 3) and
         # merge with the rest of the dict
-        merged_data = {}
+        merged_data: dict = {}
         for key, value in data.items():
             if isinstance(value, self.__class__):
                 # Merge with rest of data, giving non-pydantic class keys preference
@@ -46,11 +47,11 @@ class MappedBaseModel(BaseModel, Mapping):
         __tracebackhide__ = True
         self.__pydantic_validator__.validate_python(merged_data, self_instance=self)
 
-    def __getitem__(self, key):
+    def __getitem__(self: Self, key: str) -> Any:
         return getattr(self, key)
 
-    def __iter__(self):
-        return iter(self.__dict__)
+    def __iter__(self: Self) -> Generator:
+        return iter(self.__dict__)  # type: ignore
 
-    def __len__(self):
+    def __len__(self: Self) -> int:
         return len(self.__dict__)

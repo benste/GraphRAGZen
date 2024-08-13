@@ -18,7 +18,7 @@ def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.D
     Returns:
         pd.DataFrame: Includes the columns 'document_path' and 'document_id'
     """
-    config = preprocessing.LoadTextDocumentsConfig(**kwargs)
+    config = preprocessing.LoadTextDocumentsConfig(**kwargs)  # type: ignore
 
     # Walk the folder path, find text files and load them
     folder_path = config.raw_documents_folder
@@ -28,7 +28,7 @@ def load_text_documents(**kwargs: preprocessing.LoadTextDocumentsConfig) -> pd.D
         for file in files:
             if file.endswith(".txt"):
                 df["document_path"].append(os.path.join(root, file))
-                df[config.raw_content_column].append(open(df["document_path"][-1], "r").read())
+                df[config.raw_content_column].append(open(df["document_path"][-1], "r").read())  # type: ignore  # noqa: E501
                 df["document_id"].append(str(file_id))
                 file_id += 1
 
@@ -56,11 +56,11 @@ def chunk_documents(
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
             allowing referencing
     """
-    config = preprocessing.ChunkConfig(**kwargs)
+    config = preprocessing.ChunkConfig(**kwargs)  # type: ignore
 
-    results_column = config.results_column
-    len_column = config.results_column + "_len"
-    id_column = config.results_column + "_id"
+    results_column: str = config.results_column
+    len_column: str = results_column + "_len"
+    id_column: str = results_column + "_id"
 
     # Apply chunking per document, also saving the number of tokens in each chunk
     dataframe[results_column], dataframe[len_column] = zip(

@@ -24,11 +24,11 @@ class GenerateDomainConfig(MappedBaseModel):
             If not specified, the `prompt` will be used to infer the domain. Defaults to None.
     """
 
-    prompt: Optional[str] = domain.GENERATE_DOMAIN_PROMPT
+    prompt: str = domain.GENERATE_DOMAIN_PROMPT
     domain: Optional[str] = None
 
     @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt):
+    def set_prompt(cls, prompt: Optional[str]) -> str:
         return prompt or domain.GENERATE_DOMAIN_PROMPT
 
 
@@ -40,10 +40,10 @@ class GeneratePersonaConfig(MappedBaseModel):
             Defaults to `graphragzen.prompts.prompt_tuning.persona.GENERATE_PERSONA_PROMPT`.
     """
 
-    prompt: Optional[str] = persona.GENERATE_PERSONA_PROMPT
+    prompt: str = persona.GENERATE_PERSONA_PROMPT
 
     @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt):
+    def set_prompt(cls, prompt: Optional[str]) -> str:
         return prompt or persona.GENERATE_PERSONA_PROMPT
 
 
@@ -62,7 +62,7 @@ class GenerateEntityTypesConfig(MappedBaseModel):
     entity_types: Optional[List[str]] = None
 
     @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt):
+    def set_prompt(cls, prompt: Optional[str]) -> str:
         return prompt or entity_types.GENERATE_ENTITY_TYPE_PROMPT
 
 
@@ -78,16 +78,16 @@ class GenerateEntityRelationshipExamplesConfig(MappedBaseModel):
         max_examples (int, optional): Number of examples to create.
     """  # noqa: E501
 
-    prompt: Optional[str] = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT
-    example_template: Optional[str] = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
-    max_examples: Optional[int] = 3
+    prompt: str = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT
+    example_template: str = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
+    max_examples: int = 3
 
     @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt):
+    def set_prompt(cls, prompt: Optional[str]) -> str:
         return prompt or entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT
 
     @field_validator("example_template", mode="before")
-    def set_example_template(cls, example_template):
+    def set_example_template(cls, example_template: Optional[str]) -> str:
         return example_template or entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
 
 
@@ -101,11 +101,11 @@ class CreateEntityExtractionPromptConfig(MappedBaseModel):
             be. Defaults to 3000
     """  # noqa: E501
 
-    prompt_template: Optional[str] = entity_extraction.ENTITY_EXTRACTION_TEMPLATE
-    prompt_max_tokens: Optional[int] = 3000
+    prompt_template: str = entity_extraction.ENTITY_EXTRACTION_TEMPLATE
+    prompt_max_tokens: int = 3000
 
     @field_validator("prompt_template", mode="before")
-    def set_prompt_template(cls, prompt_template):
+    def set_prompt_template(cls, prompt_template: Optional[str]) -> str:
         return prompt_template or entity_extraction.ENTITY_EXTRACTION_TEMPLATE
 
 
@@ -117,8 +117,8 @@ class CreateEntitySummarizationPromptConfig(MappedBaseModel):
             Defaults to `graphragzen.prompts.prompt_tuning.entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE`
     """  # noqa: E501
 
-    prompt_template: Optional[str] = entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE
+    prompt_template: str = entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE
 
     @field_validator("prompt_template", mode="before")
-    def set_prompt_template(cls, prompt_template):
+    def set_prompt_template(cls, prompt_template: Optional[str]) -> str:
         return prompt_template or entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE

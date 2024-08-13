@@ -18,7 +18,7 @@ def leiden(graph: nx.Graph, **kwargs: ClusterConfig) -> nx.Graph:
     Returns:
         nx.Graph: With the feature 'cluster' added to the entities
     """
-    config = ClusterConfig(**kwargs)
+    config = ClusterConfig(**kwargs)  # type: ignore
 
     igraph = ig.Graph.from_networkx(graph)
     partition = la.find_partition(

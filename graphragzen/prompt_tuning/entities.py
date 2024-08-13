@@ -32,7 +32,7 @@ def generate_domain(llm: LLM, documents: List[str], **kwargs: GenerateDomainConf
     Returns:
         str: domain
     """
-    config = GenerateDomainConfig(**kwargs)
+    config = GenerateDomainConfig(**kwargs)  # type: ignore
 
     if config.domain:
         # User provided a domain, no need to generate one
@@ -58,7 +58,7 @@ def generate_persona(llm: LLM, domain: str, **kwargs: GeneratePersonaConfig) -> 
     Returns:
         str: persona
     """
-    config = GeneratePersonaConfig(**kwargs)
+    config = GeneratePersonaConfig(**kwargs)  # type: ignore
 
     persona_prompt = config.prompt.format(domain=domain)
 
@@ -95,7 +95,7 @@ def generate_entity_types(
     Returns:
         str | list[str]: entity types
     """
-    config = GenerateEntityTypesConfig(**kwargs)
+    config = GenerateEntityTypesConfig(**kwargs)  # type: ignore
 
     if config.entity_types:
         # User provided entity types, no need to generate them
@@ -137,7 +137,7 @@ def generate_entity_relationship_examples(
     Returns:
         list[str]: examples
     """  # noqa: E501
-    config = GenerateEntityRelationshipExamplesConfig(**kwargs)
+    config = GenerateEntityRelationshipExamplesConfig(**kwargs)  # type: ignore
 
     entity_types_str = ", ".join(entity_types)
     sampled_documents = documents[: config.max_examples]
@@ -190,15 +190,15 @@ def create_entity_extraction_prompt(
     Returns:
         str: Prompt to use for entity extraction
     """  # noqa: E501
-    config = CreateEntityExtractionPromptConfig(**kwargs)
+    config = CreateEntityExtractionPromptConfig(**kwargs)  # type: ignore
 
-    prompt = config.prompt
-    entity_types = ", ".join(entity_types)
+    prompt = config.prompt_template
+    entity_types_string = ", ".join(entity_types)
 
     tokens_left = (
         config.prompt_max_tokens
         - _num_tokens_from_string(prompt, llm.tokenizer)
-        - _num_tokens_from_string(entity_types, llm.tokenizer)
+        - _num_tokens_from_string(entity_types_string, llm.tokenizer)
     )
 
     examples_prompt = ""
@@ -233,6 +233,6 @@ def create_entity_summarization_prompt(
     Returns:
         str: Prompt to use for entity summarization
     """  # noqa: E501
-    config = CreateEntitySummarizationPromptConfig(**kwargs)
+    config = CreateEntitySummarizationPromptConfig(**kwargs)  # type: ignore
 
     return config.prompt_template.format(persona=persona)

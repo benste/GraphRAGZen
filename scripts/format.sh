@@ -30,5 +30,5 @@ set -e
 echo "Running Black formatting..."
 poetry run black --config scripts/test_config/black.toml .
 echo "Running isort..."
-poetry run isort *.py --settings-file scripts/test_config/.isort.cfg
+poetry run isort graphragzen/*.py --settings-file scripts/test_config/.isort.cfg
 echo "Done!"

@@ -21,7 +21,7 @@ def raw_entity_extraction(
     prompt_config: EntityExtractionPromptConfig,
     **kwargs: EntityExtractionConfig,
 ) -> tuple:
-    config = EntityExtractionConfig(**kwargs)
+    config = EntityExtractionConfig(**kwargs)  # type: ignore
 
     """Let the LLM extract entities that is however just strings, output still needs to be parsed
         to extract structured data.
@@ -83,7 +83,7 @@ def raw_entities_to_graph(
     Returns:
         nx.Graph
     """
-    config = RawEntitiesToGraphConfig(**kwargs)
+    config = RawEntitiesToGraphConfig(**kwargs)  # type: ignore
 
     graph = nx.Graph()
     for extracted_data, source_id in zip(
@@ -126,7 +126,7 @@ def raw_entities_to_graph(
                 edge_source_id = clean_str(str(source_id))
                 # Try to get the weight
                 weight = (
-                    float(record_attributes[-1])
+                    float(str(record_attributes[-1]))
                     if isinstance(record_attributes[-1], numbers.Number)
                     else 1.0
                 )
