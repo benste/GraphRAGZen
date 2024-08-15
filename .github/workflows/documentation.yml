@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
       - name: Install dependencies and Sphinx build
+        shell: bash-wrapper {0}
         run: |
           ./scripts/build_documentation.sh -p
       - name: Deploy to GitHub Pages
