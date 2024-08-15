@@ -5,7 +5,7 @@ import networkx as nx
 from graphragzen.llm import load_gemma2_gguf
 from graphragzen import preprocessing
 from graphragzen import entity_extraction
-from graphragzen import description_summarization
+from graphragzen import feature_merging
 from graphragzen import clustering
 
 
@@ -48,9 +48,9 @@ def entity_graph_pipeline() -> nx.Graph:
     # Each node could be found multiple times in the documents and thus have multiple descriptions.
     # We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
-    prompt_config = description_summarization.DescriptionSummarizationPromptConfig()
-    entity_graph = description_summarization.summarize_graph_descriptions(
-        entity_graph, llm, prompt_config
+    prompt_config = feature_merging.MergeFeaturesPromptConfig()
+    entity_graph = feature_merging.merge_graph_features(
+        entity_graph, llm, prompt_config, feature = "description", how="LLM"
     )
 
     # Let's clusted the nodes and assign the cluster ID as a property to each node
