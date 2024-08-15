@@ -2,8 +2,8 @@
 Help()
 {
    # Display Help
-   echo "Tests all python files found under monoHDRmerge/"
-   echo "using pytest, flake8, black, mypy and isort"
+   echo "Tests all python files found under graphragzen/"
+   echo "using flake8, black, mypy and isort"
    echo
    echo "Syntax: format [-h]"
    echo "options:"
@@ -19,7 +19,7 @@ while getopts ":hp" option; do
             Help
             exit;;
         p) # setup poetry
-            setup_poetry=false
+            setup_poetry=true
     esac
 done
 
