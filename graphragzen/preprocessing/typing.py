@@ -4,7 +4,7 @@ from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class LoadTextDocumentsConfig(MappedBaseModel):
-    """Config for raw document loading
+    """Config for text document loading
 
     Args:
         raw_documents_folder (str): Folder to search for text documents

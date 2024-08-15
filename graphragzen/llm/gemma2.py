@@ -1,13 +1,14 @@
 from typing import List
 
+from graphragzen.llm.base_llm import LLM
 from llama_cpp import Llama, LlamaCache
 from transformers import AutoTokenizer
 
-from graphragzen.llm.base_llm import LLM
 from .typing import ChatNames
 
 
 class Gemma2GGUF(LLM):
+    """Loads the GGUF version of a gemma2 model using llama-cpp-python"""
 
     def __init__(self, model_path: str, tokenizer_URI: str, context_size: int = 8192):
         self.model = Llama(model_path=model_path, verbose=False, n_ctx=context_size)

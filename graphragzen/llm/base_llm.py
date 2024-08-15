@@ -1,6 +1,6 @@
-from typing import List, Iterator, Any
-from datetime import datetime
 from copy import deepcopy
+from datetime import datetime
+from typing import Any, Iterator, List
 
 from .typing import ChatNames
 
@@ -11,12 +11,38 @@ class LLM:
     chatnames: ChatNames = ChatNames()
 
     def run_chat(self, chat: List[dict], max_tokens: int = -1, stream: bool = False) -> str:
+        """Runs a chat through the LLM
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+            stream (bool, optional): If True, streams the results to console. Defaults to False.
+
+        Returns:
+            str: Generated content
+        """
         return ""
 
     def tokenize(self, content: str) -> List[str]:
+        """Tokenize a string
+
+        Args:
+            content (str): String to tokenize
+
+        Returns:
+            List[str]: Tokenized string
+        """
         return [""]
 
     def untokenize(self, tokens: List[str]) -> str:
+        """Generate a string from a list of tokens
+
+        Args:
+            tokens (List[str]): Tokenized string
+
+        Returns:
+            str: Untokenized string
+        """
         return ""
 
     def print_streamed(self, stream: Iterator, timeit: bool = False) -> str:

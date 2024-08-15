@@ -1,7 +1,8 @@
-from typing import List, Optional, Literal
-from ..typing.MappedBaseModel import MappedBaseModel
+from typing import List, Literal, Optional
 
 from graphragzen.prompts.default_prompts import summarization_prompts
+
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class MergeFeaturesPromptFormatting(MappedBaseModel):
@@ -28,9 +29,7 @@ class MergeFeaturesPromptConfig(MappedBaseModel):
     """
 
     prompt: str = summarization_prompts.SUMMARIZE_PROMPT
-    formatting: MergeFeaturesPromptFormatting = (
-        MergeFeaturesPromptFormatting()
-    )
+    formatting: MergeFeaturesPromptFormatting = MergeFeaturesPromptFormatting()
 
 
 class MergeFeaturesConfig(MappedBaseModel):
@@ -39,7 +38,7 @@ class MergeFeaturesConfig(MappedBaseModel):
     During entity extraction the same node or edge can be found multiple times, at which point
     features are concatenated using a delimiter. This can be made into a list again and merged into
     a single desrciption.
-                
+
     Args:
         feature (str): The feature attached to a graph entity (node or edge) to merge.
         how (Literal['LLM', 'count', 'mean'], optional): 'LLM' summarizes the features.
@@ -60,4 +59,3 @@ class MergeFeaturesConfig(MappedBaseModel):
     feature_delimiter: str = "\n"  #
     max_input_tokens: int = 4000
     max_output_tokens: int = 500
-    

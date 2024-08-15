@@ -1,8 +1,8 @@
-from typing import Any, Generator
-from typing_extensions import Self
 from collections.abc import Mapping
+from typing import Any, Generator
 
 from pydantic import BaseModel
+from typing_extensions import Self
 
 
 class MappedBaseModel(BaseModel, Mapping):

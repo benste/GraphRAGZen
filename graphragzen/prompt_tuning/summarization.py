@@ -6,10 +6,8 @@ from .typing import CreateDescriptionSummarizationPromptConfig
 def create_description_summarization_prompt(persona: str, **kwargs: Any) -> str:
     """Create a prompt for entity summarization.
 
-     Args:
+    Args:
         persona (str): Relevant to the domain
-
-    Kwargs:
         prompt_template (str, optional): The template that will be formatted using a persona.
             Defaults to `graphragzen.prompts.prompt_tuning.entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE`
 

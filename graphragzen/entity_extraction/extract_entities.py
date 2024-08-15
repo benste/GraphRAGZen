@@ -1,9 +1,11 @@
-import re
 import numbers
+import re
 from typing import Any
 
-import pandas as pd
 import networkx as nx
+import pandas as pd
+from graphragzen.llm.base_llm import LLM
+from graphragzen.preprocessing import clean_str
 
 from .typing import (
     EntityExtractionConfig,
@@ -12,8 +14,6 @@ from .typing import (
     RawEntitiesToGraphConfig,
 )
 from .utils import loop_extraction
-from graphragzen.preprocessing import clean_str
-from graphragzen.llm.base_llm import LLM
 
 
 def extract_raw_entities(
@@ -22,19 +22,15 @@ def extract_raw_entities(
     prompt_config: EntityExtractionPromptConfig,
     **kwargs: Any,
 ) -> tuple:
-    config = EntityExtractionConfig(**kwargs)  # type: ignore
-
-    """Let the LLM extract entities that is however just strings, output still needs to be parsed
-        to extract structured data.
+    """Let the LLM extract entities that is however just strings, output still needs to be
+    parsed to extract structured data.
 
     Args:
         dataframe (pd.DataFrame)
         llm (LLM)
         prompt_config (EntityExtractionPromptConfig): See
-            `graphragzen.typing.EntityExtractionPromptConfig`
-
-    Kwargs:
-         max_gleans (int, optional): How often the LLM should be asked if all entities have been
+            graphragzen.entity_extraction.EntityExtractionPromptConfig
+        `max_gleans (int, optional): How often the LLM should be asked if all entities have been
             extracted from a single text. Defaults to 5.
         column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
             entities from. Defaults to 'chunk'.
@@ -44,6 +40,8 @@ def extract_raw_entities(
     Returns:
         pd.DataFrame: Input document with new column containing the raw entities extracted
     """
+    config = EntityExtractionConfig(**kwargs)  # type: ignore
+
     dataframe.reset_index(inplace=True, drop=True)
 
     llm_raw_output = loop_extraction(
@@ -65,24 +63,22 @@ def raw_entities_to_graph(
     prompt_formatting: EntityExtractionPromptFormatting,
     **kwargs: Any,
 ) -> nx.Graph:
-    """Parse the result from raw entity extraction to create an undirected unipartite graph.
+    """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
         dataframe (pd.DataFrame): Should contain a column with raw extracted entities
-        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
-            extraction. See `graphragzen.typing.EntityExtractionPromptFormatting`.
-
-    Kwargs:
+            prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
+            extraction. See graphragzen.entity_extraction.EntityExtractionPromptFormatting.
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
             entity extraction. Defaults to 'raw_entities'.
         reference_column (str, optional): Value from this column in the DataFrame will be added to
             the edged and nodes. This allows to reference to the source where entities were
             extracted from when quiring the graph. Defaults to 'chunk_id'.
         feature_delimiter (str, optional): When the same node or edge is found multiple times,
-            features are concatenated using this demiliter. Defaults to '\n'.
+            features are concatenated using this demiliter. Defaults to '\\n'.
 
     Returns:
-        nx.Graph
+        nx.Graph: unipartite graph
     """
     config = RawEntitiesToGraphConfig(**kwargs)  # type: ignore
 
@@ -109,7 +105,11 @@ def raw_entities_to_graph(
                     node = graph.nodes[entity_name]
                     node["description"] += config.feature_delimiter + entity_description
                     node["source_id"] += config.feature_delimiter + str(source_id)
-                    node["entity_type"] = entity_type if entity_type != "" else node["entity_type"]
+                    node["entity_type"] = (
+                        entity_type + node["entity_type"]
+                        if entity_type != ""
+                        else node["entity_type"]
+                    )
                 else:
                     graph.add_node(
                         entity_name,

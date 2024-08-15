@@ -1,5 +1,6 @@
-from ..typing.MappedBaseModel import MappedBaseModel
 from pydantic import ConfigDict
+
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class ChatNames(MappedBaseModel):

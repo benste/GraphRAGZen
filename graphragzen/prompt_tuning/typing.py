@@ -1,16 +1,16 @@
-from typing import Optional, List
-from pydantic import field_validator
-
-from ..typing.MappedBaseModel import MappedBaseModel
+from typing import List, Optional
 
 from graphragzen.prompts.prompt_tuning import (
     domain,
+    entity_extraction,
+    entity_relationship,
+    entity_summarization,
     entity_types,
     persona,
-    entity_relationship,
-    entity_extraction,
-    entity_summarization,
 )
+from pydantic import field_validator
+
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class GenerateDomainConfig(MappedBaseModel):

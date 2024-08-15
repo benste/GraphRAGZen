@@ -1,12 +1,12 @@
 from collections import Counter
-from typing import List, Any, Optional
 from functools import partial
+from typing import Any, List, Optional, Union
 
 import networkx as nx
+from graphragzen.llm.base_llm import LLM
 from numpy import mean
 
-from .typing import MergeFeaturesPromptConfig, MergeFeaturesConfig
-from graphragzen.llm.base_llm import LLM
+from .typing import MergeFeaturesConfig, MergeFeaturesPromptConfig
 from .utils import _num_tokens_from_string
 
 
@@ -85,7 +85,7 @@ def merge_item_feature(
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig],
     **kwargs: Any,
-) -> str:
+) -> Union[str, float]:
     """Summarize a list of descriptions for a single node or edge
 
     Args:
@@ -108,19 +108,20 @@ def merge_item_feature(
         str: summary
     """
     config = MergeFeaturesConfig(**kwargs)
-    
+
     match config.how.lower():
-        case 'count':
+        case "count":
             return _count_merge(feature_list)
-        case 'mean':
+        case "mean":
             return _mean_merge(feature_list)
-        case 'llm':
+        case "llm":
             return _LLM_merge(entity_name, feature_list, llm, prompt, **config)
         case _:
             # If an exact match is not confirmed, raise exception
             raise Exception(
                 "Merging strategy not recognized, must be one of ['LLM', 'count', 'mean']"
-                ) 
+            )
+
 
 def _count_merge(feature_list: List[str]) -> str:
     """Returns the feature description occuring most. Ties are broken by alphabetical order.
@@ -132,6 +133,7 @@ def _count_merge(feature_list: List[str]) -> str:
         str: Most occuring feature description
     """
     return Counter(sorted(feature_list)).most_common(1)[0][0]
+
 
 def _mean_merge(feature_list: List[str]) -> float:
     """Returns the mean of the feature descriptions.
@@ -145,13 +147,13 @@ def _mean_merge(feature_list: List[str]) -> float:
     # Try and force feature descriptions to floats and average
     float_feature_list = [float(feature) for feature in feature_list]
     return float(mean(float_feature_list))
-    
+
 
 def _LLM_merge(
     entity_name: str,
     feature_list: List[str],
-    llm: LLM,
-    prompt: MergeFeaturesPromptConfig,
+    llm: Optional[LLM],
+    prompt: Optional[MergeFeaturesPromptConfig],
     **kwargs: Any,
 ) -> str:
     """Use a LLM to summarize a list of descriptions
@@ -170,12 +172,20 @@ def _LLM_merge(
         str: summary
     """
     config = MergeFeaturesConfig(**kwargs)
-    
+
+    if llm is None:
+        raise Exception("No LLM provided; cannot merge features with strategy 'LLM'")
+
+    if prompt is None:
+        raise Exception(
+            "No MergeFeaturesPromptConfig provided; cannot merge features with strategy 'LLM'"
+        )
+
     def _summarize(llm: LLM, prompt: MergeFeaturesPromptConfig, max_output_tokens: int) -> str:
         prompt = prompt.prompt.format(**prompt.formatting.model_dump())  # type: ignore
         chat = llm.format_chat([("user", prompt)])
         return llm.run_chat(chat, max_tokens=max_output_tokens)
-    
+
     usable_tokens = config.max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
 
     descriptions_collected = []
@@ -208,5 +218,3 @@ def _LLM_merge(
     prompt.formatting.description_list = descriptions_collected
 
     return _summarize(llm, prompt, config.max_output_tokens)
-
-    

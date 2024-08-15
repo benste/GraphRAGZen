@@ -1,6 +1,7 @@
-from typing import List, Any
+from typing import Any, List
 
 from graphragzen.llm.base_llm import LLM
+
 from .typing import GenerateDomainConfig, GeneratePersonaConfig
 
 
@@ -11,8 +12,6 @@ def generate_domain(llm: LLM, documents: List[str], **kwargs: Any) -> str:
         llm (LLM)
         documents (List[str]): Sample of documents that later will be used to create a graph.
             You likely want this to be chunks of the whole documents.
-
-    Kwargs:
         prompt (str, optional): Prompt to use for generating a domain.
             If `domain` is not specified this will be used to infer the domain.
             Defaults to `graphragzen.prompts.prompt_tuning.domain.GENERATE_DOMAIN_PROMPT`.
@@ -40,8 +39,6 @@ def generate_persona(llm: LLM, domain: str, **kwargs: Any) -> str:
     Args:
         llm (LLM)
         domain (str): To base the persona on
-
-    Kwargs:
         prompt (str, optional): Prompt to use for generating a persona.
             Defaults to `graphragzen.prompts.prompt_tuning.persona.GENERATE_PERSONA_PROMPT`.
 

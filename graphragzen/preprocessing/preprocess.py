@@ -1,40 +1,11 @@
-import os
-from collections import defaultdict
-import re
-from typing import Sequence, Any
-
 import html
+import re
+from typing import Any, Sequence
+
 import pandas as pd
-
 from graphragzen.llm.base_llm import LLM
-from .typing import LoadTextDocumentsConfig, ChunkConfig
 
-
-def load_text_documents(**kwargs: Any) -> pd.DataFrame:
-    """loads files from folder path and subfolders.
-
-    Kwargs:
-        raw_documents_folder (str): Folder to search for text documents
-        raw_content_column (str, optional): Name of the dataframe column to store each document's
-            content. Defaults to 'content'.
-    Returns:
-        pd.DataFrame: Includes the columns 'document_path' and 'document_id'
-    """
-    config = LoadTextDocumentsConfig(**kwargs)  # type: ignore
-
-    # Walk the folder path, find text files and load them
-    folder_path = config.raw_documents_folder
-    df = defaultdict(list)
-    file_id = 0
-    for root, _, files in os.walk(folder_path):
-        for file in files:
-            if file.endswith(".txt"):
-                df["document_path"].append(os.path.join(root, file))
-                df[config.raw_content_column].append(open(df["document_path"][-1], "r").read())  # type: ignore  # noqa: E501
-                df["document_id"].append(str(file_id))
-                file_id += 1
-
-    return pd.DataFrame(df)
+from .typing import ChunkConfig
 
 
 def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.DataFrame:
@@ -43,8 +14,6 @@ def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.Data
     Args:
         dataframe (pd.DataFrame): Containing the documents to chunk
         llm (LLM)
-
-    Kwargs:
         column_to_chunk (str, optional): Column to chunk, Defaults to 'content'.
         results_column (str, optional): Column to write chunks to, Defaults to 'chunk'.
         id_column (str, optional): Column with which to later refence the source chunk.
@@ -54,7 +23,7 @@ def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.Data
 
     Returns:
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
-            allowing referencing
+        allowing referencing
     """
     config = ChunkConfig(**kwargs)  # type: ignore
 
@@ -91,8 +60,6 @@ def chunk(inp: Sequence, **kwargs: Any) -> tuple[list, list]:
 
     Args:
         inp (Iterable): Iterable to chunk
-
-    Kwargs:
         window_size (int, optional): size of the chunk window. Defaults to 300.
         overlap (int, optional): overlap between windows. Defaults to 100.
 

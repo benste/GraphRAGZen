@@ -1,8 +1,8 @@
 from typing import List, Optional
 
-from ..typing.MappedBaseModel import MappedBaseModel
-
 from graphragzen.prompts.default_prompts import entity_extraction_prompts
+
+from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class EntityExtractionPromptFormatting(MappedBaseModel):
@@ -83,7 +83,7 @@ class RawEntitiesToGraphConfig(MappedBaseModel):
             the edged and nodes. This allows to reference to the source where entities were
             extracted from when quiring the graph. Defaults to 'chunk_id'.
         feature_delimiter (str, optional): When the same node or edge is found multiple times,
-            features are concatenated using this demiliter. Defaults to '\n'.
+            features are concatenated using this demiliter. Defaults to '\\n'.
     """
 
     raw_entities_column: str = "raw_entities"

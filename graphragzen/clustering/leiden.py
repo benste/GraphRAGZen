@@ -1,7 +1,7 @@
 from typing import Any
 
-import leidenalg as la
 import igraph as ig
+import leidenalg as la
 import networkx as nx
 import numpy as np
 
@@ -13,8 +13,6 @@ def leiden(graph: nx.Graph, **kwargs: Any) -> nx.Graph:
 
     Args:
         graph (nx.Graph)
-
-    Kwargs:
         max_comm_size (int, optional): Maximum number of nodes in one cluster. Defaults to 10.
 
     Returns:

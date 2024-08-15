@@ -1,9 +1,9 @@
 from typing import List
 
+from graphragzen.llm.base_llm import LLM
 from tqdm import tqdm
 
-from graphragzen.llm.base_llm import LLM
-from .typing import EntityExtractionPrompts, EntityExtractionPromptFormatting
+from .typing import EntityExtractionPromptFormatting, EntityExtractionPrompts
 
 
 def loop_extraction(
