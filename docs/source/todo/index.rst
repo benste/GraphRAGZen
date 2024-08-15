@@ -12,12 +12,6 @@ necasary for v0.1.0
 
 ✔ Finish examples
 
-- make automatic documentation that updates when new version is pushed
-to pypi
-   - make the documentation show the prompts
-- Unit tests 
-- Github tasks (automatic tests, push to pypi pipeline) 
-
 
 Needed for full version
 -----------------------
