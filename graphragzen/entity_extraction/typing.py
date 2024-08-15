@@ -10,10 +10,10 @@ class EntityExtractionPromptFormatting(MappedBaseModel):
 
     Args:
         tuple_delimiter (str, optional): Delimiter between tuples in an output record.
-            Defaults to '<|>'.
+            Defaults to '\<|>'.
         record_delimiter (str, optional):  Delimiter between records. Defaults to '##'.
         completion_delimiter (str, optional): Delimiter when no more entities can be extracted.
-            Defaults to '<|COMPLETE|>'.
+            Defaults to '\<\|COMPLETE|>'.
         entity_types (List[str], optional):  The types that can be assigned to entities.
             Defaults to ['organization', 'person', 'geo', 'event'].
         input_text (str, optional): The text to extract entities from. Defaults to None.
