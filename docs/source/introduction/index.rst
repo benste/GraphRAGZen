@@ -1,8 +1,7 @@
 GraphRAGZen
 ===================================
 
-**GraphRAGZen** is a functional, common sense, library for 
-developing GraphRAG applications.
+**GraphRAGZen** is a functional, common sense, library for developing GraphRAG pipelines.
 
 
 A big **thank you** to the team at microsoft that created

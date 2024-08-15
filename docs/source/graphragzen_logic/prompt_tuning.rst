@@ -1,3 +1,6 @@
+.. role:: raw-html(raw)
+    :format: html
+
 .. _prompt_tuning_explanation_label:
 
 Prompt tuning
@@ -6,10 +9,12 @@ Prompt tuning
 **GraphRAGZen** comes with default prompts to extract entities from documents, summarize features, etc.
 
 Although these can be used out-of-the-box to extract entities from documents and create a graph, 
-they are not tuned to the documents. Higher quality graphs could be obtained by making
+they are not tuned to the documents. 
+:raw-html:`<br />`
+Higher quality graphs could be obtained by making
 these prompts more relevant to the domain of the documents. 
 
-Your can provided you own prompts, but GraphRAGZen also comes with functions to create these prompts.
+Your can provided you own custom prompts, but **GraphRAGZen** does come with functions to create these prompts.
 
 These functions rely on their own prompts, that ask the LLM to look at sample of the documents and:
 

@@ -2,25 +2,23 @@ Motivation
 ==========
 
 `GraphRAG from Microsoft <https://github.com/microsoft/graphrag>`_
-makes it easy to get started with automated RAG using Graphs.
+makes it easy to get started with automated Graph RAG.
 
-Sadly, the codebase is hard to read, difficult to addapt, and dataflow
-in the pipelines near impossible to follow.
+Sadly, the codebase is hard to read, difficult to adapt, and dataflow in the pipelines near impossible to follow.
 
-The work done by the GraphRAG team shouldn’t be in vain, but should
-allow for developers to create GraphRAG applications that are
-maintainable, extendable and intuitive.
+The work done by the GraphRAG team shouldn't be in vain, but should allow for developers to create GraphRAG applications that are maintainable, extendable and intuitive.
 
-And so GraphRAGZen was born; the logic given by GraphRAG in a
-functional, common sense library.
+And so **GraphRAGZen** was born; the logic given by GraphRAG in a functional, common sense library...
 
-But that’s just another implementation of GraphRAG, right?
+
+
+But that's just another Graph RAG library, right?
 -----------------------------------------------------------------------------
 
 `XKCD says it well <https://xkcd.com/927/>`_
 
 It's early days for GraphRAG technology, and there's no standard implementation method accepted at 
-large. This shows that there's still a lack of high quality, easy to implement, solutions in the 
+large. This shows that there's still a lack of high quality, easy to implement solutions in the 
 OSS space.
 
 From experience I found that most libraries available either provide a limited set

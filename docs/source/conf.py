@@ -45,7 +45,7 @@ extensions = [
     'sphinx_collapse'
     ]
     
-sphinx_rtd_size_width = "90%"
+sphinx_rtd_size_width = "75%"
 autosummary_generate = True
 autosummary_generate_overwrite = False
 napoleon_include_init_with_doc = True

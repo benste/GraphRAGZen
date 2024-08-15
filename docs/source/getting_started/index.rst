@@ -11,9 +11,9 @@ Installation
 LLM
 ----
 
-GraphRAGZen relies on an LLM to create a graph from documents. 
+**GraphRAGZen** relies on an LLM to create a graph from documents. 
 
-Currently GraphRAGZen only supplies a method to load `gemma2` models in gguf format using Llama CPP python.
+Currently **GraphRAGZen** only supplies a method to load `gemma2` models in gguf format using Llama CPP python.
 
 .. code-block:: python
 
@@ -34,7 +34,7 @@ Currently GraphRAGZen only supplies a method to load `gemma2` models in gguf for
 Implementing your own LLM instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can load any LLM you want and GraphRAGZen can use it, as long as it implements the following:
+You can load any LLM you want and **GraphRAGZen** can use it, as long as it implements the following:
 
 .. collapse:: Implementing a Local LLM
 
