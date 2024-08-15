@@ -1,21 +1,20 @@
-.. include:: introduction/index.rst
-
-
-.. these we want to dipsplay on the main page
-.. include:: motivation/index.rst
-
-.. include:: getting_started/index.rst
-
 .. Table of contents
 .. toctree::
    :maxdepth: 2
    :caption: Content
 
-   motivation/index.rst
    getting_started/index.rst
+   motivation/index.rst
    graphzen_ideology/index.rst
    graphragzen_logic/index.rst
    todo/index.rst
+
+.. these we want to dipsplay on the main page
+.. include:: motivation/index.rst
+
+.. include:: introduction/index.rst
+
+.. include:: getting_started/index.rst
 
 .. Prompts
 .. toctree::

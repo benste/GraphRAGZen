@@ -1,4 +1,8 @@
 **/__pycache__/
+
+dist/*
+
+_build/*
 docs/build/*
 docs/source/api/*
 docs/source/generated/*

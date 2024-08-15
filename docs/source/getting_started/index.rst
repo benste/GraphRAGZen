@@ -1,13 +1,92 @@
 Getting Started
 ===================================
 
-**Installation**
+Installation
+------------
 
 .. code-block:: python
 
     pip install graphragzen
 
-**Examples**
+LLM
+----
+
+GraphRAGZen relies on an LLM to create a graph from documents. 
+
+Currently GraphRAGZen only supplies a method to load `gemma2` models in gguf format using Llama CPP python.
+
+.. code-block:: python
+
+    from graphragzen.llm import load_gemma2_gguf
+
+    model_storage_path="path/to/model.gguf"
+    tokenizer_URI="google/gemma-2-2b-it" # HF URI, adjust according to your model
+
+    llm = load_gemma2_gguf(
+                model_storage_path=model_storage_path,
+                tokenizer_URI=tokenizer_URI,
+            )
+
+`Gemma 2 2B it Q4 M <https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/blob/main/gemma-2-2b-it-Q4_K_M.gguf>`_
+
+`Gemma 2 9B it Q4 XS <https://huggingface.co/bartowski/gemma-2-9b-it-GGUF/blob/main/gemma-2-9b-it-IQ4_XS.gguf>`_
+
+Implementing your own LLM instance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can load any LLM you want and GraphRAGZen can use it, as long as it implements the following:
+
+.. collapse:: Implementing a Local LLM
+
+    .. code-block:: python
+
+        def run_chat(self, chat: List[dict], max_tokens: int = -1, stream: bool = False) -> str:
+            """Runs a chat through the LLM
+
+            Chat should be in OpenAI format
+            i.e. [{"role": ..., "content": ...}, {"role": ..., "content": ...
+
+            For an example on how to make it stream the output see 
+            https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF
+
+            Args:
+                chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+                max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+                stream (bool, optional): If True, streams the results to console. Defaults to False.
+
+            Returns:
+                str: Generated content
+            """
+
+        def tokenize(self, content: str) -> List[str]:
+            """Tokenize a string
+
+            Returns string tokens, not tensor
+
+            Args:
+                content (str): String to tokenize
+
+            Returns:
+                List[str]: Tokenized string
+            """
+            
+
+        def untokenize(self, tokens: List[str]) -> str:
+            """Generate a string from a list of tokens
+
+            Args:
+                tokens (List[str]): String tokens, not tensor
+
+            Returns:
+                str: Untokenized string
+            """
+
+See `this LLM class <https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF>`_
+for an example.
+
+Usage examples
+---------
+
 These examples are rather intuitive and should get you started fast
 
 .. collapse:: Generating a graph
@@ -30,14 +109,15 @@ These examples are rather intuitive and should get you started fast
             # Load an LLM locally
             print("Loading LLM")
             llm = load_gemma2_gguf(
-                model_storage_path="/home/bens/projects/DemystifyGraphRAG/models/gemma-2-2b-it-Q4_K_M.gguf",
-                tokenizer_URI="google/gemma-2-2b-it",
+                model_storage_path="path/to/model.gguf",
+                tokenizer_URI="google/gemma-2-2b-it", # HF URI, adjust according to your model
             )
 
-            # Load raw documents
+            # Load raw documents. `load_text_documents` will walk the folder, also loading 
+            # text files from subfolders
             print("Loading raw documents")
             raw_documents = preprocessing.load_text_documents(
-                raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"
+                raw_documents_folder="/folder/with/text/files"
             )
 
             # Split documents into chunks based on tokens

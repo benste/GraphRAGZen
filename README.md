@@ -1,6 +1,7 @@
 # GraphRAGZen
 **GraphRAGZen** is a functional, common sense, library for developing GraphRAG applications.
-[Documentation found here](https://benste.github.io/GraphRAGZen/)
+
+[Find documentation here](https://benste.github.io/GraphRAGZen/)
 
 A big **thank you** to the team at microsoft that created [GraphRAG](https://github.com/microsoft/graphrag), which is the foundation for this project.
 
@@ -35,4 +36,4 @@ is, the python function is king, and the functions are named and located intuiti
 When that is established we have a toolbox that can be used as seen fit
 by developers. It is modular, extendable, maintainable and intuitive.
 
-[Documentation found here](https://benste.github.io/GraphRAGZen/)
+[Find documentation here](https://benste.github.io/GraphRAGZen/)

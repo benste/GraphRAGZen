@@ -1,4 +1,4 @@
-Feature mergin
+Feature merging
 ----------------
 
 When entities are extracted from the documents the same entity (node or edge) can be found multiple

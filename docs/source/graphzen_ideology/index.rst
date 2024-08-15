@@ -5,11 +5,10 @@ Functions: first class citizens
 ----------------------------------
 
 The python function is king, and the functions are named and located intuitively. 
-**Why the python function as first class citizen**
 
 - A well written python function has a clear purpose, is not too long, and easy to read.
 - Required inputs and produced outputs are easily understood.
-- Flow of data can be easily traced. 
+- Flow of data can be easily traced.
 - No wacky behind the scenes magic.
 
 .. note::
