@@ -1,5 +1,7 @@
+.. _prompt_tuning_prompts_label:
+
 Prompt tuning Prompts
-===============
+======================
 
 These are the prompts used to create the prompts that can be used to create a graph using an LLM.
 

@@ -14,16 +14,17 @@ maintainable, extendable and intuitive.
 And so GraphRAGZen was born; the logic given by GraphRAG in a
 functional, common sense library.
 
-But that’s just another implementation of GraphRAG, there are so many already
+But that’s just another implementation of GraphRAG, right?
 -----------------------------------------------------------------------------
 
 `XKCD says it well <https://xkcd.com/927/>`_
 
-It’s early days for this technology, and there’s not yet a standard
-accepted at large.
+It's early days for GraphRAG technology, and there's no standard implementation method accepted at 
+large. This shows that there's still a lack of high quality, easy to implement, solutions in the 
+OSS space.
 
-From experience I found that most libraries either provide a limited set
-of abilities with the bulk hiding behind convoluted code (i.e. GraphRAG)
+From experience I found that most libraries available either provide a limited set
+of abilities with the bulk hiding behind convoluted code (i.e. GraphRAG)
 or are unintuitive and rely heavily on extended documentation.
 
 This should be easily mittigated by writing a functional library. That

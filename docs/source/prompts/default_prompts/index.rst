@@ -1,3 +1,5 @@
+.. _default_prompts_label:
+
 Default Prompts
 ===============
 

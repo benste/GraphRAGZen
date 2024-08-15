@@ -2,7 +2,7 @@ Entity extraction
 ==================
 
 ENTITY_EXTRACTION_TEMPLATE
--------------------------
+---------------------------
 
 \-Goal-
 Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.

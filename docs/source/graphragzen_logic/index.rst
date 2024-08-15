@@ -9,3 +9,13 @@ GraphRAGZen logic
     clustering.rst
     prompt_tuning.rst
     querying.rst
+
+.. include:: entity_extraction.rst
+
+.. include:: feature_merging.rst
+
+.. include:: clustering.rst
+    
+.. include:: prompt_tuning.rst
+    
+.. include:: querying.rst

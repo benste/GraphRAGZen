@@ -1,3 +1,5 @@
+.. _entity_extraction_prompt_label:
+
 Entity extraction
 ==================
 

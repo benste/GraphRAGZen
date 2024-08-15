@@ -1,4 +1,4 @@
 Querying
 ---------
 
-lorum ipsum
+NOT YET IMPLEMENTED
