@@ -1,7 +1,7 @@
 # GraphRAGZen
-Logic of GraphRAG in a functional, non-nonsense library.
+**GraphRAGZen** is a functional, common sense, library for developing GraphRAG applications.
 
-A big thank you to the team at microsoft that created [GraphRAG](https://github.com/microsoft/graphrag), which is the foundation for this project.
+A big **thank you** to the team at microsoft that created [GraphRAG](https://github.com/microsoft/graphrag), which is the foundation for this project.
 
 # Motivation
 [GraphRAG from Microsoft](https://github.com/microsoft/graphrag) makes it easy to get started with automated RAG using Graphs.
@@ -10,7 +10,7 @@ Sadly, the codebase is hard to read, difficult to addapt, and dataflow in the pi
 
 The work done by the GraphRAG team shouldn't be in vain, but should allow for developers to create GraphRAG applications that are maintainable, extendable and intuitive.
 
-And so GraphRAGZen was born; the logic given by GraphRAG in a functional, common-sense library.
+And so **GraphRAGZen** was born; the logic given by GraphRAG in a functional, common sense library.
 
 ## But that's just another implementation of GraphRAG, there are so many already
 [XKCD says it well](https://xkcd.com/927/)
