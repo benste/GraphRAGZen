@@ -17,7 +17,7 @@ class EntityExtractionPromptFormatting(MappedBaseModel):
         entity_types (List[str], optional):  The types that can be assigned to entities.
             Defaults to ['organization', 'person', 'geo', 'event'].
         input_text (str, optional): The text to extract entities from. Defaults to None.
-    """
+    """  # noqa: W605
 
     tuple_delimiter: str = "<|>"
     record_delimiter: str = "##"
