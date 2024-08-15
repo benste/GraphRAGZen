@@ -1,0 +1,13 @@
+name: documentation
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Run tests
+        run: |
+          ./scripts/test.sh -p
