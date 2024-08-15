@@ -1,7 +1,5 @@
 name: documentation
 
-on:
-
 permissions:
   contents: write
 
