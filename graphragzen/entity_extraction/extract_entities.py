@@ -105,11 +105,7 @@ def raw_entities_to_graph(
                     node = graph.nodes[entity_name]
                     node["description"] += config.feature_delimiter + entity_description
                     node["source_id"] += config.feature_delimiter + str(source_id)
-                    node["entity_type"] = (
-                        entity_type + node["entity_type"]
-                        if entity_type != ""
-                        else node["entity_type"]
-                    )
+                    node["type"] = node["type"] if entity_type != "" else node["type"]
                 else:
                     graph.add_node(
                         entity_name,
