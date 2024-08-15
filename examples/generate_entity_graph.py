@@ -10,8 +10,8 @@ from graphragzen import clustering
 
 
 def entity_graph_pipeline() -> nx.Graph:
-    # Note: Each config has sane defaults but can be overwritten as seen fit at instantiation of
-    # the config
+    # Note: Each function's optional parameters have sane defaults. Check out their
+    # docstrings for their desrciptions and see if you want to overwrite any
 
     # Load an LLM locally
     print("Loading LLM")
@@ -23,7 +23,7 @@ def entity_graph_pipeline() -> nx.Graph:
     # Load raw documents
     print("Loading raw documents")
     raw_documents = preprocessing.load_text_documents(
-        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"  # noqa: E501
+        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"
     )
 
     # Split documents into chunks based on tokens
@@ -36,7 +36,7 @@ def entity_graph_pipeline() -> nx.Graph:
 
     # Extract entities from the chunks
     print("Extracting raw entities")
-    prompt_config = entity_extraction.EntityExtractionPromptConfig()
+    prompt_config = entity_extraction.EntityExtractionPromptConfig() # default prompt
     raw_entities = entity_extraction.extract_raw_entities(
         chunked_documents, llm, prompt_config, max_gleans=3
     )
@@ -45,12 +45,12 @@ def entity_graph_pipeline() -> nx.Graph:
     print("Creating graph from raw entities")
     entity_graph = entity_extraction.raw_entities_to_graph(raw_entities, prompt_config.formatting)
 
-    # Each node could be found multiple times in the documents and thus have multiple descriptions.
-    # We'll summarize these into one description per node and edge
+    # Each node and edge could be found multiple times in the documents and thus have
+    # multiple descriptions. We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
-    prompt_config = feature_merging.MergeFeaturesPromptConfig()
+    prompt_config = feature_merging.MergeFeaturesPromptConfig() # default prompt
     entity_graph = feature_merging.merge_graph_features(
-        entity_graph, llm, prompt_config, feature = "description", how="LLM"
+        entity_graph, llm, prompt_config, feature="description", how="LLM"
     )
 
     # Let's clusted the nodes and assign the cluster ID as a property to each node

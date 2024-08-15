@@ -9,21 +9,20 @@ from graphragzen import prompt_tuning
 
 def create_entity_extraction_prompt() -> str:
     """
-    Create a prompt for entity extraction.
+    Use an LLM to generate a prompt for entity extraction.
     1. Domain: We fist ask the LLM to create the domains that the documents span
     2. Persona: with the domains the LLM can create a persona (e.g. You are an expert {{role}}.
-          You are skilled at {{relevant skills}})
+        You are skilled at {{relevant skills}})
     3. Entity types: using the domain and persona we ask the LLM to extract from the documents
-          the types of entities a node could get (e.g. person, school of thought, ML)
+        the types of entities a node could get (e.g. person, school of thought, ML)
     4. Examples: Using all of the above we ask the LLM to create some example document->entities
-          extracted
+        extracted
     5. Entity extraction prompt: We merge all of the above information in a prompt that can be
-          used to extract entities
+        used to extract entities
+    
+    Note: Each function's optional parameters have sane defaults. Check out their
+    docstrings for their desrciptions and see if you want to overwrite any
     """
-
-    # Note: Each config has sane defaults but can be overwritten as seen fit at instantiation of
-    # the config
-
     # Load an LLM locally
     print("Loading LLM")
     llm = load_gemma2_gguf(
@@ -34,13 +33,12 @@ def create_entity_extraction_prompt() -> str:
     # Load raw documents
     print("Loading raw documents")
     raw_documents = preprocessing.load_text_documents(
-        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"  # noqa: E501
+        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"
     )
 
     # Split documents into chunks based on tokens
     print("Chunking documents")
-    chunk_config = preprocessing.ChunkConfig()  # let's use default parameters
-    chunked_documents = preprocessing.chunk_documents(raw_documents, llm, config=chunk_config)
+    chunked_documents = preprocessing.chunk_documents(raw_documents, llm)
 
     # Let's not use all documents, that's not neccessary and too slow
     print("Sampling documents")
@@ -61,9 +59,8 @@ def create_entity_extraction_prompt() -> str:
 
     # Generate some entity relationship examples
     print("Generating entity relationship examples")
-    config = prompt_tuning.GenerateEntityRelationshipExamplesConfig(max_examples=3)
     entity_relationship_examples = prompt_tuning.generate_entity_relationship_examples(
-        llm, sampled_documents, persona, entity_types, config=config
+        llm, sampled_documents, persona, entity_types, max_examples=3
     )
 
     # Create the actual entity extraction prompt
