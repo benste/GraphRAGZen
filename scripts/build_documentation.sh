@@ -33,4 +33,4 @@ if [ $setup_poetry = true ]; then
 fi
 
 # Build documenation using sphinx
-poetry run sphinx-build -WETa --keep-going -j auto -D language=en -b html -d docs/build/doctrees docs/source docs/build/html
+poetry run sphinx-build -ETa -j auto -D language=en -b html -d docs/build/doctrees docs/source docs/build/html
