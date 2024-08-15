@@ -1,3 +1,5 @@
+.. include:: introduction/index.rst
+
 .. Table of contents
 .. toctree::
    :maxdepth: 2
@@ -11,8 +13,6 @@
 
 .. these we want to dipsplay on the main page
 .. include:: motivation/index.rst
-
-.. include:: introduction/index.rst
 
 .. include:: getting_started/index.rst
 

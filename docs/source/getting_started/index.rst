@@ -85,7 +85,7 @@ See `this LLM class <https://benste.github.io/GraphRAGZen/_modules/graphragzen/l
 for an example.
 
 Usage examples
----------
+---------------
 
 These examples are rather intuitive and should get you started fast
 
@@ -234,5 +234,6 @@ These examples are rather intuitive and should get you started fast
 
             return entity_extraction_prompt, description_summarization_prompt
 
+Idea behind prompt tuning can be found here :ref:`prompt_tuning_explanation_label`
 
 ‎ 

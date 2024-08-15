@@ -27,7 +27,7 @@ From experience I found that most libraries available either provide a limited s
 of abilities with the bulk hiding behind convoluted code (i.e. GraphRAG)
 or are unintuitive and rely heavily on extended documentation.
 
-This should be easily mittigated by writing a functional library. That
+This should be easily mitigated by writing a functional library. That
 is, the python function is king, and the functions are named and located intuitively.
 
 When that is established we have a toolbox that can be used as seen fit
