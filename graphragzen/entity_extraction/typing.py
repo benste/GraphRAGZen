@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from pydantic import field_validator
 from graphragzen.prompts.default_prompts import entity_extraction_prompts
 
 from ..typing.MappedBaseModel import MappedBaseModel
@@ -41,6 +42,18 @@ class EntityExtractionPrompts(MappedBaseModel):
     entity_extraction_prompt: str = entity_extraction_prompts.ENTITY_EXTRACTION_PROMPT
     continue_prompt: str = entity_extraction_prompts.CONTINUE_PROMPT
     loop_prompt: str = entity_extraction_prompts.LOOP_PROMPT
+    
+    @field_validator("entity_extraction_prompt", mode="before")
+    def set_entity_extraction_prompt(cls, prompt: Optional[str]) -> str:
+        return prompt or entity_extraction_prompts.ENTITY_EXTRACTION_PROMPT
+    
+    @field_validator("continue_prompt", mode="before")
+    def set_continue_prompt(cls, prompt: Optional[str]) -> str:
+        return prompt or entity_extraction_prompts.CONTINUE_PROMPT
+    
+    @field_validator("loop_prompt", mode="before")
+    def set_loop_prompt(cls, prompt: Optional[str]) -> str:
+        return prompt or entity_extraction_prompts.LOOP_PROMPT
 
 
 class EntityExtractionPromptConfig(MappedBaseModel):
