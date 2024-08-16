@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Union
 
 import igraph as ig
 import leidenalg as la
@@ -8,7 +8,7 @@ import numpy as np
 from .typing import ClusterConfig
 
 
-def leiden(graph: nx.Graph, **kwargs: Any) -> nx.Graph:
+def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig]) -> nx.Graph:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
     Args:

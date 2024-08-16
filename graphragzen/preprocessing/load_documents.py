@@ -1,13 +1,13 @@
 import os
 from collections import defaultdict
-from typing import Any
+from typing import Union
 
 import pandas as pd
 
 from .typing import LoadTextDocumentsConfig
 
 
-def load_text_documents(**kwargs: Any) -> pd.DataFrame:
+def load_text_documents(**kwargs: Union[dict, LoadTextDocumentsConfig]) -> pd.DataFrame:
     """loads files from folder path and subfolders.
 
     Args:

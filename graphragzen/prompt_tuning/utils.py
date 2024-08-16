@@ -1,11 +1,13 @@
-from typing import Any, List
+from typing import List, Union
 
 from graphragzen.llm.base_llm import LLM
 
 from .typing import GenerateDomainConfig, GeneratePersonaConfig
 
 
-def generate_domain(llm: LLM, documents: List[str], **kwargs: Any) -> str:
+def generate_domain(
+    llm: LLM, documents: List[str], **kwargs: Union[dict, GenerateDomainConfig]
+) -> str:
     """Generate a domain to use for GraphRAG prompts.
 
     Args:
@@ -33,7 +35,7 @@ def generate_domain(llm: LLM, documents: List[str], **kwargs: Any) -> str:
     return llm.run_chat(chat)
 
 
-def generate_persona(llm: LLM, domain: str, **kwargs: Any) -> str:
+def generate_persona(llm: LLM, domain: str, **kwargs: Union[dict, GeneratePersonaConfig]) -> str:
     """Generate a persona relevant to a domain to use for GraphRAG prompts.
 
     Args:

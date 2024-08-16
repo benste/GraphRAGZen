@@ -1,6 +1,6 @@
 import numbers
 import re
-from typing import Any
+from typing import Union
 
 import networkx as nx
 import pandas as pd
@@ -20,7 +20,7 @@ def extract_raw_entities(
     dataframe: pd.DataFrame,
     llm: LLM,
     prompt_config: EntityExtractionPromptConfig,
-    **kwargs: Any,
+    **kwargs: Union[dict, EntityExtractionConfig],
 ) -> tuple:
     """Let the LLM extract entities that is however just strings, output still needs to be
     parsed to extract structured data.
@@ -61,7 +61,7 @@ def extract_raw_entities(
 def raw_entities_to_graph(
     dataframe: pd.DataFrame,
     prompt_formatting: EntityExtractionPromptFormatting,
-    **kwargs: Any,
+    **kwargs: Union[dict, RawEntitiesToGraphConfig],
 ) -> nx.Graph:
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 

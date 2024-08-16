@@ -1,9 +1,11 @@
-from typing import Any
+from typing import Union
 
 from .typing import CreateDescriptionSummarizationPromptConfig
 
 
-def create_description_summarization_prompt(persona: str, **kwargs: Any) -> str:
+def create_description_summarization_prompt(
+    persona: str, **kwargs: Union[dict, CreateDescriptionSummarizationPromptConfig]
+) -> str:
     """Create a prompt for entity summarization.
 
     Args:

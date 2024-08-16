@@ -1,6 +1,6 @@
 import html
 import re
-from typing import Any, Sequence
+from typing import Any, Sequence, Union
 
 import pandas as pd
 from graphragzen.llm.base_llm import LLM
@@ -8,7 +8,9 @@ from graphragzen.llm.base_llm import LLM
 from .typing import ChunkConfig
 
 
-def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.DataFrame:
+def chunk_documents(
+    dataframe: pd.DataFrame, llm: LLM, **kwargs: Union[dict, ChunkConfig]
+) -> pd.DataFrame:
     """Chunk documents based on number of tokens
 
     Args:
@@ -55,7 +57,7 @@ def chunk_documents(dataframe: pd.DataFrame, llm: LLM, **kwargs: Any) -> pd.Data
     return dataframe
 
 
-def chunk(inp: Sequence, **kwargs: Any) -> tuple[list, list]:
+def chunk(inp: Sequence, **kwargs: Union[dict, ChunkConfig]) -> tuple[list, list]:
     """Chunk an sequence using a sliding window
 
     Args:

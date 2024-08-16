@@ -1,11 +1,11 @@
-from typing import Any
+from typing import Union
 
 from graphragzen.llm.gemma2 import Gemma2GGUF
 
 from .typing import LlmLoadingConfig
 
 
-def load_gemma2_gguf(**kwargs: Any) -> Gemma2GGUF:
+def load_gemma2_gguf(**kwargs: Union[dict, LlmLoadingConfig]) -> Gemma2GGUF:
     """Load gguf version of Gemma 2
 
     Args:

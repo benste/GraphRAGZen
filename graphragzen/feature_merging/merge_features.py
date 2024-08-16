@@ -1,6 +1,6 @@
 from collections import Counter
 from functools import partial
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
 import networkx as nx
 from graphragzen.llm.base_llm import LLM
@@ -14,7 +14,7 @@ def merge_graph_features(
     graph: nx.Graph,
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig],
-    **kwargs: Any,
+    **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> nx.Graph:
     """Summarize lists of descriptions for each node or edge
 
@@ -84,7 +84,7 @@ def merge_item_feature(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig],
-    **kwargs: Any,
+    **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> Union[str, float]:
     """Summarize a list of descriptions for a single node or edge
 
@@ -107,7 +107,7 @@ def merge_item_feature(
     Returns:
         str: summary
     """
-    config = MergeFeaturesConfig(**kwargs)
+    config = MergeFeaturesConfig(**kwargs)  # type: ignore
 
     match config.how.lower():
         case "count":
@@ -154,7 +154,7 @@ def _LLM_merge(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig],
-    **kwargs: Any,
+    **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> str:
     """Use a LLM to summarize a list of descriptions
 
@@ -171,7 +171,7 @@ def _LLM_merge(
     Returns:
         str: summary
     """
-    config = MergeFeaturesConfig(**kwargs)
+    config = MergeFeaturesConfig(**kwargs)  # type: ignore
 
     if llm is None:
         raise Exception("No LLM provided; cannot merge features with strategy 'LLM'")
