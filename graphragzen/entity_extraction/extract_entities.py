@@ -19,7 +19,7 @@ from .utils import loop_extraction
 def extract_raw_entities(
     dataframe: pd.DataFrame,
     llm: LLM,
-    prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
+    prompt_config: Optional[EntityExtractionPromptConfig],
     **kwargs: Union[dict, EntityExtractionConfig],
 ) -> tuple:
     """Let the LLM extract entities that is however just strings, output still needs to be
@@ -61,9 +61,7 @@ def extract_raw_entities(
 
 def raw_entities_to_graph(
     dataframe: pd.DataFrame,
-    prompt_formatting: Optional[
-        EntityExtractionPromptFormatting
-    ] = EntityExtractionPromptFormatting(),
+    prompt_formatting: Optional[EntityExtractionPromptFormatting],
     **kwargs: Union[dict, RawEntitiesToGraphConfig],
 ) -> nx.Graph:
     """Parse the result from raw entity extraction to create an undirected unipartite graph
