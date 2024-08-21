@@ -13,7 +13,7 @@ from .utils import _num_tokens_from_string
 def merge_graph_features(
     graph: nx.Graph,
     llm: Optional[LLM],
-    prompt: Optional[MergeFeaturesPromptConfig],
+    prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
     **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> nx.Graph:
     """Summarize lists of descriptions for each node or edge
@@ -22,9 +22,10 @@ def merge_graph_features(
         graph (nx.Graph): With edges and nodes expected to have the feature 'description'.
             The descriptions are expected to be delimited by Kwargs["feature_delimiter"]
         llm (LLM, optional): Only used if `how` is set to 'LLM'. Dedaults to None.
-        prompt (DescriptionSummarizationPromptConfig, optional): Will be formatted with the feature
+        prompt (MergeFeaturesPromptConfig, optional): Will be formatted with the feature
             to send to the LLM. Only used if `how` is set to 'LLM'.
-            See `graphragzen.typing.DescriptionSummarizationPromptConfig`. Defaults to None.
+            See `graphragzen.typing.MergeFeaturesPromptConfig`.
+            Defaults to MergeFeaturesPromptConfig.
         feature (str): The feature attached to a graph entity (node or edge) to merge.
         how (Literal['LLM', 'count', 'mean'], optional): 'LLM' summarizes the features.
             'count' takes the feature that occurs most. 'mean' takes the mean of the feature.
@@ -83,7 +84,7 @@ def merge_item_feature(
     entity_name: str,
     feature_list: List[str],
     llm: Optional[LLM],
-    prompt: Optional[MergeFeaturesPromptConfig],
+    prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
     **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> Union[str, float]:
     """Summarize a list of descriptions for a single node or edge
@@ -92,9 +93,10 @@ def merge_item_feature(
         entity_name (str): Name of the node or edge
         feature_list (List[str]): feature descriptions to merge
         llm (LLM, optional): Only used if `how` is set to 'LLM'. Dedaults to None.
-        prompt (DescriptionSummarizationPromptConfig, optional): Will be formatted with the feature
+        prompt (MergeFeaturesPromptConfig, optional): Will be formatted with the feature
             to send to the LLM. Only used if `how` is set to 'LLM'.
-            See `graphragzen.typing.DescriptionSummarizationPromptConfig`. Defaults to None.
+            See `graphragzen.typing.MergeFeaturesPromptConfig`.
+            Defaults to MergeFeaturesPromptConfig.
         how (Literal['LLM', 'count', 'mean'], optional): 'LLM' summarizes the features.
             'count' takes the feature that occurs most. 'mean' takes the mean of the feature.
             Defaults to 'LLM'..
@@ -153,15 +155,19 @@ def _LLM_merge(
     entity_name: str,
     feature_list: List[str],
     llm: Optional[LLM],
-    prompt: Optional[MergeFeaturesPromptConfig],
+    prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
     **kwargs: Union[dict, MergeFeaturesConfig],
 ) -> str:
     """Use a LLM to summarize a list of descriptions
 
     Args:
-        llm (LLM)
-        prompt (DescriptionSummarizationPromptConfig):  Will be formatted with the feature
-            to send to the LLM.
+        entity_name (str): Name of the node or edge
+        feature_list (List[str]): feature descriptions to merge
+        llm (LLM, optional): Only used if `how` is set to 'LLM'. Dedaults to None.
+        prompt (MergeFeaturesPromptConfig, optional): Will be formatted with the feature
+            to send to the LLM. Only used if `how` is set to 'LLM'.
+            See `graphragzen.typing.MergeFeaturesPromptConfig`.
+            Defaults to MergeFeaturesPromptConfig.
         max_input_tokens (int, optional): Only used when how=='LLM'. Maximum input tokens until a
             summary is made. Remaining descriptions will be appended to the summary until
             max_input_tokens is reached again or no descriptions are left. Defaults to 4000.

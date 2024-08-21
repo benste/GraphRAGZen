@@ -1,6 +1,6 @@
 import numbers
 import re
-from typing import Union
+from typing import Optional, Union
 
 import networkx as nx
 import pandas as pd
@@ -19,7 +19,7 @@ from .utils import loop_extraction
 def extract_raw_entities(
     dataframe: pd.DataFrame,
     llm: LLM,
-    prompt_config: EntityExtractionPromptConfig,
+    prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
     **kwargs: Union[dict, EntityExtractionConfig],
 ) -> tuple:
     """Let the LLM extract entities that is however just strings, output still needs to be
@@ -28,7 +28,7 @@ def extract_raw_entities(
     Args:
         dataframe (pd.DataFrame)
         llm (LLM)
-        prompt_config (EntityExtractionPromptConfig): See
+        prompt_config (EntityExtractionPromptConfig, optional): See
             graphragzen.entity_extraction.EntityExtractionPromptConfig
         `max_gleans (int, optional): How often the LLM should be asked if all entities have been
             extracted from a single text. Defaults to 5.
@@ -41,6 +41,7 @@ def extract_raw_entities(
         pd.DataFrame: Input document with new column containing the raw entities extracted
     """
     config = EntityExtractionConfig(**kwargs)  # type: ignore
+    prompt_config = prompt_config or EntityExtractionPromptConfig()
 
     dataframe.reset_index(inplace=True, drop=True)
 
@@ -60,14 +61,16 @@ def extract_raw_entities(
 
 def raw_entities_to_graph(
     dataframe: pd.DataFrame,
-    prompt_formatting: EntityExtractionPromptFormatting,
+    prompt_formatting: Optional[
+        EntityExtractionPromptFormatting
+    ] = EntityExtractionPromptFormatting(),
     **kwargs: Union[dict, RawEntitiesToGraphConfig],
 ) -> nx.Graph:
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
         dataframe (pd.DataFrame): Should contain a column with raw extracted entities
-            prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
+        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
             extraction. See graphragzen.entity_extraction.EntityExtractionPromptFormatting.
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
             entity extraction. Defaults to 'raw_entities'.
@@ -81,6 +84,7 @@ def raw_entities_to_graph(
         nx.Graph: unipartite graph
     """
     config = RawEntitiesToGraphConfig(**kwargs)  # type: ignore
+    prompt_formatting = prompt_formatting or EntityExtractionPromptFormatting()
 
     graph = nx.Graph()
     for extracted_data, source_id in zip(

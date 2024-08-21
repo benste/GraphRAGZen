@@ -1,6 +1,7 @@
 from typing import List, Literal, Optional
 
 from graphragzen.prompts.default_prompts import summarization_prompts
+from pydantic import field_validator
 
 from ..typing.MappedBaseModel import MappedBaseModel
 
@@ -30,6 +31,10 @@ class MergeFeaturesPromptConfig(MappedBaseModel):
 
     prompt: str = summarization_prompts.SUMMARIZE_PROMPT
     formatting: MergeFeaturesPromptFormatting = MergeFeaturesPromptFormatting()
+
+    @field_validator("prompt", mode="before")
+    def setprompt(cls, prompt: Optional[str]) -> str:
+        return prompt or summarization_prompts.SUMMARIZE_PROMPT
 
 
 class MergeFeaturesConfig(MappedBaseModel):
