@@ -8,7 +8,6 @@ from graphragzen.prompts.prompt_tuning import (
     entity_types,
     persona,
 )
-from pydantic import field_validator
 
 from ..typing.MappedBaseModel import MappedBaseModel
 
@@ -26,11 +25,7 @@ class GenerateDomainConfig(MappedBaseModel):
 
     prompt: str = domain.GENERATE_DOMAIN_PROMPT
     domain: Optional[str] = None
-
-    @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt: Optional[str]) -> str:
-        return prompt or domain.GENERATE_DOMAIN_PROMPT
-
+    
 
 class GeneratePersonaConfig(MappedBaseModel):
     """Config for generating a persona relevant to the domain of a set of documents
@@ -41,10 +36,6 @@ class GeneratePersonaConfig(MappedBaseModel):
     """
 
     prompt: str = persona.GENERATE_PERSONA_PROMPT
-
-    @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt: Optional[str]) -> str:
-        return prompt or persona.GENERATE_PERSONA_PROMPT
 
 
 class GenerateEntityTypesConfig(MappedBaseModel):
@@ -60,10 +51,6 @@ class GenerateEntityTypesConfig(MappedBaseModel):
 
     prompt: str = entity_types.GENERATE_ENTITY_TYPE_PROMPT
     entity_types: Optional[List[str]] = None
-
-    @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt: Optional[str]) -> str:
-        return prompt or entity_types.GENERATE_ENTITY_TYPE_PROMPT
 
 
 class GenerateEntityRelationshipExamplesConfig(MappedBaseModel):
@@ -82,14 +69,6 @@ class GenerateEntityRelationshipExamplesConfig(MappedBaseModel):
     example_template: str = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
     max_examples: int = 5
 
-    @field_validator("prompt", mode="before")
-    def set_prompt(cls, prompt: Optional[str]) -> str:
-        return prompt or entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT
-
-    @field_validator("example_template", mode="before")
-    def set_example_template(cls, example_template: Optional[str]) -> str:
-        return example_template or entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE
-
 
 class CreateEntityExtractionPromptConfig(MappedBaseModel):
     """Config for creating an entity extraction prompt.
@@ -104,10 +83,6 @@ class CreateEntityExtractionPromptConfig(MappedBaseModel):
     prompt_template: str = entity_extraction.ENTITY_EXTRACTION_TEMPLATE
     prompt_max_tokens: int = 3000
 
-    @field_validator("prompt_template", mode="before")
-    def set_prompt_template(cls, prompt_template: Optional[str]) -> str:
-        return prompt_template or entity_extraction.ENTITY_EXTRACTION_TEMPLATE
-
 
 class CreateDescriptionSummarizationPromptConfig(MappedBaseModel):
     """Config for generating a prompt that can be used to summarize entities
@@ -118,7 +93,3 @@ class CreateDescriptionSummarizationPromptConfig(MappedBaseModel):
     """  # noqa: E501
 
     prompt_template: str = entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE
-
-    @field_validator("prompt_template", mode="before")
-    def set_prompt_template(cls, prompt_template: Optional[str]) -> str:
-        return prompt_template or entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE
