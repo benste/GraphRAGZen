@@ -1,11 +1,12 @@
 import numbers
 import re
-from typing import Optional, Union
+from typing import Any, Optional, Tuple, Union
 
 import networkx as nx
 import pandas as pd
 from graphragzen.llm.base_llm import LLM
 from graphragzen.preprocessing import clean_str
+from tqdm import tqdm
 
 from .typing import (
     EntityExtractionConfig,
@@ -19,10 +20,10 @@ from .utils import loop_extraction
 def extract_raw_entities(
     dataframe: pd.DataFrame,
     llm: LLM,
-    prompt_config: Optional[EntityExtractionPromptConfig],
-    **kwargs: Union[dict, EntityExtractionConfig],
+    prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
+    **kwargs: Union[dict, EntityExtractionConfig, Any],
 ) -> tuple:
-    """Let the LLM extract entities that is however just strings, output still needs to be
+    """Let the LLM extract entities in the form of strings, output still needs to be
     parsed to extract structured data.
 
     Args:
@@ -43,27 +44,36 @@ def extract_raw_entities(
     config = EntityExtractionConfig(**kwargs)  # type: ignore
     prompt_config = prompt_config or EntityExtractionPromptConfig()
 
+    # Extract raw entities from each document
     dataframe.reset_index(inplace=True, drop=True)
+    raw_extracted_entities = []
+    for document in tqdm(
+        dataframe[config.column_to_extract], total=len(dataframe), desc="extracting entities"
+    ):
+        # Extract entities through LLM
+        raw_extracted_entities.append(
+            loop_extraction(
+                document,
+                prompt_config.prompts,
+                prompt_config.formatting,
+                llm,
+                config.max_gleans,
+            ),
+        )
 
-    llm_raw_output = loop_extraction(
-        dataframe[config.column_to_extract],
-        prompt_config.prompts,
-        prompt_config.formatting,
-        llm,
-        config.max_gleans,
-    )
-
-    # Map LLM output to correct df column for intermediate saving
-    dataframe[config.results_column] = [llm_raw_output[id] for id in dataframe.chunk_id.tolist()]
+    # Map LLM output to correct df column
+    dataframe[config.results_column] = raw_extracted_entities
 
     return dataframe
 
 
 def raw_entities_to_graph(
     dataframe: pd.DataFrame,
-    prompt_formatting: Optional[EntityExtractionPromptFormatting],
-    **kwargs: Union[dict, RawEntitiesToGraphConfig],
-) -> nx.Graph:
+    prompt_formatting: Optional[
+        EntityExtractionPromptFormatting
+    ] = EntityExtractionPromptFormatting(),
+    **kwargs: Union[dict, RawEntitiesToGraphConfig, Any],
+) -> Tuple[nx.Graph, pd.DataFrame]:
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
@@ -91,7 +101,7 @@ def raw_entities_to_graph(
 
         records = extracted_data.split(prompt_formatting.record_delimiter)
         for record in records:
-            # Some light cleaning
+            # Some light cleaning and splitting of raw text
             record = re.sub(r"^\(|\)$", "", record.strip())
             record_attributes = record.split(prompt_formatting.tuple_delimiter)
 
@@ -122,45 +132,48 @@ def raw_entities_to_graph(
                 source = clean_str(record_attributes[1].upper())
                 target = clean_str(record_attributes[2].upper())
                 edge_description = clean_str(record_attributes[3])
-                edge_source_id = clean_str(str(source_id))
+
                 # Try to get the weight
                 weight = (
                     float(str(record_attributes[-1]))
                     if isinstance(record_attributes[-1], numbers.Number)
                     else 1.0
                 )
+
+                # Add nodes for this edge if they do not exist yet
                 if source not in graph.nodes():
                     graph.add_node(
                         source,
                         type="",
                         description="",
-                        source_id=edge_source_id,
+                        source_id=source_id,
                     )
+
                 if target not in graph.nodes():
                     graph.add_node(
                         target,
                         type="",
                         description="",
-                        source_id=edge_source_id,
+                        source_id=source_id,
                     )
-                if graph.has_edge(source, target):
-                    # Merge edge attributes
-                    edge_data = graph.get_edge_data(source, target)
-                    if edge_data is not None:
-                        weight += edge_data["weight"]
-                        edge_description = (
-                            edge_data["description"] + config.feature_delimiter + edge_description
-                        )
-                        edge_source_id = (
-                            edge_data["source_id"] + config.feature_delimiter + edge_source_id
-                        )
 
-                graph.add_edge(
-                    source,
-                    target,
-                    weight=weight,
-                    description=edge_description,
-                    source_id=edge_source_id,
-                )
+                # If edge already exist, concat or merge features
+                if graph.has_edge(source, target):
+                    edge = graph.edges[(source, target)]
+                    edge["weight"] = edge.get("weight", 0) + weight
+                    edge["description"] = (
+                        edge.get("description", "") + config.feature_delimiter + edge_description
+                    )
+                    edge["source_id"] = (
+                        edge.get("source_id", "") + config.feature_delimiter + source_id
+                    )
+                else:
+                    graph.add_edge(
+                        source,
+                        target,
+                        weight=weight,
+                        description=edge_description,
+                        source_id=source_id,
+                    )
 
     return graph

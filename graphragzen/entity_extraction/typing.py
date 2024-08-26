@@ -42,6 +42,7 @@ class EntityExtractionPrompts(MappedBaseModel):
     continue_prompt: str = entity_extraction_prompts.CONTINUE_PROMPT
     loop_prompt: str = entity_extraction_prompts.LOOP_PROMPT
 
+
 class EntityExtractionPromptConfig(MappedBaseModel):
     """Config for the prompt used to extract entities
 
@@ -64,7 +65,7 @@ class EntityExtractionConfig(MappedBaseModel):
         column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
             entities from. Defaults to 'chunk'.
         results_column (str, optional): Column to write the output of the LLM to.
-            Defaults to 'raw_entities'.
+            Defaults to 'raw_entities'..
     """
 
     max_gleans: int = 5
