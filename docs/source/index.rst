@@ -9,6 +9,7 @@
    motivation/index.rst
    graphzen_ideology/index.rst
    graphragzen_logic/index.rst
+   graphragzen_concepts/index.rst
    todo/index.rst
 
 .. these we want to dipsplay on the main page

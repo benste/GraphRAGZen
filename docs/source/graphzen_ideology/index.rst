@@ -11,19 +11,12 @@ The python function is king, and the functions are named and located intuitively
 - Flow of data can be easily traced.
 - No wacky behind the scenes magic.
 
-.. note::
-    Most functions have their kwargs coupled to a Pydantic class.
-    This allows:
-
-    - kwargs parameters to be typed
-    - Easy integration in pipeline frameworks like *Kedro*
-
 Modularity
 ------------
 In order to be modular functions should not presume a specific use-case. 
 
-e.g. there is no **load_documents** function that presumes documents are in text format. 
-Rather there is a **load_text_documents** function.
+e.g. there is no **load_documents** function that presumes documents are in text format, rather 
+there is a **load_text_documents** function.
 
 Intuition
 ------------

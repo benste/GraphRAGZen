@@ -81,6 +81,16 @@ You can load any LLM you want and **GraphRAGZen** can use it, as long as it impl
                 str: Untokenized string
             """
 
+        def num_chat_tokens(self, chat: List[dict]) -> int:
+        """Return the length of the tokenized chat
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+
+        Returns:
+            int: number of tokens
+        """
+
 See `this LLM class <https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF>`_
 for an example.
 
