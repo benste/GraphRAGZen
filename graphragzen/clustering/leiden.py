@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 import igraph as ig
 import leidenalg as la
@@ -6,9 +6,40 @@ import networkx as nx
 import numpy as np
 
 from .typing import ClusterConfig
+from .util import _create_cluster_map, _int_list_to_string_representation
 
 
-def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig]) -> dict:
+def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
+    """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
+
+    note: Clusters have levels, i.e. cluster 1 can be subdevided into multiple clusters.
+        This is represented by a comma separated string, where each index is a level. e.g. cluster
+        "2, 11" is the 11th subcluster of the 2nd cluster, while cluster "4, 11" is associated with
+        main cluster "4" and has no relation with cluster "2, 11".
+
+    Args:
+        graph (nx.Graph)
+        max_comm_size (int, optional): Maximum number of nodes in one cluster. Defaults to 0 (no
+            contraint).
+        levels (int, optional): Clusters can be split into clusters, how many levels should there
+            be? Defaults to 2.
+
+    Returns:
+        tuple(nx.Graph, cluster_map): nx.Graph has the feature 'cluster' added to the entities.
+            cluster_map maps for each cluster the nodes that belong to it.
+    """
+    config = ClusterConfig(**kwargs)  # type: ignore
+
+    clusters = _leiden(graph, config=config)
+
+    # Map back to graphnx
+    for entity_name, cluster in clusters.items():
+        graph.nodes[entity_name]["cluster"] = _int_list_to_string_representation(cluster)
+
+    return graph, _create_cluster_map(graph)
+
+
+def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> dict:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
     Args:
@@ -41,32 +72,10 @@ def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig]) -> dict:
 
         if config.levels > 1:
             subgraph = graph.subgraph(nodes_in_custer)
-            subgrap_clusters = _leiden(subgraph, kwargs={"levels": config.levels - 1})
+            subgrap_clusters = _leiden(
+                subgraph, max_comm_size=int(config.max_comm_size / 2), levels=config.levels - 1
+            )
             for node, map in subgrap_clusters.items():
                 clusters[node] += map
 
     return clusters
-
-
-def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig]) -> nx.Graph:
-    """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
-
-    Args:
-        graph (nx.Graph)
-        max_comm_size (int, optional): Maximum number of nodes in one cluster. Defaults to 0 (no
-            contraint).
-        levels (int, optional): Clusters can be split into clusters, how many levels should there
-            be? Defaults to 2.
-
-    Returns:
-        nx.Graph: With the feature 'cluster' added to the entities
-    """
-    config = ClusterConfig(**kwargs)  # type: ignore
-
-    clusters = _leiden(graph, config=config)
-
-    # Map back to graphnx
-    for entity_name, cluster in clusters.items():
-        graph.nodes[entity_name]["cluster"] = str(cluster)
-
-    return graph
