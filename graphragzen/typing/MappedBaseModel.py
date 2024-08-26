@@ -25,9 +25,9 @@ class MappedBaseModel(BaseModel, Mapping):
         horsepower = 10,
         free_text = "Unique car with single front wheel in the center",
     )
-    
+
     describe_car(**my_car)
-    
+
     describe_car(config = my_car)
 
     describe_car(config = my_car, some_other_input = "hello world")
@@ -50,7 +50,7 @@ class MappedBaseModel(BaseModel, Mapping):
                 merged_data = value.__dict__ | merged_data
             else:
                 merged_data[key] = value
-                
+
         # Remove None values so that the default is used for optional parameters
         merged_data = {key: value for key, value in merged_data.items() if value is not None}
 

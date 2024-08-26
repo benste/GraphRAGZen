@@ -25,7 +25,7 @@ class GenerateDomainConfig(MappedBaseModel):
 
     prompt: str = domain.GENERATE_DOMAIN_PROMPT
     domain: Optional[str] = None
-    
+
 
 class GeneratePersonaConfig(MappedBaseModel):
     """Config for generating a persona relevant to the domain of a set of documents

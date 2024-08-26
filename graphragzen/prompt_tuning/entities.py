@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Any, List, Union
 
 from graphragzen.feature_merging import _num_tokens_from_string
 from graphragzen.llm.base_llm import LLM
@@ -16,7 +16,7 @@ def generate_entity_types(
     documents: List[str],
     domain: str,
     persona: str,
-    **kwargs: Union[dict, GenerateEntityTypesConfig],
+    **kwargs: Union[dict, GenerateEntityTypesConfig, Any],
 ) -> str | list[str]:
     """Generate entity type categories from a given set of (small) documents.
 
@@ -55,7 +55,7 @@ def generate_entity_relationship_examples(
     documents: List[str],
     persona: str,
     entity_types: list[str],
-    **kwargs: Union[dict, GenerateEntityRelationshipExamplesConfig],
+    **kwargs: Union[dict, GenerateEntityRelationshipExamplesConfig, Any],
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity
         extraction prompt.
@@ -107,7 +107,7 @@ def create_entity_extraction_prompt(
     llm: LLM,
     entity_types: List[str],
     entity_relationship_examples: List[str],
-    **kwargs: Union[dict, CreateEntityExtractionPromptConfig],
+    **kwargs: Union[dict, CreateEntityExtractionPromptConfig, Any],
 ) -> str:
     """Create a prompt for entity extraction.
 

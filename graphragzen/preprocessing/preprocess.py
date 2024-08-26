@@ -9,7 +9,7 @@ from .typing import ChunkConfig
 
 
 def chunk_documents(
-    dataframe: pd.DataFrame, llm: LLM, **kwargs: Union[dict, ChunkConfig]
+    dataframe: pd.DataFrame, llm: LLM, **kwargs: Union[dict, ChunkConfig, Any]
 ) -> pd.DataFrame:
     """Chunk documents based on number of tokens
 
@@ -57,7 +57,7 @@ def chunk_documents(
     return dataframe
 
 
-def chunk(inp: Sequence, **kwargs: Union[dict, ChunkConfig]) -> tuple[list, list]:
+def chunk(inp: Sequence, **kwargs: Union[dict, ChunkConfig, Any]) -> tuple[list, list]:
     """Chunk an sequence using a sliding window
 
     Args:

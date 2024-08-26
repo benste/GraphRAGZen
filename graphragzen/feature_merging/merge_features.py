@@ -1,6 +1,6 @@
 from collections import Counter
 from functools import partial
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import networkx as nx
 from graphragzen.llm.base_llm import LLM
@@ -14,7 +14,7 @@ def merge_graph_features(
     graph: nx.Graph,
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig],
+    **kwargs: Union[dict, MergeFeaturesConfig, Any],
 ) -> nx.Graph:
     """Summarize lists of descriptions for each node or edge
 
@@ -85,7 +85,7 @@ def merge_item_feature(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig],
+    **kwargs: Union[dict, MergeFeaturesConfig, Any],
 ) -> Union[str, float]:
     """Summarize a list of descriptions for a single node or edge
 
@@ -156,7 +156,7 @@ def _LLM_merge(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig],
+    **kwargs: Union[dict, MergeFeaturesConfig, Any],
 ) -> str:
     """Use a LLM to summarize a list of descriptions
 
