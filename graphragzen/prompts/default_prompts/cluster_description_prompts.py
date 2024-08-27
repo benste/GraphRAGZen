@@ -1,10 +1,6 @@
 """A file containing prompts definition."""
 
-DEFAULT_FORMATTING = {
-    "input_text": None,
-}
-
-COMMUNITY_REPORT_PROMPT = """
+CLUSTER_DESCRIPTION_PROMPT = """
 You are an AI assistant that helps a human analyst to perform general information discovery. Information discovery is the process of identifying and assessing relevant information associated with certain entities (e.g., organizations and individuals) within a network.
 
 # Goal

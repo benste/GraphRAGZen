@@ -13,7 +13,8 @@ LLM
 
 **GraphRAGZen** relies on an LLM to create a graph from documents. 
 
-Currently **GraphRAGZen** only supplies a method to load `gemma2` models in gguf format using Llama CPP python.
+Out of the box **GraphRAGZen** only supplies methods to load `Phi 3.5 mini` and `gemma2` models in gguf format using Llama CPP python, but it's rather easy to implement your own class (see below).
+
 
 .. code-block:: python
 
@@ -27,6 +28,10 @@ Currently **GraphRAGZen** only supplies a method to load `gemma2` models in gguf
                 tokenizer_URI=tokenizer_URI,
             )
 
+Phi 3.5 mini instruct gave the best results in my tests, but it is domain specific. I would advice to extract entities from a very small set of documents and check if the extraction makes sense. Pay attention that not just quality nodes are extracted, but also a good amount of edges.
+
+`Phi 3.5 mini instruct Q4 K M <https://huggingface.co/bartowski/Phi-3.5-mini-instruct-GGUF/blob/main/Phi-3.5-mini-instruct-Q4_K_M.gguf>`
+
 `Gemma 2 2B it Q4 M <https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/blob/main/gemma-2-2b-it-Q4_K_M.gguf>`_
 
 `Gemma 2 9B it Q4 XS <https://huggingface.co/bartowski/gemma-2-9b-it-GGUF/blob/main/gemma-2-9b-it-IQ4_XS.gguf>`_
@@ -34,62 +39,64 @@ Currently **GraphRAGZen** only supplies a method to load `gemma2` models in gguf
 Implementing your own LLM instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can load any LLM you want and **GraphRAGZen** can use it, as long as it implements the following:
+You can load any LLM  you want or implement a class that interacts with a hosted LLM and **GraphRAGZen** can use it, as long as your implementation defines the following:
 
 .. collapse:: Implementing a Local LLM
 
     .. code-block:: python
+        from graphragzen.llm.base_llm import LLM
 
-        def run_chat(self, chat: List[dict], max_tokens: int = -1, stream: bool = False) -> str:
-            """Runs a chat through the LLM
+        class MyLlmImplementation(LLM):
+            def run_chat(self, chat: List[dict], max_tokens: int = -1, stream: bool = False) -> str:
+                """Runs a chat through the LLM
 
-            Chat should be in OpenAI format
-            i.e. [{"role": ..., "content": ...}, {"role": ..., "content": ...
+                Chat should be in OpenAI format
+                i.e. [{"role": ..., "content": ...}, {"role": ..., "content": ...
 
-            For an example on how to make it stream the output see 
-            https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF
+                For an example on how to make it stream the output see 
+                https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF
+
+                Args:
+                    chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+                    max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+                    stream (bool, optional): If True, streams the results to console. Defaults to False.
+
+                Returns:
+                    str: Generated content
+                """
+
+            def tokenize(self, content: str) -> List[str]:
+                """Tokenize a string
+
+                Returns string tokens, not tensor
+
+                Args:
+                    content (str): String to tokenize
+
+                Returns:
+                    List[str]: Tokenized string
+                """
+                
+
+            def untokenize(self, tokens: List[str]) -> str:
+                """Generate a string from a list of tokens
+
+                Args:
+                    tokens (List[str]): String tokens, not tensor
+
+                Returns:
+                    str: Untokenized string
+                """
+
+            def num_chat_tokens(self, chat: List[dict]) -> int:
+            """Return the length of the tokenized chat
 
             Args:
                 chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
-                max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
-                stream (bool, optional): If True, streams the results to console. Defaults to False.
 
             Returns:
-                str: Generated content
+                int: number of tokens
             """
-
-        def tokenize(self, content: str) -> List[str]:
-            """Tokenize a string
-
-            Returns string tokens, not tensor
-
-            Args:
-                content (str): String to tokenize
-
-            Returns:
-                List[str]: Tokenized string
-            """
-            
-
-        def untokenize(self, tokens: List[str]) -> str:
-            """Generate a string from a list of tokens
-
-            Args:
-                tokens (List[str]): String tokens, not tensor
-
-            Returns:
-                str: Untokenized string
-            """
-
-        def num_chat_tokens(self, chat: List[dict]) -> int:
-        """Return the length of the tokenized chat
-
-        Args:
-            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
-
-        Returns:
-            int: number of tokens
-        """
 
 See `this LLM class <https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF>`_
 for an example.
@@ -244,6 +251,6 @@ These examples are rather intuitive and should get you started fast
 
             return entity_extraction_prompt, description_summarization_prompt
 
-Idea behind prompt tuning can be found here :ref:`prompt_tuning_explanation_label`
+The idea behind prompt tuning can be found here :ref:`prompt_tuning_explanation_label`
 
 ‎ 
