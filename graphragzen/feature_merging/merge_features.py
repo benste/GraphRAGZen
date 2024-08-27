@@ -5,6 +5,7 @@ from typing import Any, List, Optional, Union
 import networkx as nx
 from graphragzen.llm.base_llm import LLM
 from numpy import mean
+from tqdm import tqdm
 
 from .typing import MergeFeaturesConfig, MergeFeaturesPromptConfig
 from .utils import _num_tokens_from_string
@@ -51,9 +52,7 @@ def merge_graph_features(
         **config,
     )
 
-    i = 1
-    for node in graph.nodes(data=True):
-        print(f"summarizing descriptions of node {i} of {len(graph.nodes())}")
+    for node in tqdm(graph.nodes(data=True), desc=f"Merging {config.feature} of nodes"):
         entity_name = node[0]
         # Split and sort the feature
         feature_list = sorted(set(node[1].get(config.feature, "").split(config.feature_delimiter)))
@@ -62,11 +61,8 @@ def merge_graph_features(
             graph.nodes[entity_name][config.feature] = item_merger(
                 entity_name=entity_name, feature_list=feature_list
             )
-        i += 1
 
-    i = 1
-    for edge in graph.edges(data=True):
-        print(f"summarizing descriptions of edge {i} of {len(graph.edges())}")
+    for edge in tqdm(graph.edges(data=True), desc=f"Merging {config.feature} of edges"):
         entity_name = edge[:2]
         # Split and sort the feature
         feature_list = sorted(set(edge[2].get(config.feature, "").split(config.feature_delimiter)))
@@ -75,7 +71,6 @@ def merge_graph_features(
             graph.edges[entity_name]["description"] = item_merger(
                 entity_name=entity_name, feature_list=feature_list
             )
-        i += 1
 
     return graph
 
