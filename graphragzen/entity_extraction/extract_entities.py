@@ -1,5 +1,6 @@
 import numbers
 import re
+from random import sample
 from typing import Any, Optional, Tuple, Union
 
 import networkx as nx
@@ -31,7 +32,7 @@ def extract_raw_entities(
         llm (LLM)
         prompt_config (EntityExtractionPromptConfig, optional): See
             graphragzen.entity_extraction.EntityExtractionPromptConfig
-        `max_gleans (int, optional): How often the LLM should be asked if all entities have been
+        `max_gleans (int, optional): How often the LLM can be asked if all entities have been
             extracted from a single text. Defaults to 5.
         column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
             entities from. Defaults to 'chunk'.
@@ -67,8 +68,70 @@ def extract_raw_entities(
     return dataframe
 
 
+def extract_more_edges(
+    graph: nx.Graph,
+    llm: LLM,
+    prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
+    **kwargs: Union[dict, EntityExtractionConfig, Any],
+) -> str:
+    """Extracts more edges from a graph. It simply takes the nodes from the graph and asks the LLM
+    if there are edges between these nodes.
+
+    Args:
+        graph (nx.Graph)
+        llm (LLM)
+        prompt_config (Optional[EntityExtractionPromptConfig], optional):See
+            graphragzen.entity_extraction.EntityExtractionPromptConfig
+        extra_edges_iterations (int, optional): During extra edge extraction random nodes are
+            selected to find relationships. If extra edges are extracted, how many runs are
+            performed. Defaults to 100.
+        extra_edges_max_nodes (int, optional): During extra edge extraction random nodes are
+            selected to find relationships. How many nodes should be selected per sample?
+            Defaults to 20.
+
+    Returns:
+        str: Raw LLM output
+    """
+    config = EntityExtractionConfig(**kwargs)  # type: ignore
+    prompt_config = prompt_config or EntityExtractionPromptConfig()
+
+    nodes = list(graph.nodes(data=True))
+
+    raw_extracted_edges = ""
+    for _ in tqdm(range(config.extra_edges_iterations), desc="finding more edges"):
+        # Sample nodes
+        sampled_nodes = sample(nodes, min([len(nodes), config.extra_edges_max_nodes]))
+
+        # Create a string from the nodes
+        tuple_delimiter = prompt_config.formatting.tuple_delimiter
+        entities_string = prompt_config.formatting.record_delimiter.join(
+            [_node_to_entity_string(node, tuple_delimiter) for node in sampled_nodes]
+        )
+        prompt_config.formatting.entities_string = entities_string
+
+        # Create final prompt
+        prompt = prompt_config.prompts.entity_relationship_prompt.format(
+            **prompt_config.formatting.model_dump()
+        )
+
+        # Run prompt
+        chat = llm.format_chat([("user", prompt)])
+        llm_output = llm.run_chat(chat).removesuffix(prompt_config.formatting.completion_delimiter)
+        raw_extracted_edges += prompt_config.formatting.record_delimiter + llm_output
+
+    return raw_extracted_edges
+
+
+def _node_to_entity_string(node: tuple, tuple_delimiter: str) -> str:
+    node_name = node[0]
+    node_type = node[1]["type"]
+    node_description = node[1]["description"]
+
+    return f"(entity{tuple_delimiter}{node_name}{tuple_delimiter}{node_type}{tuple_delimiter}{node_description})"  # noqa: E501
+
+
 def raw_entities_to_graph(
-    dataframe: pd.DataFrame,
+    input: Union[pd.DataFrame, str],
     prompt_formatting: Optional[
         EntityExtractionPromptFormatting
     ] = EntityExtractionPromptFormatting(),
@@ -77,14 +140,17 @@ def raw_entities_to_graph(
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
-        dataframe (pd.DataFrame): Should contain a column with raw extracted entities
-        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
-            extraction. See graphragzen.entity_extraction.EntityExtractionPromptFormatting.
+        input (Union[pd.DataFrame, str]): If a raw extracted entities string is provided it will
+            simply be parsed to a graph.
+            When a dataframe is provided it should contain a column with raw extracted entities
+            strings and a reference column whos value will be added to the nodes and edged.
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
             entity extraction. Defaults to 'raw_entities'.
         reference_column (str, optional): Value from this column in the DataFrame will be added to
             the edged and nodes. This allows to reference to the source where entities were
             extracted from when quiring the graph. Defaults to 'chunk_id'.
+        prompt_formatting (EntityExtractionPromptFormatting): formatting used for raw entity
+            extraction. See graphragzen.entity_extraction.EntityExtractionPromptFormatting.
         feature_delimiter (str, optional): When the same node or edge is found multiple times,
             features are concatenated using this demiliter. Defaults to '\\n'.
 
@@ -94,10 +160,22 @@ def raw_entities_to_graph(
     config = RawEntitiesToGraphConfig(**kwargs)  # type: ignore
     prompt_formatting = prompt_formatting or EntityExtractionPromptFormatting()
 
+    if isinstance(input, str):
+        dataframe = pd.DataFrame(
+            {
+                config.raw_entities_column: [input],
+                config.reference_column: [None],
+            }
+        )
+    else:
+        dataframe = input
+
     graph = nx.Graph()
     for extracted_data, source_id in zip(
         *(dataframe[config.raw_entities_column], dataframe[config.reference_column])
     ):
+
+        source_id = str(source_id)
 
         records = extracted_data.split(prompt_formatting.record_delimiter)
         for record in records:
@@ -116,29 +194,30 @@ def raw_entities_to_graph(
                     # Merge attributes
                     node = graph.nodes[entity_name]
                     node["description"] += config.feature_delimiter + entity_description
-                    node["source_id"] += config.feature_delimiter + str(source_id)
+                    node["source_id"] += config.feature_delimiter + source_id
                     node["type"] = node["type"] if entity_type != "" else node["type"]
                 else:
                     graph.add_node(
                         entity_name,
                         type=entity_type,
                         description=entity_description,
-                        source_id=str(source_id),
+                        source_id=source_id,
                     )
 
             # Check if attribute is an edge
-            if record_attributes[0] == '"relationship"' and len(record_attributes) >= 5:
+            if record_attributes[0] == '"relationship"' and len(record_attributes) >= 4:
                 # Some cleaning
                 source = clean_str(record_attributes[1].upper())
                 target = clean_str(record_attributes[2].upper())
                 edge_description = clean_str(record_attributes[3])
 
                 # Try to get the weight
-                weight = (
-                    float(str(record_attributes[-1]))
-                    if isinstance(record_attributes[-1], numbers.Number)
-                    else 1.0
-                )
+                if len(record_attributes) > 4:
+                    weight = (
+                        float(str(record_attributes[-1]))
+                        if isinstance(record_attributes[-1], numbers.Number)
+                        else 1.0
+                    )
 
                 # Add nodes for this edge if they do not exist yet
                 if source not in graph.nodes():

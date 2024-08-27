@@ -17,6 +17,8 @@ class EntityExtractionPromptFormatting(MappedBaseModel):
         entity_types (List[str], optional):  The types that can be assigned to entities.
             Defaults to ['organization', 'person', 'geo', 'event'].
         input_text (str, optional): The text to extract entities from. Defaults to None.
+        entities_string (str, optional): String representation of entities to extract more edges
+            from. Is set by `extract_more_edges`. Defaults to None.
     """  # noqa: W605
 
     tuple_delimiter: str = "<|>"
@@ -24,6 +26,7 @@ class EntityExtractionPromptFormatting(MappedBaseModel):
     completion_delimiter: str = "<|COMPLETE|>"
     entity_types: List[str] = ["organization", "person", "geo", "event"]
     input_text: Optional[str] = None
+    entities_string: Optional[str] = None
 
 
 class EntityExtractionPrompts(MappedBaseModel):
@@ -32,6 +35,9 @@ class EntityExtractionPrompts(MappedBaseModel):
     Args:
         entity_extraction_prompt (str, optional): Main extraction prompt.
             Defaults to `graphragzen.prompts.default_prompts.entity_extraction_prompts.ENTITY_EXTRACTION_PROMPT`
+        entity_relationship_prompt (str, optional): Prompt for optional extraction of more edges
+            after the initial extraction of nodes and edges is finished.
+            Defaults to `graphragzen.prompts.default_prompts.entity_extraction_prompts.ENTITY_RELATIONSHIP_PROMPT`
         continue_prompt (str, optional): Prompt that asks the LLM to continue extracting entities.
             Defaults to `graphragzen.prompts.default_prompts.entity_extraction_prompts.CONTINUE_PROMPT`
         loop_prompt (str, optional): Prompt that asks the LLM if there are more entities to extract.
@@ -39,6 +45,7 @@ class EntityExtractionPrompts(MappedBaseModel):
     """  # noqa: E501
 
     entity_extraction_prompt: str = entity_extraction_prompts.ENTITY_EXTRACTION_PROMPT
+    entity_relationship_prompt: str = entity_extraction_prompts.ENTITY_RELATIONSHIP_PROMPT
     continue_prompt: str = entity_extraction_prompts.CONTINUE_PROMPT
     loop_prompt: str = entity_extraction_prompts.LOOP_PROMPT
 
@@ -60,17 +67,25 @@ class EntityExtractionConfig(MappedBaseModel):
     """Config for the extraction of entities from text
 
     Args:
-        max_gleans (int, optional): How often the LLM should be asked if all entities have been
+        max_gleans (int, optional): How often the LLM can be asked if all entities have been
             extracted from a single text. Defaults to 5.
         column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
             entities from. Defaults to 'chunk'.
         results_column (str, optional): Column to write the output of the LLM to.
-            Defaults to 'raw_entities'..
+            Defaults to 'raw_entities'.
+        extra_edges_iterations (int, optional): During extra edge extraction random nodes are
+            selected to find relationships. If extra edges are extracted, how many runs are
+            performed. Defaults to 100.
+        extra_edges_max_nodes (int, optional): During extra edge extraction random nodes are
+            selected to find relationships. How many nodes should be selected per sample?
+            Defaults to 20.
     """
 
     max_gleans: int = 5
     column_to_extract: str = "chunk"
     results_column: str = "raw_entities"
+    extra_edges_iterations: int = 100
+    extra_edges_max_nodes: int = 20
 
 
 class RawEntitiesToGraphConfig(MappedBaseModel):
