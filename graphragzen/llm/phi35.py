@@ -7,8 +7,8 @@ from transformers import AutoTokenizer
 from .typing import ChatNames, LlmLoadingConfig
 
 
-class Gemma2GGUF(LLM):
-    """Loads the GGUF version of a gemma2 model using llama-cpp-python"""
+class Phi35MiniGGUF(LLM):
+    """Loads the GGUF version of a Phi 3.5 Mini model using llama-cpp-python"""
 
     def __init__(self, **kwargs: Union[dict, LlmLoadingConfig, Any]):
         config = LlmLoadingConfig(**kwargs)  # type: ignore
@@ -16,7 +16,7 @@ class Gemma2GGUF(LLM):
             model_path=config.model_storage_path, verbose=False, n_ctx=config.context_size
         )
         self.tokenizer = AutoTokenizer.from_pretrained(config.tokenizer_URI)
-        self.chatnames = ChatNames(user="user", model="assistant")
+        self.chatnames = ChatNames(system="system", user="user", model="assistant")
         self.config = config
 
         super().__init__()

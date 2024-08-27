@@ -102,7 +102,7 @@ class LLM:
         """format chat with the correct names ready for `tokenizer.apply_chat_template`
 
         Args:
-            chat (List[tuple]): [(role: content), (role: content)]
+            chat (List[tuple]): [(role, content), (role, content)]
                                 role (str): either "user" or "model"
                                 content (str)
             established_chat (List[dict], optional): Already established chat to append to.
@@ -164,16 +164,20 @@ class LLM:
         if self.config.use_cache:
             self.cache = {}
 
-        if self.config.cache_persistent and self.config.persistent_cache_file:
-            # Load or create persisten cache file
-            if not os.path.isfile(self.config.persistent_cache_file):
-                os.makedirs(
-                    os.path.dirname(self.config.persistent_cache_file) or "./", exist_ok=True
-                )
+            if self.config.cache_persistent and self.config.persistent_cache_file:
+                # Load or create persisten cache file
+                if not os.path.isfile(self.config.persistent_cache_file):
+                    os.makedirs(
+                        os.path.dirname(self.config.persistent_cache_file) or "./", exist_ok=True
+                    )
 
-            else:
-                with open(self.config.persistent_cache_file, "r") as stream:
-                    self.cache = yaml.safe_load(stream)
+                else:
+                    with open(self.config.persistent_cache_file, "r") as stream:
+                        self.cache = yaml.safe_load(stream)
+
+                    if not self.cache:
+                        # Might have loaded an empty file
+                        self.cache = {}
 
         else:
             warnings.warn(
