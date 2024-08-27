@@ -66,12 +66,12 @@ def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> dict:
     clusters = dict()
     for partition, nodes in enumerate(partitions):
         # Nodes in igraph are indices. Let's map the cluster to the nx graph node name
-        nodes_in_custer = nodes_list[nodes].tolist()
-        mapping = dict(zip(nodes_in_custer, [[partition]] * len(nodes)))
+        nodes_in_cluster = nodes_list[nodes].tolist()
+        mapping = dict(zip(nodes_in_cluster, [[partition] for _ in range(len(nodes))]))
         clusters.update(mapping)
 
         if config.levels > 1:
-            subgraph = graph.subgraph(nodes_in_custer)
+            subgraph = graph.subgraph(nodes_in_cluster)
             subgrap_clusters = _leiden(
                 subgraph, max_comm_size=int(config.max_comm_size / 2), levels=config.levels - 1
             )

@@ -27,7 +27,7 @@ def _create_cluster_map(graph: nx.Graph) -> pd.DataFrame:
             cluster_name = _int_list_to_string_representation(cluster[:i])
             cluster_map[cluster_name].append(node_name)
 
-    return pd.DataFrame(cluster_map).T.rename(columns={0: "node_name"})
+    return pd.DataFrame({"node_name": cluster_map.values()}, index=cluster_map.keys())
 
 
 def _int_list_to_string_representation(input: List[int]) -> str:

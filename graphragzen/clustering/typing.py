@@ -1,3 +1,5 @@
+from graphragzen.prompts.default_prompts import cluster_description_prompts
+
 from ..typing.MappedBaseModel import MappedBaseModel
 
 
@@ -13,3 +15,13 @@ class ClusterConfig(MappedBaseModel):
 
     max_comm_size: int = 0
     levels: int = 2
+
+
+class DescribeClustersConfig(MappedBaseModel):
+    """Configuration for describing clusters
+
+    Args:
+        prompt (str, optional): The prompt to use for the LLM to describe a cluster
+    """
+
+    prompt: str = cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT
