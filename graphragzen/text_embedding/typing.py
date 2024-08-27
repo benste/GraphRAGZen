@@ -1,6 +1,6 @@
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional, Union
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, field_validator
 
 from ..typing.MappedBaseModel import MappedBaseModel
 
@@ -8,8 +8,8 @@ from ..typing.MappedBaseModel import MappedBaseModel
 class EmbedderLoadingConfig(MappedBaseModel):
     """Config for loading embedding model
 
-    note: Either or both `model_storage_path` or `huggingface_URI` must be provided. When both are
-    provided `model_storage_path` takes precedence.
+    note: Either or both `model_storage_path` or `huggingface_URI` must be set. When both are
+    set `model_storage_path` takes precedence.
 
     Args:
         model_storage_path (str, optional): Path to the model on the local filesystem
@@ -36,7 +36,7 @@ class VectorDBConfig(MappedBaseModel):
         vector_size (int): Length of the vectors to store .
         distance_measure (Literal['Cosine', 'Euclid', 'Dot', 'Manhattan'], optional): Method to
             calculate distances between vectors. Defaults to 'Cosine'
-        on_disk (bool, optional): If true, v`ectors are served from disk, improving RAM usage at the
+        on_disk (bool, optional): If true, vectors are served from disk, improving RAM usage at the
             cost of latency. Defaults to False.
         collection_name (str, optional): QDrant can have multiple separated collections in one DB,
             each collection containing their own vectors. For the purpose of RAG it's recommended to
@@ -58,7 +58,13 @@ class EmbedGraphFeaturesConfig(MappedBaseModel):
         features_to_embed (List[str]): Which features to embed
     """
 
-    features_to_embed: List[str]
+    features_to_embed: Union[List[str], str]
+
+    @field_validator("features_to_embed")
+    def passwords_match(cls: Any, fields: Union[List[str], str]) -> List[str]:
+        if isinstance(fields, str):
+            return [fields]
+        return fields
 
 
 class EmbedDataframeConfig(MappedBaseModel):

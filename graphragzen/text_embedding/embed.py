@@ -70,12 +70,11 @@ def embed_graph_features(
     embeddings_df.drop(columns="to_embed", inplace=True)  # don't need to store this
 
     # If vector database is provided, add the vectors to it
+    embeddings_df["metadata"] = (
+        embeddings_df[["entity_type", "entity_name", "feature"]].T.to_dict().values()
+    )
     if vector_db_client:
-        embeddings_df["metadata"] = (
-            embeddings_df[["entity_type", "entity_name", "feature"]].T.to_dict().values()
-        )
         add_points_to_vector_db(vector_db_client, embeddings_df)
-        embeddings_df.drop(columns="metadata", inplace=True)  # don't need to store this
 
     return embeddings_df
 

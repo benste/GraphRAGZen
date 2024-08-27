@@ -11,8 +11,9 @@ class ChatNames(MappedBaseModel):
         model (str, optional): Name of the model Defaults to 'assistant'.
     """
 
+    system: str = "system"
     user: str = "user"
-    model: str = "assistant"
+    model: str = "model"
 
 
 class LlmLoadingConfig(MappedBaseModel):
