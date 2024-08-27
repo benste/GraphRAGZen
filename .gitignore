@@ -6,3 +6,5 @@ _build/*
 docs/build/*
 docs/source/api/*
 docs/source/generated/*
+qdrant/*
+documents/*
