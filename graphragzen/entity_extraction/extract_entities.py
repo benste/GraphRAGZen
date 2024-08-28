@@ -1,6 +1,5 @@
 import numbers
 import re
-from random import sample
 from typing import Any, Optional, Tuple, Union
 
 import networkx as nx
@@ -66,68 +65,6 @@ def extract_raw_entities(
     dataframe[config.results_column] = raw_extracted_entities
 
     return dataframe
-
-
-def extract_more_edges(
-    graph: nx.Graph,
-    llm: LLM,
-    prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
-    **kwargs: Union[dict, EntityExtractionConfig, Any],
-) -> str:
-    """Extracts more edges from a graph. It simply takes the nodes from the graph and asks the LLM
-    if there are edges between these nodes.
-
-    Args:
-        graph (nx.Graph)
-        llm (LLM)
-        prompt_config (Optional[EntityExtractionPromptConfig], optional):See
-            graphragzen.entity_extraction.EntityExtractionPromptConfig
-        extra_edges_iterations (int, optional): During extra edge extraction random nodes are
-            selected to find relationships. If extra edges are extracted, how many runs are
-            performed. Defaults to 100.
-        extra_edges_max_nodes (int, optional): During extra edge extraction random nodes are
-            selected to find relationships. How many nodes should be selected per sample?
-            Defaults to 20.
-
-    Returns:
-        str: Raw LLM output
-    """
-    config = EntityExtractionConfig(**kwargs)  # type: ignore
-    prompt_config = prompt_config or EntityExtractionPromptConfig()
-
-    nodes = list(graph.nodes(data=True))
-
-    raw_extracted_edges = ""
-    for _ in tqdm(range(config.extra_edges_iterations), desc="finding more edges"):
-        # Sample nodes
-        sampled_nodes = sample(nodes, min([len(nodes), config.extra_edges_max_nodes]))
-
-        # Create a string from the nodes
-        tuple_delimiter = prompt_config.formatting.tuple_delimiter
-        entities_string = prompt_config.formatting.record_delimiter.join(
-            [_node_to_entity_string(node, tuple_delimiter) for node in sampled_nodes]
-        )
-        prompt_config.formatting.entities_string = entities_string
-
-        # Create final prompt
-        prompt = prompt_config.prompts.entity_relationship_prompt.format(
-            **prompt_config.formatting.model_dump()
-        )
-
-        # Run prompt
-        chat = llm.format_chat([("user", prompt)])
-        llm_output = llm.run_chat(chat).removesuffix(prompt_config.formatting.completion_delimiter)
-        raw_extracted_edges += prompt_config.formatting.record_delimiter + llm_output
-
-    return raw_extracted_edges
-
-
-def _node_to_entity_string(node: tuple, tuple_delimiter: str) -> str:
-    node_name = node[0]
-    node_type = node[1]["type"]
-    node_description = node[1]["description"]
-
-    return f"(entity{tuple_delimiter}{node_name}{tuple_delimiter}{node_type}{tuple_delimiter}{node_description})"  # noqa: E501
 
 
 def raw_entities_to_graph(
