@@ -1,10 +1,12 @@
-from typing import Any, Union
+from typing import Optional
 
 from .embedding_models import NomicTextEmbedder
-from .typing import EmbedderLoadingConfig
 
 
-def load_nomic_embed_text(**kwargs: Union[dict, EmbedderLoadingConfig, Any]) -> NomicTextEmbedder:
+def load_nomic_embed_text(
+    model_storage_path: Optional[str] = None,
+    huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5",
+) -> NomicTextEmbedder:
     """Load the nomic text embedder.
 
     note: Either or both `model_storage_path` or `huggingface_URI` must be set. When both are
@@ -18,9 +20,8 @@ def load_nomic_embed_text(**kwargs: Union[dict, EmbedderLoadingConfig, Any]) -> 
     Returns:
         NomicTextEmbedder
     """
-    config = EmbedderLoadingConfig(**kwargs)  # type: ignore
 
     # Get the local model path, and if not provided the huggingface URI
-    model_URI_path = config.model_storage_path or config.huggingface_URI
+    model_URI_path = model_storage_path or huggingface_URI
 
     return NomicTextEmbedder(model_path_or_huggingface_URI=model_URI_path)

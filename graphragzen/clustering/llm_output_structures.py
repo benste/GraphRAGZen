@@ -7,6 +7,7 @@ class Finding(BaseModel):
     summary: str
     explanation: str
 
+
 class ClusterDescription(BaseModel):
     title: str
     summary: str

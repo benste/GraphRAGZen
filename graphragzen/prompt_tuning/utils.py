@@ -1,12 +1,14 @@
-from typing import Any, List, Union
+from typing import List, Optional
 
 from graphragzen.llm.base_llm import LLM
-
-from .typing import GenerateDomainConfig, GeneratePersonaConfig
+from graphragzen.prompts.prompt_tuning import domain, persona
 
 
 def generate_domain(
-    llm: LLM, documents: List[str], **kwargs: Union[dict, GenerateDomainConfig, Any]
+    llm: LLM,
+    documents: List[str],
+    prompt: str = domain.GENERATE_DOMAIN_PROMPT,
+    domain: Optional[str] = None,
 ) -> str:
     """Generate a domain to use for GraphRAG prompts.
 
@@ -23,20 +25,21 @@ def generate_domain(
     Returns:
         str: domain
     """
-    config = GenerateDomainConfig(**kwargs)  # type: ignore
 
-    if config.domain:
+    if domain:
         # User provided a domain, no need to generate one
-        return config.domain
+        return domain
 
     docs_str = "\n".join(documents)
-    domain_prompt = config.prompt.format(input_text=docs_str)
+    domain_prompt = prompt.format(input_text=docs_str)
     chat = llm.format_chat([("user", domain_prompt)])
     return llm.run_chat(chat)
 
 
 def generate_persona(
-    llm: LLM, domain: str, **kwargs: Union[dict, GeneratePersonaConfig, Any]
+    llm: LLM,
+    domain: str,
+    prompt: str = persona.GENERATE_PERSONA_PROMPT,
 ) -> str:
     """Generate a persona relevant to a domain to use for GraphRAG prompts.
 
@@ -49,9 +52,8 @@ def generate_persona(
     Returns:
         str: persona
     """
-    config = GeneratePersonaConfig(**kwargs)  # type: ignore
 
-    persona_prompt = config.prompt.format(domain=domain)
+    persona_prompt = prompt.format(domain=domain)
 
     chat = llm.format_chat([("user", persona_prompt)])
     return llm.run_chat(chat)

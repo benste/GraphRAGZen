@@ -1,14 +1,13 @@
-from typing import Any, List, Union
+from typing import List, Optional
 
 from graphragzen.feature_merging import _num_tokens_from_string
 from graphragzen.llm.base_llm import LLM
-from tqdm import tqdm
-
-from .typing import (
-    CreateEntityExtractionPromptConfig,
-    GenerateEntityRelationshipExamplesConfig,
-    GenerateEntityCategoriesConfig,
+from graphragzen.prompts.prompt_tuning import (
+    entity_categories,
+    entity_extraction,
+    entity_relationship,
 )
+from tqdm import tqdm
 
 
 def generate_entity_categories(
@@ -16,7 +15,8 @@ def generate_entity_categories(
     documents: List[str],
     domain: str,
     persona: str,
-    **kwargs: Union[dict, GenerateEntityCategoriesConfig, Any],
+    prompt: str = entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT,
+    entity_categories: Optional[List[str]] = None,
 ) -> str | list[str]:
     """Generate entity categories from a given set of (small) documents.
 
@@ -37,15 +37,14 @@ def generate_entity_categories(
 
     Returns:
         str | list[str]: entity categories
-    """
-    config = GenerateEntityCategoriesConfig(**kwargs)  # type: ignore
+    """  # noqa: E501
 
-    if config.entity_categories:
+    if entity_categories:
         # User provided entity categories, no need to generate them
-        return config.entity_categories
+        return entity_categories
 
     docs_str = "\n".join(documents)
-    entity_categories_prompt = config.prompt.format(domain=domain, input_text=docs_str)
+    entity_categories_prompt = prompt.format(domain=domain, input_text=docs_str)
     chat = llm.format_chat([("model", persona), ("user", entity_categories_prompt)])
     return llm.run_chat(chat)
 
@@ -55,7 +54,9 @@ def generate_entity_relationship_examples(
     documents: List[str],
     persona: str,
     entity_categories: list[str],
-    **kwargs: Union[dict, GenerateEntityRelationshipExamplesConfig, Any],
+    prompt: str = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
+    example_template: str = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE,
+    max_examples: int = 5,
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity
         extraction prompt.
@@ -78,14 +79,13 @@ def generate_entity_relationship_examples(
     Returns:
         list[str]: Entity relationship examples
     """  # noqa: E501
-    config = GenerateEntityRelationshipExamplesConfig(**kwargs)  # type: ignore
 
     entity_categories_str = ", ".join(entity_categories)
-    sampled_documents = documents[: config.max_examples]
+    sampled_documents = documents[:max_examples]
 
     history = llm.format_chat([("model", persona)])
     messages = [
-        config.prompt.format(entity_categories=entity_categories_str, input_text=doc)
+        prompt.format(entity_categories=entity_categories_str, input_text=doc)
         for doc in sampled_documents
     ]
 
@@ -96,7 +96,7 @@ def generate_entity_relationship_examples(
 
     # Format the examples and return
     return [
-        config.example_template.format(
+        example_template.format(
             n=i + 1, input_text=doc, entity_categories=entity_categories_str, output=entity_relation
         )
         for i, (doc, entity_relation) in enumerate(zip(sampled_documents, entity_relations))
@@ -107,7 +107,8 @@ def create_entity_extraction_prompt(
     llm: LLM,
     entity_categories: List[str],
     entity_relationship_examples: List[str],
-    **kwargs: Union[dict, CreateEntityExtractionPromptConfig, Any],
+    prompt_template: str = entity_extraction.ENTITY_EXTRACTION_TEMPLATE,
+    prompt_max_tokens: int = 3000,
 ) -> str:
     """Create a prompt for entity extraction.
 
@@ -128,13 +129,12 @@ def create_entity_extraction_prompt(
     Returns:
         str: Prompt to use for entity extraction
     """  # noqa: E501
-    config = CreateEntityExtractionPromptConfig(**kwargs)  # type: ignore
 
-    prompt = config.prompt_template
+    prompt = prompt_template
     entity_categories_string = ", ".join(entity_categories)
 
     tokens_left = (
-        config.prompt_max_tokens
+        prompt_max_tokens
         - _num_tokens_from_string(prompt, llm.tokenizer)
         - _num_tokens_from_string(entity_categories_string, llm.tokenizer)
     )

@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import List, Optional, Union
 from uuid import uuid4
 
 import networkx as nx
@@ -7,31 +7,31 @@ from graphragzen.text_embedding.embedding_models import BaseEmbedder
 from graphragzen.text_embedding.vector_db import add_points_to_vector_db
 from qdrant_client import QdrantClient
 
-from .typing import EmbedDataframeConfig, EmbedGraphFeaturesConfig
-
 
 def embed_graph_features(
     graph: nx.Graph,
     embedding_model: BaseEmbedder,
+    features_to_embed: Union[List[str], str],
     vector_db_client: Optional[QdrantClient] = None,
-    **kwargs: Union[dict, EmbedGraphFeaturesConfig, Any],
 ) -> pd.DataFrame:
     """Text embed features of entities from a graph.
 
     Args:
         graph (nx.Graph):
         embedding_model (BaseEmbedder):
+        features_to_embed (List[str]): Features of the entities (node or edge) the embed
         vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
             vector database.
-        features_to_embed (List[str]): Features of the entities (node or edge) the embed
 
     Returns:
         pd.DataFrame: with keys 'entity_name', 'entity_type', 'feature', 'uuid', 'vector'
     """
-    config = EmbedGraphFeaturesConfig(**kwargs)  # type: ignore
+
+    if isinstance(features_to_embed, str):
+        features_to_embed = [features_to_embed]
 
     embeddings = []
-    for feature_to_embed in config.features_to_embed:
+    for feature_to_embed in features_to_embed:
         # Get the node features to embed
         for entity in graph.nodes(data=True):
             entity_name = entity[0]
@@ -83,7 +83,7 @@ def embed_dataframe(
     dataframe: pd.DataFrame,
     embedding_model: BaseEmbedder,
     vector_db_client: Optional[QdrantClient] = None,
-    **kwargs: Union[dict, EmbedDataframeConfig, Any],
+    columns_to_embed: List[str] = [],
 ) -> pd.DataFrame:
     """_summary_
 
@@ -93,20 +93,19 @@ def embed_dataframe(
         vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
             vector database.
         columns_to_embed (List[str], optional): Which columns to embed. If not provided embeds all
-            columns of that contain strings or Null. Defaults to None.
+            columns of that contain strings or Null. Defaults to [].
 
     Returns:
         pd.DataFrame: With vector columns added as f"{original_column}_vector"
     """
-    config = EmbedDataframeConfig(**kwargs)  # type: ignore
 
-    if not config.columns_to_embed:
+    if not columns_to_embed:
         # Get all columns that contain strings or Null
         for column in dataframe:
             if pd.api.types.is_string_dtype(dataframe[column].dropna()):
-                config.columns_to_embed.append(column)
+                columns_to_embed.append(column)
 
-    for to_embed in config.columns_to_embed:
+    for to_embed in columns_to_embed:
         # Make a placehold for Na's, we'll replace their vectors with nan's later
         isna = dataframe[to_embed].isna().tolist()
         dataframe[to_embed][isna] = "_na_placeholder_"

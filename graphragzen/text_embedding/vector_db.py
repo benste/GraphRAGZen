@@ -1,7 +1,7 @@
 import os
 import shutil
 import warnings
-from typing import Any, Union, List, Optional
+from typing import Any, Literal, Optional
 
 import numpy as np
 import pandas as pd
@@ -9,10 +9,15 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import PointStruct, VectorParams
 from qdrant_client.models import FieldCondition, Filter, MatchValue
 
-from .typing import VectorDBConfig
 
-
-def create_vector_db(**kwargs: Union[dict, VectorDBConfig, Any]) -> QdrantClient:
+def create_vector_db(
+    vector_size: int,
+    database_location: Optional[str] = None,
+    overwrite_existing_db: bool = False,
+    distance_measure: Literal["Cosine", "Euclid", "Dot", "Manhattan"] = "Cosine",
+    on_disk: bool = False,
+    collection_name: str = "default",
+) -> QdrantClient:
     """Create an instance of a vector database and return a client for interaction.
 
     Args:
@@ -34,45 +39,44 @@ def create_vector_db(**kwargs: Union[dict, VectorDBConfig, Any]) -> QdrantClient
     Returns:
         QdrantClient
     """
-    config = VectorDBConfig(**kwargs)  # type: ignore
 
     # If no db location is provided, set a temporary location
-    if config.database_location is None:
+    if database_location is None:
         base_location = "qdrant/temp_db"
         location_postfix = 0
-        config.database_location = f"{base_location}{location_postfix}"
-        while os.path.exists(config.database_location):
+        database_location = f"{base_location}{location_postfix}"
+        while os.path.exists(database_location):
             location_postfix += 1
-            config.database_location = f"{base_location}{location_postfix}"
+            database_location = f"{base_location}{location_postfix}"
 
         warnings.warn(
-            f"No location provided for vector DB, creating temporary db in {config.database_location}"  # noqa: E501
+            f"No location provided for vector DB, creating temporary db in {database_location}"  # noqa: E501
         )
 
     # Check if there's already a database at `database_location`
-    if os.path.exists(config.database_location):
-        if config.overwrite_existing_db:
+    if os.path.exists(database_location):
+        if overwrite_existing_db:
             # Remove the database already there
-            shutil.rmtree(os.path.join(config.database_location, "collection"), ignore_errors=True)
-            os.remove(os.path.join(config.database_location, ".lock"))
-            os.remove(os.path.join(config.database_location, "meta.json"))
+            shutil.rmtree(os.path.join(database_location, "collection"), ignore_errors=True)
+            os.remove(os.path.join(database_location, ".lock"))
+            os.remove(os.path.join(database_location, "meta.json"))
         else:
             # Database already exists and we do not have permission to overwrite
             raise Exception(
-                f"""{config.database_location} already exists. Set 'overwrite_db' to True or load
+                f"""{database_location} already exists. Set 'overwrite_db' to True or load
                 the existing database using `load_vector_db`"""
             )
 
     # Create the client
-    client = QdrantClient(path=config.database_location)
+    client = QdrantClient(path=database_location)
 
     # Create a collection
-    add_collection_to_db(client=client, config=config)
+    add_collection_to_db(client, vector_size, distance_measure, on_disk, collection_name)
 
     return client
 
 
-def save_vector_db(client: QdrantClient, **kwargs: Union[dict, VectorDBConfig, Any]) -> None:
+def save_vector_db(client: QdrantClient, database_location: str) -> None:
     """This just copies the DB to a new location. Does not work for :memory: qdrant client instances
     since they life in RAM.
 
@@ -81,38 +85,58 @@ def save_vector_db(client: QdrantClient, **kwargs: Union[dict, VectorDBConfig, A
         database_location (str): path to store the DB
     """
 
-    config = VectorDBConfig(**kwargs)  # type: ignore
-
-    if config.database_location:
-        if os.path.exists(config.database_location):
+    if database_location:
+        if os.path.exists(database_location):
             # Database already exists at this location
             raise Exception(
-                f"Trying to save vector DB to {config.database_location}, but path already exists."
+                f"Trying to save vector DB to {database_location}, but path already exists."
             )
 
-        shutil.copytree(src=client._client.location, dst=config.database_location)  # type: ignore
+        shutil.copytree(src=client._client.location, dst=database_location)  # type: ignore
 
 
-def load_vector_db(**kwargs: Union[dict, VectorDBConfig, Any]) -> QdrantClient:
-    config = VectorDBConfig(**kwargs)  # type: ignore
-    return QdrantClient(path=config.database_location)
+def load_vector_db(database_location: str) -> QdrantClient:
+    """Load a qdrant vector database from disk
+
+    Args:
+        database_location (str): Path to the database to load
+
+    Returns:
+        QdrantClient
+    """
+    return QdrantClient(path=database_location)
 
 
-def add_collection_to_db(client: QdrantClient, **kwargs: Union[dict, VectorDBConfig, Any]) -> None:
-    config = VectorDBConfig(**kwargs)  # type: ignore
+def add_collection_to_db(
+    client: QdrantClient,
+    vector_size: int,
+    distance_measure: Literal["Cosine", "Euclid", "Dot", "Manhattan"] = "Cosine",
+    on_disk: bool = False,
+    collection_name: str = "default",
+) -> None:
+    """Initiate a new collection in the DB. This will set the vector size and distance measure.
 
-    if client.collection_exists(config.collection_name):
-        warnings.warn(
-            f"collection {config.collection_name} already exists in vector DB, won't add it."
-        )
+    Args:
+        vector_size (int): Length of the vectors to store .
+        distance_measure (Literal['Cosine', 'Euclid', 'Dot', 'Manhattan'], optional): Method to
+            calculate distances between vectors. Defaults to 'Cosine'
+        on_disk (bool, optional): If true, v`ectors are served from disk, improving RAM usage at the
+            cost of latency. Defaults to False.
+        collection_name (str, optional): QDrant can have multiple separated collections in one DB,
+            each collection containing their own vectors. For the purpose of RAG it's recommended to
+            create a new DB for each new project and stick to one collection name per DB.
+    """
+
+    if client.collection_exists(collection_name):
+        warnings.warn(f"collection {collection_name} already exists in vector DB, won't add it.")
         return None
 
     vectors_config = VectorParams(
-        size=config.vector_size,
-        distance=config.distance_measure,  # type: ignore
-        on_disk=config.on_disk,
+        size=vector_size,
+        distance=distance_measure,  # type: ignore
+        on_disk=on_disk,
     )
-    client.create_collection(collection_name=config.collection_name, vectors_config=vectors_config)
+    client.create_collection(collection_name=collection_name, vectors_config=vectors_config)
 
 
 def add_points_to_vector_db(
@@ -156,25 +180,25 @@ def add_points_to_vector_db(
         collection_name=collection_name,
         points=points,
     )
-    
-    
+
+
 def search_vector_db(
     client: QdrantClient,
     query_vector: np.ndarray,
     k: int,
-    filters: Optional[List[dict]] = {},
+    filters: dict = {},
     collection_name: str = "default",
-    ) -> Any:
+) -> Any:
     """Search the vector database with optional filters on the metadata attached to the points.
-    
-    Note: The distance measure used to search is set when the database is created, see 
+
+    Note: The distance measure used to search is set when the database is created, see
     `graphragzen.text_embedding.vector_db.create_vector_db()`
 
     Args:
         client (QdrantClient)
         query_vector (np.ndarray): Shaped (n,) or (n,1) where n is the size of the vectors to search
         k (int): Max number of results to return
-        filters (List[dict]), optional: [{"key": "value_it_should_have"}, {"key": "value_it .....
+        filters (dict), optional: {"key": "value_it_should_have", "key2": "value_it .....
         collection_name (str, optional): Collection to search vectors in.
             QDrant can have multiple separated collections in one DB,
             each collection containing their own vectors. For the purpose of RAG it's recommended to
@@ -184,16 +208,16 @@ def search_vector_db(
     Returns:
         Any: _description_
     """
-    
+
     # Format the filters for qdrant
-    query_filter = []
-    for key, value in filters.items():
-        query_filter.append([FieldCondition(key=key, match=MatchValue(value=value))])
-    query_filter = Filter(must=query_filter)
-    
+    query_filter_list = [
+        FieldCondition(key=key, match=MatchValue(value=value)) for key, value in filters.items()
+    ]
+    query_filter = Filter(must=query_filter_list)  # type: ignore
+
     return client.search(
         collection_name=collection_name,
         query_vector=query_vector,
         query_filter=query_filter,
-        limit=k
+        limit=k,
     )

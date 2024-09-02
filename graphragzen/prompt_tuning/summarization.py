@@ -1,10 +1,9 @@
-from typing import Any, Union
-
-from .typing import CreateDescriptionSummarizationPromptConfig
+from graphragzen.prompts.prompt_tuning import entity_summarization
 
 
 def create_description_summarization_prompt(
-    persona: str, **kwargs: Union[dict, CreateDescriptionSummarizationPromptConfig, Any]
+    persona: str,
+    prompt_template: str = entity_summarization.ENTITY_SUMMARIZATION_TEMPLATE,
 ) -> str:
     """Create a prompt for entity summarization.
 
@@ -16,6 +15,5 @@ def create_description_summarization_prompt(
     Returns:
         str: Prompt to use for entity summarization
     """  # noqa: E501
-    config = CreateDescriptionSummarizationPromptConfig(**kwargs)  # type: ignore
 
-    return config.prompt_template.format(persona=persona)
+    return prompt_template.format(persona=persona)

@@ -1,21 +1,25 @@
 from collections import Counter
 from functools import partial
-from typing import Any, List, Optional, Union
+from typing import List, Literal, Optional, Union
 
 import networkx as nx
 from graphragzen.llm.base_llm import LLM
 from numpy import mean
 from tqdm import tqdm
 
-from .typing import MergeFeaturesConfig, MergeFeaturesPromptConfig
+from .typing import MergeFeaturesPromptConfig
 from .utils import _num_tokens_from_string
 
 
 def merge_graph_features(
     graph: nx.Graph,
     llm: Optional[LLM],
-    prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig, Any],
+    feature: str,
+    prompt: MergeFeaturesPromptConfig = MergeFeaturesPromptConfig(),
+    how: Literal["LLM", "count", "mean"] = "LLM",
+    feature_delimiter: str = "\n",
+    max_input_tokens: int = 4000,
+    max_output_tokens: int = 500,
 ) -> nx.Graph:
     """Summarize lists of descriptions for each node or edge
 
@@ -23,11 +27,11 @@ def merge_graph_features(
         graph (nx.Graph): With edges and nodes expected to have the feature 'description'.
             The descriptions are expected to be delimited by Kwargs["feature_delimiter"]
         llm (LLM, optional): Only used if `how` is set to 'LLM'. Dedaults to None.
+        feature (str): The feature attached to a graph entity (node or edge) to merge.
         prompt (MergeFeaturesPromptConfig, optional): Will be formatted with the feature
             to send to the LLM. Only used if `how` is set to 'LLM'.
             See `graphragzen.typing.MergeFeaturesPromptConfig`.
             Defaults to MergeFeaturesPromptConfig.
-        feature (str): The feature attached to a graph entity (node or edge) to merge.
         how (Literal['LLM', 'count', 'mean'], optional): 'LLM' summarizes the features.
             'count' takes the feature that occurs most. 'mean' takes the mean of the feature.
             Defaults to 'LLM'.
@@ -43,29 +47,30 @@ def merge_graph_features(
     Returns:
         nx.Graph
     """
-    config = MergeFeaturesConfig(**kwargs)  # type: ignore
 
     item_merger = partial(
         merge_item_feature,
         llm=llm,
         prompt=prompt,
-        **config,
+        how=how,
+        max_input_tokens=max_input_tokens,
+        max_output_tokens=max_output_tokens,
     )
 
-    for node in tqdm(graph.nodes(data=True), desc=f"Merging {config.feature} of nodes"):
+    for node in tqdm(graph.nodes(data=True), desc=f"Merging {feature} of nodes"):
         entity_name = node[0]
         # Split and sort the feature
-        feature_list = sorted(set(node[1].get(config.feature, "").split(config.feature_delimiter)))
+        feature_list = sorted(set(node[1].get(feature, "").split(feature_delimiter)))
         # Merge
         if feature_list:
-            graph.nodes[entity_name][config.feature] = item_merger(
+            graph.nodes[entity_name][feature] = item_merger(
                 entity_name=entity_name, feature_list=feature_list
             )
 
-    for edge in tqdm(graph.edges(data=True), desc=f"Merging {config.feature} of edges"):
+    for edge in tqdm(graph.edges(data=True), desc=f"Merging {feature} of edges"):
         entity_name = edge[:2]
         # Split and sort the feature
-        feature_list = sorted(set(edge[2].get(config.feature, "").split(config.feature_delimiter)))
+        feature_list = sorted(set(edge[2].get(feature, "").split(feature_delimiter)))
         # Merge
         if feature_list:
             graph.edges[entity_name]["description"] = item_merger(
@@ -80,7 +85,9 @@ def merge_item_feature(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig, Any],
+    how: Literal["LLM", "count", "mean"] = "LLM",
+    max_input_tokens: int = 4000,
+    max_output_tokens: int = 500,
 ) -> Union[str, float]:
     """For a single node or edge, merge one feature that is however a list.
 
@@ -104,15 +111,16 @@ def merge_item_feature(
     Returns:
         str: summary
     """
-    config = MergeFeaturesConfig(**kwargs)  # type: ignore
 
-    match config.how.lower():
+    match how.lower():
         case "count":
             return _count_merge(feature_list)
         case "mean":
             return _mean_merge(feature_list)
         case "llm":
-            return _LLM_merge(entity_name, feature_list, llm, prompt, **config)
+            return _LLM_merge(
+                entity_name, feature_list, llm, prompt, max_input_tokens, max_output_tokens
+            )
         case _:
             # If an exact match is not confirmed, raise exception
             raise Exception(
@@ -151,7 +159,8 @@ def _LLM_merge(
     feature_list: List[str],
     llm: Optional[LLM],
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
-    **kwargs: Union[dict, MergeFeaturesConfig, Any],
+    max_input_tokens: int = 4000,
+    max_output_tokens: int = 500,
 ) -> str:
     """Use a LLM to summarize a list of descriptions
 
@@ -172,7 +181,6 @@ def _LLM_merge(
     Returns:
         str: summary
     """
-    config = MergeFeaturesConfig(**kwargs)  # type: ignore
 
     if llm is None:
         raise Exception("No LLM provided; cannot merge features with strategy 'LLM'")
@@ -187,7 +195,7 @@ def _LLM_merge(
         chat = llm.format_chat([("user", prompt)])
         return llm.run_chat(chat, max_tokens=max_output_tokens)
 
-    usable_tokens = config.max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
+    usable_tokens = max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
 
     descriptions_collected = []
     for feature in feature_list:
@@ -199,14 +207,14 @@ def _LLM_merge(
             # Calculate result (final or partial)
             prompt.formatting.entity_name = entity_name
             prompt.formatting.description_list = descriptions_collected
-            summarized = _summarize(llm, prompt, config.max_output_tokens)
+            summarized = _summarize(llm, prompt, max_output_tokens)
 
             # Add summarization to 'descriptions' to be part of the next possible loop
             descriptions_collected = [summarized]
 
             # reset values for a possible next loop
             usable_tokens = (
-                config.max_input_tokens
+                max_input_tokens
                 - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
                 - _num_tokens_from_string(summarized, llm.tokenizer)
             )
@@ -218,4 +226,4 @@ def _LLM_merge(
     prompt.formatting.entity_name = entity_name
     prompt.formatting.description_list = descriptions_collected
 
-    return _summarize(llm, prompt, config.max_output_tokens)
+    return _summarize(llm, prompt, max_output_tokens)

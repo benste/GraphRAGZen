@@ -7,9 +7,9 @@ from hashlib import sha256
 from typing import Any, Iterator, List, Optional, Union
 
 import yaml
-from pydantic import BaseModel
+from pydantic._internal._model_construction import ModelMetaclass
 
-from .typing import ChatNames, LlmLoadingConfig
+from .typing import ChatNames
 
 
 @dataclass
@@ -19,8 +19,11 @@ class LLM:
     re-process input.
     """
 
-    config: LlmLoadingConfig
-    model: Any = None
+    context_size = 0
+    use_cache = True
+    cache_persistent = False
+    persistent_cache_file = ""
+    model_name: Any = None
     tokenizer: Any = None
     chatnames: ChatNames = ChatNames()
 
@@ -28,14 +31,15 @@ class LLM:
         self._initiate_cache()
 
     def __call__(
-        self, input: Any, output_structure: Optional[BaseModel] = None, **kwargs: Any
+        self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
     ) -> Any:
         """Call the LLM as you would llm(input)
 
         Args:
             input (Any): Any input you would normally pass to llm(input, kwargs)
-            output_structure (BaseModel, optional): Output structure to force, e.g. grammars from
-                llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the reference.
+            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
+                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+                reference.
                 Correct = BaseLlamCpp("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp("some text", MyPydanticModel())
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
@@ -49,7 +53,7 @@ class LLM:
         self,
         chat: List[dict],
         max_tokens: int = -1,
-        output_structure: Optional[BaseModel] = None,
+        output_structure: Optional[ModelMetaclass] = None,
         stream: bool = False,
     ) -> str:
         """Runs a chat through the LLM
@@ -57,7 +61,8 @@ class LLM:
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
             max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
-            output_structure (BaseModel): Output structure to force. e.g. grammars from llama.cpp.
+            output_structure (ModelMetaclass): Output structure to force. e.g. grammars from
+                llama.cpp.
             stream (bool, optional): If True, streams the results to console. Defaults to False.
 
         Returns:
@@ -65,7 +70,7 @@ class LLM:
         """
         return ""
 
-    def tokenize(self, content: str) -> List[str]:
+    def tokenize(self, content: str) -> Union[List[str], List[int]]:
         """Tokenize a string
 
         Args:
@@ -116,10 +121,10 @@ class LLM:
             try:
                 # llama-cpp-python output
                 token = s["choices"][0]["text"]
-            except Exception(TypeError):
+            except TypeError:
                 # OpenAI compatible output
                 token = s.choices[0].delta.content
-                
+
             print(token, end="", flush=True)
             full_text += token
             num_tokens += 1
@@ -183,8 +188,8 @@ class LLM:
             hash = sha256(llm_input.encode("utf-8")).hexdigest()
             self.cache.update({hash: llm_output})
 
-            if self.config.cache_persistent:
-                with open(self.config.persistent_cache_file, "a") as cache_file:
+            if self.cache_persistent:
+                with open(self.persistent_cache_file, "a") as cache_file:
                     cache_file.write("\n")
                     cache_file.write(yaml.dump({hash: llm_output}))
 
@@ -194,18 +199,16 @@ class LLM:
         """
         self.cache = None
 
-        if self.config.use_cache:
+        if self.use_cache:
             self.cache = {}
 
-            if self.config.cache_persistent and self.config.persistent_cache_file:
+            if self.cache_persistent and self.persistent_cache_file:
                 # Load or create persisten cache file
-                if not os.path.isfile(self.config.persistent_cache_file):
-                    os.makedirs(
-                        os.path.dirname(self.config.persistent_cache_file) or "./", exist_ok=True
-                    )
+                if not os.path.isfile(self.persistent_cache_file):
+                    os.makedirs(os.path.dirname(self.persistent_cache_file) or "./", exist_ok=True)
 
                 else:
-                    with open(self.config.persistent_cache_file, "r") as stream:
+                    with open(self.persistent_cache_file, "r") as stream:
                         self.cache = yaml.safe_load(stream)
 
                     if not self.cache:
@@ -216,6 +219,6 @@ class LLM:
                 warnings.warn(
                     f"""LLM initiated with persisten cache but invalid persistent cache file
                     provided.
-                    Persistent cache file provided: {self.config.persistent_cache_file}"""
+                    Persistent cache file provided: {self.persistent_cache_file}"""
                 )
-                self.config.cache_persistent = False
+                self.cache_persistent = False

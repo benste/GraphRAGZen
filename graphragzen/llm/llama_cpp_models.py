@@ -3,25 +3,25 @@ import sys
 from typing import Any, List, Optional, Union
 
 from graphragzen.llm.base_llm import LLM
-from llama_cpp import Llama  # , LlamaCache
-from pydantic import BaseModel
+from llama_cpp import Llama
 from pydantic._internal._fields import PydanticMetadata
+from pydantic._internal._model_construction import ModelMetaclass
 from transformers import AutoTokenizer
 
-from .typing import ChatNames, LlmLoadingConfig
+from .typing import ChatNames
 
 # llama_prompter imports pydantic._internal._fields.PydanticGeneralMetadata
 # but it should import pydantic._internal._fields.PydanticMetadata
 # This hack fixes that by creating an alias
-sys.modules["pydantic._internal._fields"].PydanticGeneralMetadata = PydanticMetadata
-from llama_prompter import Prompter
+sys.modules["pydantic._internal._fields"].PydanticGeneralMetadata = PydanticMetadata  # type: ignore
+from llama_prompter import Prompter  # noqa: F401, E402
 
 
 # llama_prompter is used to create the grammar that forces a specific structure to the LLM output.
 # It calls llama_cpp.llama_grammar.LlamaGrammar.from_string with verbosity to False, but sadly
 # that function did not implement a verbosity check and still prints to the terminal.
 # The following function will suppressing sys.stdout
-def suppress_prompter_output(output_structure: BaseModel) -> Prompter:
+def suppress_prompter_output(output_structure: ModelMetaclass) -> Prompter:
     # Save the current stdout
     original_stdout = sys.stdout
     try:
@@ -39,18 +39,36 @@ def suppress_prompter_output(output_structure: BaseModel) -> Prompter:
 class BaseLlamCpp(LLM):
     """Loads a GGUF model using llama cpp python and it's corresponding tokenizer from HF"""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        model_storage_path: str,
+        tokenizer_URI: str,
+        context_size: int = 8192,
+        use_cache: bool = True,
+        cache_persistent: bool = True,
+        persistent_cache_file: str = "./llm_persistent_cache.yaml",
+    ) -> None:
+
+        self.context_size = context_size
+        self.use_cache = use_cache
+        self.cache_persistent = cache_persistent
+        self.persistent_cache_file = persistent_cache_file
+
+        self.model = Llama(model_path=model_storage_path, verbose=False, n_ctx=context_size)
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_URI)
+
         super().__init__()
 
     def __call__(
-        self, input: Any, output_structure: Optional[BaseModel] = None, **kwargs: Any
+        self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
     ) -> Any:
         """Call the LLM as you would llm(input), but allow to force an output structure.
 
         Args:
             input (Any): Any input you would normally pass to llm(input, kwargs)
-            output_structure (BaseModel, optional): Output structure to force, e.g. grammars from
-                llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the reference.
+            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
+                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+                reference.
                 Correct = BaseLlamCpp("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp("some text", MyPydanticModel())
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
@@ -72,7 +90,7 @@ class BaseLlamCpp(LLM):
         self,
         chat: List[dict],
         max_tokens: int = -1,
-        output_structure: Optional[BaseModel] = None,
+        output_structure: Optional[ModelMetaclass] = None,
         stream: bool = False,
     ) -> str:
         """Runs a chat through the LLM
@@ -80,8 +98,9 @@ class BaseLlamCpp(LLM):
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
             max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
-            output_structure (BaseModel, optional): Output structure to force, e.g. grammars from
-                llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the reference.
+            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammar
+                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+                reference.
                 Correct = BaseLlamCpp.run_chat("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp.run_chat("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
@@ -135,7 +154,7 @@ class BaseLlamCpp(LLM):
             self.tokenizer.apply_chat_template(chat, tokenize=True, add_generation_prompt=True)
         )
 
-    def tokenize(self, content: str) -> List[str]:
+    def tokenize(self, content: str) -> Union[List[str], List[int]]:
         """Tokenize a string
 
         Args:
@@ -163,28 +182,48 @@ class BaseLlamCpp(LLM):
 class Gemma2GGUF(BaseLlamCpp):
     """Loads the GGUF version of a gemma2 model using llama-cpp-python"""
 
-    def __init__(self, **kwargs: Union[dict, LlmLoadingConfig, Any]) -> None:
-        config = LlmLoadingConfig(**kwargs)  # type: ignore
-        self.model = Llama(
-            model_path=config.model_storage_path, verbose=False, n_ctx=config.context_size
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained(config.tokenizer_URI)
-        self.chatnames = ChatNames(user="user", model="assistant")
-        self.config = config
+    def __init__(
+        self,
+        model_storage_path: str,
+        tokenizer_URI: str,
+        context_size: int = 8192,
+        use_cache: bool = True,
+        cache_persistent: bool = True,
+        persistent_cache_file: str = "./llm_persistent_cache.yaml",
+    ) -> None:
 
-        super().__init__()
+        self.chatnames = ChatNames(user="user", model="assistant")
+
+        super().__init__(
+            model_storage_path,
+            tokenizer_URI,
+            context_size,
+            use_cache,
+            cache_persistent,
+            persistent_cache_file,
+        )
 
 
 class Phi35MiniGGUF(BaseLlamCpp):
     """Loads the GGUF version of a Phi 3.5 Mini model using llama-cpp-python"""
 
-    def __init__(self, **kwargs: Union[dict, LlmLoadingConfig, Any]):
-        config = LlmLoadingConfig(**kwargs)  # type: ignore
-        self.model = Llama(
-            model_path=config.model_storage_path, verbose=False, n_ctx=config.context_size
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained(config.tokenizer_URI)
-        self.chatnames = ChatNames(system="system", user="user", model="assistant")
-        self.config = config
+    def __init__(
+        self,
+        model_storage_path: str,
+        tokenizer_URI: str,
+        context_size: int = 8192,
+        use_cache: bool = True,
+        cache_persistent: bool = True,
+        persistent_cache_file: str = "./llm_persistent_cache.yaml",
+    ) -> None:
 
-        super().__init__()
+        self.chatnames = ChatNames(system="system", user="user", model="assistant")
+
+        super().__init__(
+            model_storage_path,
+            tokenizer_URI,
+            context_size,
+            use_cache,
+            cache_persistent,
+            persistent_cache_file,
+        )

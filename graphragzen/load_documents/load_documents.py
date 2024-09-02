@@ -1,13 +1,14 @@
 import os
 from collections import defaultdict
-from typing import Any, Union
+from typing import Optional
 
 import pandas as pd
 
-from .typing import LoadTextDocumentsConfig
 
-
-def load_text_documents(**kwargs: Union[dict, LoadTextDocumentsConfig, Any]) -> pd.DataFrame:
+def load_text_documents(
+    raw_documents_folder: str,
+    raw_content_column: Optional[str] = "content",
+) -> pd.DataFrame:
     """loads files from folder path and subfolders as raw text.
 
     Args:
@@ -17,17 +18,17 @@ def load_text_documents(**kwargs: Union[dict, LoadTextDocumentsConfig, Any]) -> 
     Returns:
         pd.DataFrame: Includes the columns 'document_path' and 'document_id'
     """
-    config = LoadTextDocumentsConfig(**kwargs)  # type: ignore
+    # config = LoadTextDocumentsConfig(**kwargs)  # type: ignore
 
     # Walk the folder path, find text files and load them
-    folder_path = config.raw_documents_folder
+    folder_path = raw_documents_folder
     df = defaultdict(list)
     file_id = 0
     for root, _, files in os.walk(folder_path):
         for file in files:
             try:
                 df["document_path"].append(os.path.join(root, file))
-                df[config.raw_content_column].append(open(df["document_path"][-1], "r").read())  # type: ignore  # noqa: E501
+                df[raw_content_column].append(open(df["document_path"][-1], "r").read())  # type: ignore  # noqa: E501
                 df["document_id"].append(str(file_id))
                 file_id += 1
             except Exception as e:

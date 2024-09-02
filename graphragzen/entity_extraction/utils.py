@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import List, Optional
 
 from graphragzen.llm.base_llm import LLM
-from pydantic import BaseModel
+from pydantic._internal._model_construction import ModelMetaclass
 
 from .typing import EntityExtractionPromptFormatting, EntityExtractionPrompts
 
@@ -12,8 +12,8 @@ def loop_extraction(
     prompts_formatting: EntityExtractionPromptFormatting,
     llm: LLM,
     max_gleans: int = 5,
-    output_structure: Optional[BaseModel] = None,
-) -> str:
+    output_structure: Optional[ModelMetaclass] = None,
+) -> List[str]:
     """Extract entities in a loop, asking a few times if all entities are extracted using the
         correct prompts.
 
@@ -26,11 +26,11 @@ def loop_extraction(
         llm (LLM)
         max_gleans (int, optional): How often the LLM should be asked if all entities have been
             extracted. Defaults to 5.
-        output_structure (BaseModel, optional): Output structure to force, using e.g. grammars from
-            llama.cpp.
+        output_structure (ModelMetaclass, optional): Output structure to force, using e.g. grammars
+            from llama.cpp.
 
     Returns:
-        str: Raw description of extracted entities.
+        List[str]: Raw json string of extracted entities.
     """
 
     prompts_formatting.input_text = document
@@ -45,7 +45,7 @@ def loop_extraction(
     # Extract more entities LLM might have missed first time around
     for _ in range(max_gleans):
         chat = llm.format_chat([("user", prompts.continue_prompt)], chat)
-        if llm.num_chat_tokens(chat) >= llm.config.context_size:
+        if llm.num_chat_tokens(chat) >= llm.context_size:
             # Context limit reached, can't extract more
             break
 

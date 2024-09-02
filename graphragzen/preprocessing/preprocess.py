@@ -1,15 +1,20 @@
 import html
 import re
-from typing import Any, Sequence, Union
+from typing import Any, Sequence
 
 import pandas as pd
 from graphragzen.llm.base_llm import LLM
 
-from .typing import ChunkConfig
-
 
 def chunk_documents(
-    dataframe: pd.DataFrame, llm: LLM, **kwargs: Union[dict, ChunkConfig, Any]
+    dataframe: pd.DataFrame,
+    llm: LLM,
+    column_to_chunk: str = "content",
+    results_column: str = "chunk",
+    id_column: str = "chunk_id",
+    window_size: int = 300,
+    overlap: int = 100,
+    method: str = "tokens",
 ) -> pd.DataFrame:
     """Chunk documents based on number of tokens
 
@@ -18,35 +23,34 @@ def chunk_documents(
         llm (LLM):
         column_to_chunk (str, optional): Column to chunk, Defaults to 'content'.
         results_column (str, optional): Column to write chunks to, Defaults to 'chunk'.
-        id_column (str, optional): Column with which to later refence the source chunk.
-            Defaults to 'chunk_id'.
+        id_column (str, optional): Column to write chunk ID's to. Can later be used to refence the
+            source chunk. Defaults to 'chunk_id'.
         window_size (str, optional): Number of tokens in each chunk, Defaults to 300.
         overlap (str, optional): Number of tokens chunks overlap, Defaults to 100.
+        method (str, optional): What to chunk. Currently only 'tokens' is implemented meaning
+            column_to_chunk is first tokenized and the tokens are chunked.
 
     Returns:
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
         allowing referencing
     """
-    config = ChunkConfig(**kwargs)  # type: ignore
 
-    results_column: str = config.results_column
     len_column: str = results_column + "_len"
-    id_column: str = results_column + "_id"
 
     # Method of chunking
-    if config.method == "tokens":
-        to_chunk = dataframe[config.column_to_chunk].apply(llm.tokenize)
+    if method == "tokens":
+        to_chunk = dataframe[column_to_chunk].apply(llm.tokenize)
 
     # Apply chunking per document, also saving the length of each chunk
     dataframe[results_column], dataframe[len_column] = zip(
-        *to_chunk.apply(lambda c: chunk(c, **config))
+        *to_chunk.apply(lambda c: chunk(c, window_size, overlap))
     )
 
     # Map each chunk back to the correct row
     dataframe = dataframe.explode([results_column, len_column])
 
     # 'untokenize' if required
-    if config.method == "tokens":
+    if method == "tokens":
         dataframe[results_column] = dataframe[results_column].apply(llm.untokenize)
 
     # Give each chunk a unique ID
@@ -57,7 +61,11 @@ def chunk_documents(
     return dataframe
 
 
-def chunk(inp: Sequence, **kwargs: Union[dict, ChunkConfig, Any]) -> tuple[list, list]:
+def chunk(
+    inp: Sequence,
+    window_size: int = 300,
+    overlap: int = 100,
+) -> tuple[list, list]:
     """Chunk an sequence using a sliding window
 
     Args:
@@ -68,12 +76,11 @@ def chunk(inp: Sequence, **kwargs: Union[dict, ChunkConfig, Any]) -> tuple[list,
     Returns:
         tuple[list, list]: (chunks, chunk lengths)
     """
-    config = ChunkConfig(**kwargs)  # type: ignore
 
     chunks = []
     chunk_lengths = []
-    for start_index in range(0, len(inp), config.window_size - config.overlap):
-        chunk = inp[start_index : start_index + config.window_size]
+    for start_index in range(0, len(inp), window_size - overlap):
+        chunk = inp[start_index : start_index + window_size]
         chunks.append(chunk)
         chunk_lengths.append(len(chunk))
 

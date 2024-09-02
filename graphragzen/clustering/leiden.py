@@ -1,15 +1,16 @@
-from typing import Any, Union
-
 import igraph as ig
 import leidenalg as la
 import networkx as nx
 import numpy as np
 
-from .typing import ClusterConfig
 from .util import _create_cluster_map, _int_list_to_string_representation
 
 
-def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
+def leiden(
+    graph: nx.Graph,
+    max_comm_size: int = 0,
+    levels: int = 2,
+) -> tuple:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
     note: Clusters have levels, i.e. cluster 1 can be subdevided into multiple clusters.
@@ -28,9 +29,7 @@ def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
         tuple(nx.Graph, cluster_map): nx.Graph has the feature 'cluster' added to the entities.
             cluster_map maps for each cluster the nodes that belong to it.
     """
-    config = ClusterConfig(**kwargs)  # type: ignore
-
-    clusters = _leiden(graph, config=config)
+    clusters = _leiden(graph, max_comm_size=max_comm_size, levels=levels)
 
     # Map back to graphnx
     for node_name, cluster in clusters.items():
@@ -39,7 +38,11 @@ def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
     return graph, _create_cluster_map(graph)
 
 
-def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> dict:
+def _leiden(
+    graph: nx.Graph,
+    max_comm_size: int = 0,
+    levels: int = 2,
+) -> dict:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
     Args:
@@ -52,13 +55,12 @@ def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> dict:
     Returns:
         dict: {node_name: cluster, node_name2: cluster, etc.}
     """
-    config = ClusterConfig(**kwargs)  # type: ignore
 
     igraph = ig.Graph.from_networkx(graph)
     partitions = la.find_partition(
         igraph,
         la.ModularityVertexPartition,
-        max_comm_size=config.max_comm_size,
+        max_comm_size=max_comm_size,
         n_iterations=10,
     )
 
@@ -70,10 +72,10 @@ def _leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> dict:
         mapping = dict(zip(nodes_in_cluster, [[partition] for _ in range(len(nodes))]))
         clusters.update(mapping)
 
-        if config.levels > 1:
+        if levels > 1:
             subgraph = graph.subgraph(nodes_in_cluster)
             subgrap_clusters = _leiden(
-                subgraph, max_comm_size=int(config.max_comm_size / 2), levels=config.levels - 1
+                subgraph, max_comm_size=int(max_comm_size / 2), levels=levels - 1
             )
             for node, map in subgrap_clusters.items():
                 clusters[node] += map
