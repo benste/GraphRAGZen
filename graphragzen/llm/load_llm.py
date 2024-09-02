@@ -90,12 +90,12 @@ def load_openAI_API_client(
     e.g. llama.cpp server is mostly OpenAI API compatible.
 
     Note on tokenizers - The client tries to initiate a tokenizer in the following order, only
-        moving on if the previous step failed:
-        - Load tokenizer from HF using hf_tokenizer_URI
-        - Try to tokenize and de-tokenize using the API endpoints selfbase_url/tokenize
-            and base_url/detokenize
-        - Try to initiate tiktoken, getting encoding from
-            tiktoken.encoding_for_model(model)
+    moving on if the previous step failed:
+    - Load tokenizer from HF using hf_tokenizer_URI
+    - Try to tokenize and de-tokenize using the API endpoints selfbase_url/tokenize
+        and base_url/detokenize
+    - Try to initiate tiktoken, getting encoding from
+        tiktoken.encoding_for_model(model)
 
     Args:
         base_url (str, optional): url with API endpoints. Not needed if using openAI. Defaults to

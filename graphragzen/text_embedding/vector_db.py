@@ -23,7 +23,7 @@ def create_vector_db(
     Args:
         vector_size (int): Length of the vectors to store .
         database_location (str, optional): Location to store the DB. If not provided
-            `create_vector_db` will create a temporary location and update this variable.
+            `create_vector_db` will write to a temporary location.
         overwrite_existing_db (str, optional): If True and a database is found at
             `database_location` it will be overwritten by a new database.
             If False and a database is found at `database_location` an exception is raised.
