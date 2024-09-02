@@ -32,8 +32,8 @@ def leiden(
             cluster_map maps for each cluster the nodes that belong to it.
     """
     clusters = _leiden(graph, max_comm_size=max_comm_size, levels=levels)
-    
-    clustered_graph = deepcopy(graph)    
+
+    clustered_graph = deepcopy(graph)
 
     # Map back to graphnx
     for node_name, cluster in clusters.items():

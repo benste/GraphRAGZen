@@ -1,6 +1,6 @@
-from copy import deepcopy
 import html
 import re
+from copy import deepcopy
 from typing import Any, Sequence
 
 import pandas as pd
@@ -35,7 +35,7 @@ def chunk_documents(
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
         allowing referencing
     """
-    
+
     chunked_df = deepcopy(dataframe)
 
     len_column: str = results_column + "_len"

@@ -1,5 +1,5 @@
-from copy import deepcopy
 import json
+from copy import deepcopy
 from typing import List, Optional, Tuple, Union
 
 import networkx as nx
@@ -50,7 +50,7 @@ def extract_raw_entities(
     prompt_config = prompt_config or EntityExtractionPromptConfig()
 
     raw_entities_df = deepcopy(dataframe)
-    
+
     # Extract raw entities from each document
     raw_entities_df.reset_index(inplace=True, drop=True)
     raw_extracted_entities = []

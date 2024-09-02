@@ -2,10 +2,8 @@
 
 from random import sample
 
-from graphragzen.llm import load_phi35_mini_gguf, load_openAI_API_client
-from graphragzen import preprocessing
-from graphragzen import load_documents
-from graphragzen import prompt_tuning
+from graphragzen import load_documents, preprocessing, prompt_tuning
+from graphragzen.llm import load_openAI_API_client, load_phi35_mini_gguf  # noqa: F401
 
 
 def create_entity_extraction_prompt() -> str:
@@ -20,19 +18,19 @@ def create_entity_extraction_prompt() -> str:
         extracted
     5. Entity extraction prompt: We merge all of the above information in a prompt that can be
         used to extract entities
-    
+
     Note: Each function's optional parameters have sane defaults. Check out their
     docstrings for their desrciptions and see if you want to overwrite any
     """
     # Load an LLM locally
     print("Loading LLM")
     llm = load_phi35_mini_gguf(
-        model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",
+        model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",  # noqa: E501
         tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
         persistent_cache_file="./phi35_mini_persistent_cache.yaml",
         context_size=32786,
     )
-    
+
     # # Communicate with an LLM running on a server
     # llm = load_openAI_API_client(
     #     base_url = "http://localhost:8081",
@@ -40,12 +38,11 @@ def create_entity_extraction_prompt() -> str:
     #     use_cache=True,
     #     persistent_cache_file="./phi35_mini_persistent_cache.yaml"
     # )
-    
-    
+
     # Load raw documents
     print("Loading raw documents")
     raw_documents = load_documents.load_text_documents(
-        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"
+        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"  # noqa: E501
     )
 
     # Split documents into chunks based on tokens
@@ -67,7 +64,9 @@ def create_entity_extraction_prompt() -> str:
 
     # Get the entity categories present the documents
     print("Generating entity categories")
-    entity_categories = prompt_tuning.generate_entity_categories(llm, sampled_documents, domain, persona)
+    entity_categories = prompt_tuning.generate_entity_categories(
+        llm, sampled_documents, domain, persona
+    )
 
     # Generate some entity relationship examples
     print("Generating entity relationship examples")
@@ -89,3 +88,7 @@ def create_entity_extraction_prompt() -> str:
 
     return entity_extraction_prompt, description_summarization_prompt
 
+
+# entity_extraction_prompt, description_summarization_prompt = create_entity_extraction_prompt()
+
+1 + 1
