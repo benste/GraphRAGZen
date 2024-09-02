@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import igraph as ig
 import leidenalg as la
 import networkx as nx
@@ -30,12 +32,14 @@ def leiden(
             cluster_map maps for each cluster the nodes that belong to it.
     """
     clusters = _leiden(graph, max_comm_size=max_comm_size, levels=levels)
+    
+    clustered_graph = deepcopy(graph)    
 
     # Map back to graphnx
     for node_name, cluster in clusters.items():
-        graph.nodes[node_name]["cluster"] = _int_list_to_string_representation(cluster)
+        clustered_graph.nodes[node_name]["cluster"] = _int_list_to_string_representation(cluster)
 
-    return graph, _create_cluster_map(graph)
+    return clustered_graph, _create_cluster_map(clustered_graph)
 
 
 def _leiden(

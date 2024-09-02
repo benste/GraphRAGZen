@@ -1,3 +1,4 @@
+from copy import deepcopy
 from collections import Counter
 from functools import partial
 from typing import List, Literal, Optional, Union
@@ -48,6 +49,8 @@ def merge_graph_features(
         nx.Graph
     """
 
+    merged_features_graph = deepcopy(graph)
+
     item_merger = partial(
         merge_item_feature,
         llm=llm,
@@ -57,27 +60,27 @@ def merge_graph_features(
         max_output_tokens=max_output_tokens,
     )
 
-    for node in tqdm(graph.nodes(data=True), desc=f"Merging {feature} of nodes"):
+    for node in tqdm(merged_features_graph.nodes(data=True), desc=f"Merging {feature} of nodes"):
         entity_name = node[0]
         # Split and sort the feature
         feature_list = sorted(set(node[1].get(feature, "").split(feature_delimiter)))
         # Merge
         if feature_list:
-            graph.nodes[entity_name][feature] = item_merger(
+            merged_features_graph.nodes[entity_name][feature] = item_merger(
                 entity_name=entity_name, feature_list=feature_list
             )
 
-    for edge in tqdm(graph.edges(data=True), desc=f"Merging {feature} of edges"):
+    for edge in tqdm(merged_features_graph.edges(data=True), desc=f"Merging {feature} of edges"):
         entity_name = edge[:2]
         # Split and sort the feature
         feature_list = sorted(set(edge[2].get(feature, "").split(feature_delimiter)))
         # Merge
         if feature_list:
-            graph.edges[entity_name]["description"] = item_merger(
+            merged_features_graph.edges[entity_name]["description"] = item_merger(
                 entity_name=entity_name, feature_list=feature_list
             )
 
-    return graph
+    return merged_features_graph
 
 
 def merge_item_feature(

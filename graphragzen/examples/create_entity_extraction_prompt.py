@@ -2,8 +2,9 @@
 
 from random import sample
 
-from graphragzen.llm import load_gemma2_gguf
+from graphragzen.llm import load_phi35_mini_gguf, load_openAI_API_client
 from graphragzen import preprocessing
+from graphragzen import load_documents
 from graphragzen import prompt_tuning
 
 
@@ -13,8 +14,8 @@ def create_entity_extraction_prompt() -> str:
     1. Domain: We fist ask the LLM to create the domains that the documents span
     2. Persona: with the domains the LLM can create a persona (e.g. You are an expert {{role}}.
         You are skilled at {{relevant skills}})
-    3. Entity types: using the domain and persona we ask the LLM to extract from the documents
-        the types of entities a node could get (e.g. person, school of thought, ML)
+    3. Entity categories: using the domain and persona we ask the LLM to extract from the documents
+        the categories a node could get (e.g. person, school of thought, ML)
     4. Examples: Using all of the above we ask the LLM to create some example document->entities
         extracted
     5. Entity extraction prompt: We merge all of the above information in a prompt that can be
@@ -25,14 +26,25 @@ def create_entity_extraction_prompt() -> str:
     """
     # Load an LLM locally
     print("Loading LLM")
-    llm = load_gemma2_gguf(
-        model_storage_path="/home/bens/projects/DemystifyGraphRAG/models/gemma-2-2b-it-Q4_K_M.gguf",
-        tokenizer_URI="google/gemma-2-2b-it",
+    llm = load_phi35_mini_gguf(
+        model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",
+        tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
+        persistent_cache_file="./phi35_mini_persistent_cache.yaml",
+        context_size=32786,
     )
-
+    
+    # # Communicate with an LLM running on a server
+    # llm = load_openAI_API_client(
+    #     base_url = "http://localhost:8081",
+    #     context_size = 32768,
+    #     use_cache=True,
+    #     persistent_cache_file="./phi35_mini_persistent_cache.yaml"
+    # )
+    
+    
     # Load raw documents
     print("Loading raw documents")
-    raw_documents = preprocessing.load_text_documents(
+    raw_documents = load_documents.load_text_documents(
         raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"
     )
 
@@ -53,20 +65,20 @@ def create_entity_extraction_prompt() -> str:
     print("Generating persona")
     persona = prompt_tuning.generate_persona(llm, domain)
 
-    # Get the entity types present the documents
-    print("Generating entity types")
-    entity_types = prompt_tuning.generate_entity_types(llm, sampled_documents, domain, persona)
+    # Get the entity categories present the documents
+    print("Generating entity categories")
+    entity_categories = prompt_tuning.generate_entity_categories(llm, sampled_documents, domain, persona)
 
     # Generate some entity relationship examples
     print("Generating entity relationship examples")
     entity_relationship_examples = prompt_tuning.generate_entity_relationship_examples(
-        llm, sampled_documents, persona, entity_types, max_examples=3
+        llm, sampled_documents, persona, entity_categories, max_examples=3
     )
 
     # Create the actual entity extraction prompt
     print("Generating entity extraction prompt")
     entity_extraction_prompt = prompt_tuning.create_entity_extraction_prompt(
-        llm, entity_types, entity_relationship_examples
+        llm, entity_categories, entity_relationship_examples
     )
 
     # Also create a prompt to summarize the descriptions of the entities
@@ -77,5 +89,3 @@ def create_entity_extraction_prompt() -> str:
 
     return entity_extraction_prompt, description_summarization_prompt
 
-
-entity_extraction_prompt, description_summarization_prompt = create_entity_extraction_prompt()

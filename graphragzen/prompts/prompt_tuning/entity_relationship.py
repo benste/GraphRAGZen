@@ -38,7 +38,7 @@ text: {input_text}
 output:
 """  # noqa: E501
 
-EXAMPLE_EXTRACTION_TEMPLATE = """
+EXAMPLE_RELATION_TEMPLATE = """
 Example {n}:
 
 entity_categories: [{entity_categories}]

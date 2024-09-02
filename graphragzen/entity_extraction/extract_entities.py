@@ -1,3 +1,4 @@
+from copy import deepcopy
 import json
 from typing import List, Optional, Tuple, Union
 
@@ -48,11 +49,13 @@ def extract_raw_entities(
     """
     prompt_config = prompt_config or EntityExtractionPromptConfig()
 
+    raw_entities_df = deepcopy(dataframe)
+    
     # Extract raw entities from each document
-    dataframe.reset_index(inplace=True, drop=True)
+    raw_entities_df.reset_index(inplace=True, drop=True)
     raw_extracted_entities = []
     for document in tqdm(
-        dataframe[column_to_extract], total=len(dataframe), desc="extracting entities"
+        raw_entities_df[column_to_extract], total=len(raw_entities_df), desc="extracting entities"
     ):
         # Extract entities through LLM
         raw_extracted_entities.append(
@@ -67,9 +70,9 @@ def extract_raw_entities(
         )
 
     # Map LLM output to correct df column
-    dataframe[results_column] = raw_extracted_entities
+    raw_entities_df[results_column] = raw_extracted_entities
 
-    return dataframe
+    return raw_entities_df
 
 
 def raw_entities_to_graph(
@@ -106,7 +109,7 @@ def raw_entities_to_graph(
             }
         )
     else:
-        dataframe = input
+        dataframe = deepcopy(input)
 
     graph = nx.Graph()
     for raw_extraction_strings, source_id in zip(

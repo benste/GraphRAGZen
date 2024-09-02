@@ -1,3 +1,4 @@
+from copy import deepcopy
 import html
 import re
 from typing import Any, Sequence
@@ -34,31 +35,33 @@ def chunk_documents(
         pd.DataFrame: All columns in the input dataframe are exploded with the chunks
         allowing referencing
     """
+    
+    chunked_df = deepcopy(dataframe)
 
     len_column: str = results_column + "_len"
 
     # Method of chunking
     if method == "tokens":
-        to_chunk = dataframe[column_to_chunk].apply(llm.tokenize)
+        to_chunk = chunked_df[column_to_chunk].apply(llm.tokenize)
 
     # Apply chunking per document, also saving the length of each chunk
-    dataframe[results_column], dataframe[len_column] = zip(
+    chunked_df[results_column], chunked_df[len_column] = zip(
         *to_chunk.apply(lambda c: chunk(c, window_size, overlap))
     )
 
     # Map each chunk back to the correct row
-    dataframe = dataframe.explode([results_column, len_column])
+    chunked_df = chunked_df.explode([results_column, len_column])
 
     # 'untokenize' if required
     if method == "tokens":
-        dataframe[results_column] = dataframe[results_column].apply(llm.untokenize)
+        chunked_df[results_column] = chunked_df[results_column].apply(llm.untokenize)
 
     # Give each chunk a unique ID
-    dataframe[id_column] = list(range(len(dataframe)))
+    chunked_df[id_column] = list(range(len(chunked_df)))
 
     # TODO: drop content column to save space?
 
-    return dataframe
+    return chunked_df
 
 
 def chunk(

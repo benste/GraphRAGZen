@@ -55,7 +55,7 @@ def generate_entity_relationship_examples(
     persona: str,
     entity_categories: list[str],
     prompt: str = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
-    example_template: str = entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE,
+    example_template: str = entity_relationship.EXAMPLE_RELATION_TEMPLATE,
     max_examples: int = 5,
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity

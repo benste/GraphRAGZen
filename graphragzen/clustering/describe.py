@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import networkx as nx
 import pandas as pd
 from graphragzen.llm.base_llm import LLM
@@ -33,6 +35,8 @@ def describe_clusters(
     """  # noqa: E501
 
     cluster_entity_map["raw_descriptions"] = None
+    
+    cluster_entity_map_with_descriptions = deepcopy(cluster_entity_map)
 
     for index, cluster in cluster_entity_map.iterrows():
         cluster_graph = graph.subgraph(cluster.node_name)
@@ -54,6 +58,8 @@ def describe_clusters(
         chat = llm.format_chat([("user", prompt)])
         llm_output = llm.run_chat(chat, output_structure=output_structure)
 
-        return llm_output
+        cluster_entity_map_with_descriptions.iloc[index]['raw_descriptions'] = llm_output
         # TODO: Findings return the ID that support the findings, couple this back to the
         # correct entity
+        
+    return cluster_entity_map_with_descriptions
