@@ -45,7 +45,7 @@ the openAI API, but any API that has compatible endpoints:
     # Using OpenAI's API
     llm = load_openAI_API_client(
         api_key_env_variable = "OPENAI_API_KEY"  # the env variable, not the actual key!
-        model="gpt-4o-mini",
+        model_name="gpt-4o-mini",
         context_size = 32768,
         # Caches responses locally, saving time and OpenAI credits if the same request is made twice
         use_cache=True,
@@ -96,7 +96,10 @@ Implementing your own local LLM instance
 
 You can load any LLM you want and **GraphRAGZen** can use it, as long as your implementation defines the following:
 
+(See :func:`graphragzen.llm.llama_cpp_models.BaseLlamCpp` for an example.)
+
 .. code-block:: python
+
     from graphragzen.llm.base_llm import LLM
 
     class MyLlmImplementation(LLM):
@@ -112,7 +115,7 @@ You can load any LLM you want and **GraphRAGZen** can use it, as long as your im
             """Call the LLM as you would llm(input), but allow to force an output structure.
             
             If your implementation does not support forcing output structures, simply disregard
-            this the variable 'output_structure'. 
+            the variable 'output_structure'. 
 
             Args:
                 input (Any): Any input you would normally pass to llm(input, kwargs)
@@ -134,6 +137,9 @@ You can load any LLM you want and **GraphRAGZen** can use it, as long as your im
             stream: bool = False,
         ) -> str:
             """Runs a chat through the LLM
+
+            If your implementation does not support forcing output structures, simply disregard
+            the variable 'output_structure'. 
 
             Args:
                 chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
@@ -175,5 +181,3 @@ You can load any LLM you want and **GraphRAGZen** can use it, as long as your im
                 int: number of tokens
             """
 
-See `this LLM class <https://benste.github.io/GraphRAGZen/_modules/graphragzen/llm/gemma2.html#Gemma2GGUF>`_
-for an example.

@@ -23,6 +23,8 @@ Intuition
 To be intuitive **GraphRAGZen** is organized according to the steps one takes to implement Graph RAG
 
 - load documents
+    - load text documents
+    - load PDF files (to be implemented)
 - preprocessing
     - clean strings
     - chunk documents

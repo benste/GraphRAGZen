@@ -22,10 +22,10 @@ All function inputs are organized according to:
             parameter_2: bool = True,
         )
 
-Dissecting this structure we can see that 
-
 1. The first *n* inputs are always data as expected from a data-pipeline (loaded documents, LLM
 instance, extracted graph, etc.)
+
 2. The later inputs are always parameters. These are the parameters that determing how the function
 operates.
-3. If possible, the parameters have sane default values
+
+3. The parameters all sane default values (if possible, e.g. raw_documents_path cannot have a default)

@@ -15,3 +15,5 @@ It's a good idea to consolidate these multiplicated features for the final graph
 - Retutn the most occuring from a list
 
 For descriptions we can ask the LLM to summarize them, edge weights we can simply average, etc. 
+
+See :func:`graphragzen.feature_merging.merge_features.merge_graph_features`
