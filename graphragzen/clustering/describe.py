@@ -25,11 +25,12 @@ def describe_clusters(
         prompt (str, optional): The prompt to use for the LLM to describe a cluster. Defaults to
             `graphragzen.prompts.default_prompts.cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT`
         output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
-                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
-                reference.
-                Correct = BaseLlamCpp("some text", MyPydanticModel)
-                Wrong = BaseLlamCpp("some text", MyPydanticModel())
-                Defaults to graphragzen.entity_extraction.ClusterDescription
+            from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+            reference.
+            Correct = BaseLlamCpp("some text", MyPydanticModel)
+            Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            Defaults to graphragzen.entity_extraction.ClusterDescription
+
     Returns:
         pd.DataFrame
     """  # noqa: E501

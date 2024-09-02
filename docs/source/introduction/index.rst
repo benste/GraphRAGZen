@@ -10,4 +10,4 @@ foundation for this project
 
 .. note::
 
-   This project is under active development.
+   This project is in Beta and under active development.
