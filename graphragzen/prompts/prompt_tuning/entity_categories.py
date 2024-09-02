@@ -1,18 +1,18 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-"""Fine-tuning prompts for entity types generation."""
+"""Fine-tuning prompts for entity categories generation."""
 
-GENERATE_ENTITY_TYPE_PROMPT = """
-The goal is to study the connections and relations between the entity types and their features in order to understand all available information from the text.
+GENERATE_ENTITY_CATEGORIES_PROMPT = """
+The goal is to study the connections and relations between the entity categories and their features in order to understand all available information from the text.
 The user's task is to Identify the relations and structure of the community of interest, specifically within the {domain} domain.
-As part of the analysis, you want to identify the entity types present in the following text.
-The entity types must be relevant to the user task.
-Avoid general entity types such as "other" or "unknown".
-This is VERY IMPORTANT: Do not generate redundant or overlapping entity types. For example, if the text contains "company" and "organization" entity types, you should return only one of them.
+As part of the analysis, you want to identify the entity categories present in the following text.
+The entity categories must be relevant to the user task.
+Avoid general entity categories such as "other" or "unknown".
+This is VERY IMPORTANT: Do not generate redundant or overlapping entity categories. For example, if the text contains "company" and "organization" entity categories, you should return only one of them.
 Don't worry about quantity, always choose quality over quantity. And make sure EVERYTHING in your answer is relevant to the context of entity extraction.
-And remember, it is ENTITY TYPES what we need.
-Return the entity types in as a list of comma sepparated of strings.
+And remember, it is ENTITY CATEGORIES what we need.
+Return the entity categories in as a list of comma separated strings.
 =====================================================================
 EXAMPLE SECTION: The following section includes example output. These examples **must be excluded from your answer**.
 
@@ -39,9 +39,9 @@ END OF EXAMPLE 3
 ======================================================================
 
 ======================================================================
-REAL DATA: The following section is the real data. You should use only this real data to prepare your answer. Generate Entity Types only.
+REAL DATA: The following section is the real data. You should use only this real data to prepare your answer. Generate Entity Categories only.
 Task: Identify the relations and structure of the community of interest, specifically within the {domain} domain.
 Text: {input_text}
 RESPONSE:
-{{<entity_types>}}
+{{<entity_categories>}}
 """  # noqa: E501

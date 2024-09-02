@@ -4,33 +4,35 @@
 """Fine-tuning prompts for entity relationship generation."""
 
 ENTITY_RELATIONSHIPS_GENERATION_PROMPT = """
+You are an intelligent assistant that helps a human to analyze the information in a text document and extract a knowledg graph from it. A knowledge graph consists of nodes and their edges (relationships between the nodes in the graph).
+
 -Goal-
-Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+Given a text document that is potentially relevant to this activity and a list of categories, identify all nodes of those categories from the text and all edges among the identified nodes.
 
 -Steps-
-1. Identify all entities. For each identified entity, extract the following information:
-- entity_name: Name of the entity, capitalized
-- entity_type: One of the following types: [{entity_types}]
-- entity_description: Comprehensive description of the entity's attributes and activities
-Format each entity, include the parenthesis at the beginning and end, as ("entity"{{tuple_delimiter}}<entity_name>{{tuple_delimiter}}<entity_type>{{tuple_delimiter}}<entity_description>)
-for example: ("entity"{{tuple_delimiter}}"Microsoft"{{tuple_delimiter}}"organization"{{tuple_delimiter}}"Microsoft is a technology company")
+1. Identify all nodes. For each identified node, extract the following information:
+- name: Name of the node, capitalized
+- category: One of the following categories: [{entity_categories}]
+- description: Comprehensive description of the node's attributes and activities
+Format each node as a JSON with the following format:
+{{"type": "node", "name": <name>, "category": <category>, "description": <description>}}
+for example: {{"type": "node", "name": "Microsoft", "category": "organization", "description": "Microsoft is a technology company"}}
 
-2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
-For each pair of related entities, extract the following information:
-- source_entity: name of the source entity, as identified in step 1
-- target_entity: name of the target entity, as identified in step 1
-- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
-- relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
-Format each relationship, include the parenthesis at the beginning and end, as ("relationship"{{tuple_delimiter}}<source_entity>{{tuple_delimiter}}<target_entity>{{tuple_delimiter}}<relationship_description>{{tuple_delimiter}}<relationship_strength>)
-for example: ("relationship"{{tuple_delimiter}}"company A"{{tuple_delimiter}}"person A"{{tuple_delimiter}}"company A is currently owned by person A"{{tuple_delimiter}}8)
+2. From the nodes identified in step 1, identify all pairs of (source_node, target_node) that are *clearly related* to each other.
+For each edge, extract the following information:
+- source: name of the source node, as identified in step 1
+- target: name of the target node, as identified in step 1
+- description: explanation as to why you think the source node and the target node are related to each other
+- weight: a numeric score indicating strength of the edge between the source node and target node
+Format each edge as a JSON with the following format:
+{{"type": "edge", "source": <source>, "target": <target>, "description": <description>, "weight": <weight>}}
+for eaxmple: {{"type": "edge", "source": "company A", "target": "person A", "description": "company A is currently owned by person A", "weight": 8}}
 
-3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **{{record_delimiter}}** as the list delimiter.
-
-4. When finished, output {{completion_delimiter}}.
+3. Return output in English as a single list of all JSON entities and relationships identified in steps 1 and 2.
 
 -Real Data-
 ######################
-entity_types: {entity_types}
+entity_categories: {entity_categories}
 text: {input_text}
 ######################
 output:
@@ -39,7 +41,7 @@ output:
 EXAMPLE_EXTRACTION_TEMPLATE = """
 Example {n}:
 
-entity_types: [{entity_types}]
+entity_categories: [{entity_categories}]
 text:
 {input_text}
 ------------------------

@@ -5,7 +5,7 @@ from graphragzen.prompts.prompt_tuning import (
     entity_extraction,
     entity_relationship,
     entity_summarization,
-    entity_types,
+    entity_categories,
     persona,
 )
 
@@ -38,19 +38,19 @@ class GeneratePersonaConfig(MappedBaseModel):
     prompt: str = persona.GENERATE_PERSONA_PROMPT
 
 
-class GenerateEntityTypesConfig(MappedBaseModel):
-    """Config for generating a entity types relevant to a set of documents
+class GenerateEntityCategoriesConfig(MappedBaseModel):
+    """Config for generating a entity categories relevant to a set of documents
 
     Args:
-        prompt (str, optional): Prompt to use for generating entity types.
-            Defaults to `graphragzen.prompts.prompt_tuning.entity_types.GENERATE_ENTITY_TYPE_PROMPT`
-            If `entity_types` is not specified this will be used to infer the entity types.
-        entity_types (List[str], optional): The entity types relevant to a set of documents.
-            If not specified, the `prompt` will be used to infer the entity types. Defaults to None.
+        prompt (str, optional): Prompt to use for generating entity categories.
+            Defaults to `graphragzen.prompts.prompt_tuning.entity_categories.GENERATE_ENTITY_TYPE_PROMPT`
+            If `entity_categories` is not specified this will be used to infer the entity categories.
+        entity_categories (List[str], optional): The entity categories relevant to a set of documents.
+            If not specified, the `prompt` will be used to infer the entity categories. Defaults to None.
     """
 
-    prompt: str = entity_types.GENERATE_ENTITY_TYPE_PROMPT
-    entity_types: Optional[List[str]] = None
+    prompt: str = entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT
+    entity_categories: Optional[List[str]] = None
 
 
 class GenerateEntityRelationshipExamplesConfig(MappedBaseModel):

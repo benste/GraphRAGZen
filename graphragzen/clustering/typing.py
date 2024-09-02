@@ -1,6 +1,9 @@
 from graphragzen.prompts.default_prompts import cluster_description_prompts
 
 from ..typing.MappedBaseModel import MappedBaseModel
+from .llm_output_structures import ClusterDescription
+
+from pydantic import BaseModel
 
 
 class ClusterConfig(MappedBaseModel):
@@ -25,3 +28,4 @@ class DescribeClustersConfig(MappedBaseModel):
     """
 
     prompt: str = cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT
+    output_structure: BaseModel = ClusterDescription

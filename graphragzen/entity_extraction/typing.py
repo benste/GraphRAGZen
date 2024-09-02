@@ -1,8 +1,10 @@
 from typing import List, Optional
 
 from graphragzen.prompts.default_prompts import entity_extraction_prompts
+from pydantic import BaseModel
 
 from ..typing.MappedBaseModel import MappedBaseModel
+from .llm_output_structures import ExtractedEntities
 
 
 class EntityExtractionPromptFormatting(MappedBaseModel):
@@ -14,20 +16,13 @@ class EntityExtractionPromptFormatting(MappedBaseModel):
         record_delimiter (str, optional):  Delimiter between records. Defaults to '##'.
         completion_delimiter (str, optional): Delimiter when no more entities can be extracted.
             Defaults to '\<\|COMPLETE|>'.
-        entity_types (List[str], optional):  The types that can be assigned to entities.
+        entity_categories (List[str], optional):  The categories that can be assigned to entities.
             Defaults to ['organization', 'person', 'geo', 'event'].
         input_text (str, optional): The text to extract entities from. Defaults to None.
-        entities_string (str, optional): String representation of entities to extract more edges
-            from. Is set by `extract_more_edges`. Defaults to None.
     """  # noqa: W605
 
-    tuple_delimiter: str = "<|>"
-    record_delimiter: str = "##"
-    completion_delimiter: str = "<|COMPLETE|>"
-    entity_types: List[str] = ["organization", "person", "geo", "event"]
+    entity_categories: List[str] = ["organization", "person", "geo", "event"]
     input_text: Optional[str] = None
-    entities_string: Optional[str] = None
-
 
 class EntityExtractionPrompts(MappedBaseModel):
     """Base prompts for entity extraction
@@ -69,17 +64,15 @@ class EntityExtractionConfig(MappedBaseModel):
             entities from. Defaults to 'chunk'.
         results_column (str, optional): Column to write the output of the LLM to.
             Defaults to 'raw_entities'.
-        extra_edges_iterations (int, optional): During extra edge extraction random nodes are
-            selected to find relationships. If extra edges are extracted, how many runs are
-            performed. Defaults to 100.
-        extra_edges_max_nodes (int, optional): During extra edge extraction random nodes are
-            selected to find relationships. How many nodes should be selected per sample?
-            Defaults to 20.
+        output_structure (BaseModel, optional): Output structure to force, using e.g. grammars from
+            llama.cpp.
+            Defaults to graphragzen.entity_extraction.llm_output_structures.ExtractedEntities
     """
 
     max_gleans: int = 5
     column_to_extract: str = "chunk"
     results_column: str = "raw_entities"
+    output_structure: BaseModel = ExtractedEntities
 
 
 class RawEntitiesToGraphConfig(MappedBaseModel):
@@ -92,7 +85,7 @@ class RawEntitiesToGraphConfig(MappedBaseModel):
             the edged and nodes. This allows to reference to the source where entities were
             extracted from when quiring the graph. Defaults to 'chunk_id'.
         feature_delimiter (str, optional): When the same node or edge is found multiple times,
-            features are concatenated using this demiliter. Defaults to '\\n'.
+            features added to the entity are concatenated using this demiliter. Defaults to '\\n'.
     """
 
     raw_entities_column: str = "raw_entities"

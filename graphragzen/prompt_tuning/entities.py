@@ -7,18 +7,18 @@ from tqdm import tqdm
 from .typing import (
     CreateEntityExtractionPromptConfig,
     GenerateEntityRelationshipExamplesConfig,
-    GenerateEntityTypesConfig,
+    GenerateEntityCategoriesConfig,
 )
 
 
-def generate_entity_types(
+def generate_entity_categories(
     llm: LLM,
     documents: List[str],
     domain: str,
     persona: str,
-    **kwargs: Union[dict, GenerateEntityTypesConfig, Any],
+    **kwargs: Union[dict, GenerateEntityCategoriesConfig, Any],
 ) -> str | list[str]:
-    """Generate entity type categories from a given set of (small) documents.
+    """Generate entity categories from a given set of (small) documents.
 
         Example Output:
         ['military unit', 'organization', 'person', 'location', 'event', 'date', 'equipment']
@@ -29,24 +29,24 @@ def generate_entity_types(
             You likely want this to be chunks of the whole documents.
         domain (str): Relevant to the documents
         persona (str): Relevant to the domain
-        prompt (str, optional): Prompt to use for generating entity types.
-            Defaults to `graphragzen.prompts.prompt_tuning.entity_types.GENERATE_ENTITY_TYPE_PROMPT`
-            If `entity_types` is not specified this will be used to infer the entity types.
-        entity_types (List[str], optional): The entity types relevant to a set of documents.
-            If not specified, the `prompt` will be used to infer the entity types. Defaults to None.
+        prompt (str, optional): Prompt to use for generating entity categories.
+            Defaults to `graphragzen.prompts.prompt_tuning.entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT`
+            If `entity_categories` is not specified this will be used to infer the entity categories.
+        entity_categories (List[str], optional): The entity categories relevant to a set of documents.
+            If not specified, the `prompt` will be used to infer the entity categories. Defaults to None.
 
     Returns:
-        str | list[str]: entity types
+        str | list[str]: entity categories
     """
-    config = GenerateEntityTypesConfig(**kwargs)  # type: ignore
+    config = GenerateEntityCategoriesConfig(**kwargs)  # type: ignore
 
-    if config.entity_types:
-        # User provided entity types, no need to generate them
-        return config.entity_types
+    if config.entity_categories:
+        # User provided entity categories, no need to generate them
+        return config.entity_categories
 
     docs_str = "\n".join(documents)
-    entity_types_prompt = config.prompt.format(domain=domain, input_text=docs_str)
-    chat = llm.format_chat([("model", persona), ("user", entity_types_prompt)])
+    entity_categories_prompt = config.prompt.format(domain=domain, input_text=docs_str)
+    chat = llm.format_chat([("model", persona), ("user", entity_categories_prompt)])
     return llm.run_chat(chat)
 
 
@@ -54,7 +54,7 @@ def generate_entity_relationship_examples(
     llm: LLM,
     documents: List[str],
     persona: str,
-    entity_types: list[str],
+    entity_categories: list[str],
     **kwargs: Union[dict, GenerateEntityRelationshipExamplesConfig, Any],
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity
@@ -67,7 +67,7 @@ def generate_entity_relationship_examples(
         documents (List[str]): Sample of documents that later will be used to create a graph.
             You likely want this to be chunks of the whole documents.
         persona (str): Relevant to the domain
-        entity_types (list[str]): Generated from the documents by `generate_entity_types`
+        entity_categories (list[str]): Generated from the documents by `generate_entity_categories`
         prompt (str, optional): Prompt to use for generating entity/relationships examples.
             Defaults to `graphragzen.prompts.prompt_tuning.entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT`
         example_template (str, optional): The template of example extracted entities that will
@@ -80,12 +80,12 @@ def generate_entity_relationship_examples(
     """  # noqa: E501
     config = GenerateEntityRelationshipExamplesConfig(**kwargs)  # type: ignore
 
-    entity_types_str = ", ".join(entity_types)
+    entity_categories_str = ", ".join(entity_categories)
     sampled_documents = documents[: config.max_examples]
 
     history = llm.format_chat([("model", persona)])
     messages = [
-        config.prompt.format(entity_types=entity_types_str, input_text=doc)
+        config.prompt.format(entity_categories=entity_categories_str, input_text=doc)
         for doc in sampled_documents
     ]
 
@@ -97,7 +97,7 @@ def generate_entity_relationship_examples(
     # Format the examples and return
     return [
         config.example_template.format(
-            n=i + 1, input_text=doc, entity_types=entity_types_str, output=entity_relation
+            n=i + 1, input_text=doc, entity_categories=entity_categories_str, output=entity_relation
         )
         for i, (doc, entity_relation) in enumerate(zip(sampled_documents, entity_relations))
     ]
@@ -105,7 +105,7 @@ def generate_entity_relationship_examples(
 
 def create_entity_extraction_prompt(
     llm: LLM,
-    entity_types: List[str],
+    entity_categories: List[str],
     entity_relationship_examples: List[str],
     **kwargs: Union[dict, CreateEntityExtractionPromptConfig, Any],
 ) -> str:
@@ -116,7 +116,7 @@ def create_entity_extraction_prompt(
 
     Args:
         llm (LLM)
-        Entity types (List[str]): The types of entities to extract
+        entity_categories (List[str]): The categories of entities to extract
             (e.g. ['person', 'profession', 'location'])
         entity_relationship_examples (List[str]): Generated by
             `generate_entity_relationship_examples`
@@ -131,12 +131,12 @@ def create_entity_extraction_prompt(
     config = CreateEntityExtractionPromptConfig(**kwargs)  # type: ignore
 
     prompt = config.prompt_template
-    entity_types_string = ", ".join(entity_types)
+    entity_categories_string = ", ".join(entity_categories)
 
     tokens_left = (
         config.prompt_max_tokens
         - _num_tokens_from_string(prompt, llm.tokenizer)
-        - _num_tokens_from_string(entity_types_string, llm.tokenizer)
+        - _num_tokens_from_string(entity_categories_string, llm.tokenizer)
     )
 
     examples_prompt = ""
@@ -153,4 +153,4 @@ def create_entity_extraction_prompt(
         tokens_left -= example_tokens
 
     # Format prompt and return
-    return prompt.format(entity_types=entity_types, examples=examples_prompt)
+    return prompt.format(entity_categories=entity_categories_string, examples=examples_prompt)
