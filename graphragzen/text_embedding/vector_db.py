@@ -1,11 +1,13 @@
 import os
 import shutil
 import warnings
-from typing import Any, Union
+from typing import Any, Union, List, Optional
 
+import numpy as np
 import pandas as pd
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import PointStruct, VectorParams
+from qdrant_client.models import FieldCondition, Filter, MatchValue
 
 from .typing import VectorDBConfig
 
@@ -153,4 +155,45 @@ def add_points_to_vector_db(
     client.upsert(
         collection_name=collection_name,
         points=points,
+    )
+    
+    
+def search_vector_db(
+    client: QdrantClient,
+    query_vector: np.ndarray,
+    k: int,
+    filters: Optional[List[dict]] = {},
+    collection_name: str = "default",
+    ) -> Any:
+    """Search the vector database with optional filters on the metadata attached to the points.
+    
+    Note: The distance measure used to search is set when the database is created, see 
+    `graphragzen.text_embedding.vector_db.create_vector_db()`
+
+    Args:
+        client (QdrantClient)
+        query_vector (np.ndarray): Shaped (n,) or (n,1) where n is the size of the vectors to search
+        k (int): Max number of results to return
+        filters (List[dict]), optional: [{"key": "value_it_should_have"}, {"key": "value_it .....
+        collection_name (str, optional): Collection to search vectors in.
+            QDrant can have multiple separated collections in one DB,
+            each collection containing their own vectors. For the purpose of RAG it's recommended to
+            create a new DB for each new project and stick to one collection name per DB.
+
+
+    Returns:
+        Any: _description_
+    """
+    
+    # Format the filters for qdrant
+    query_filter = []
+    for key, value in filters.items():
+        query_filter.append([FieldCondition(key=key, match=MatchValue(value=value))])
+    query_filter = Filter(must=query_filter)
+    
+    return client.search(
+        collection_name=collection_name,
+        query_vector=query_vector,
+        query_filter=query_filter,
+        limit=k
     )
