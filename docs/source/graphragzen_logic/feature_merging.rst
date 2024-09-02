@@ -12,6 +12,6 @@ It's a good idea to consolidate these multiplicated features for the final graph
 
 - Summarize a list of features
 - Average a list of features if it's numeric
-- Take the most occuring feature from a list of features
+- Retutn the most occuring from a list
 
 For descriptions we can ask the LLM to summarize them, edge weights we can simply average, etc. 

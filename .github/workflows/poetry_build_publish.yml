@@ -1,0 +1,24 @@
+sh ./scripts/setup_poetry.sh -d
+
+poetry config pypi-token.pypi 
+
+name: poetry_build_publish
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Poetry setup
+        run: |
+          ./scripts/setup_poetry.sh -p && poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+      - name: Poetry build
+        run: |
+          poetry build
+      - name: Poetry publish
+        run: |
+          poetry publish
+          

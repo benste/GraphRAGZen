@@ -15,4 +15,5 @@ We don't want to go through the graph manually and assign each node to a topic. 
 unsupervised clustering for this, specifically the `leiden algorithm <https://arxiv.org/abs/1810.08473>`_
 
 This algorithm only assigns a number to each node, indicating to which cluster it belongs. 
-The semantic topic of each cluster still needs to be extracted.
+The semantic topic of each cluster still needs to be extracted. This can be done using
+:func:`graphragzen.clustering.describe.describe_clusters`

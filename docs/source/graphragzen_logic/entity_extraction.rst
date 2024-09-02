@@ -8,28 +8,65 @@ Documents are fed into an LLM with a prompt that asks it to:
 1. Extract the entities in the document
 2. For each entity say if it's a node or and relationship (edge)
 3. Give the entity a name
-4. Give each entity a type (e.g. concept or organization)
+4. Give each entity a category (e.g. concept or organization)
 5. Give the entity a description
-6. Format this all in a structured manner
+6. Format this all in a json string
 
-These steps are in a single prompt and a single string is returned per document.
+These steps are in a single prompt. **GraphRAGZen** does query the LLM a few times per document
+To check if all entities have been extracted, so multple json string can be returned per document.
 
-The output strings are parsed to an actual graph by simply splitting on the delimiters and using it 
-as an input to networkx.
+The output strings are parsed to an actual graph by simply loading the json strings, doing some
+simple checks on the contents, and using is as input to networkx.
 
 .. collapse:: example output
 
     .. code-block:: python
 
-        """"##\n("entity"<|>"Machine Learning"<|>"concept"<|>"Machine Learning is a subset of Artificial Intelligence, focusing on developing algorithms that enable computers to perform tasks without explicit instructions.")##\n("entity"<|>"Artificial Intelligence"<|>"concept"<|>"Artificial Intelligence is a field of study focused on developing intelligent machines that can perform tasks that typically require human intelligence.")<|COMPLETE|>"""
+        """"
+        [
+            {{
+                "type": "node",
+                "name": "WASHINGTON",
+                "category": "LOCATION",
+                "description": "Washington is a location where communications are being received, indicating its importance in the decision-making process."
+            }},
+            {{
+                "type": "node",
+                "name": "OPERATION: DULCE",
+                "category": "MISSION",
+                "description": "Operation: Dulce is described as a mission that has evolved to interact and prepare, indicating a significant shift in objectives and activities."
+            }},
+            {{
+                "type": "node",
+                "name": "THE TEAM",
+                "category": "ORGANIZATION",
+                "description": "The team is portrayed as a group of individuals who have transitioned from passive observers to active participants in a mission, showing a dynamic change in their role."
+            }},
+            {{
+                "type": "edge",
+                "source": "THE TEAM",
+                "target": "WASHINGTON",
+                "descripton": "The team receives communications from Washington, which influences their decision-making process.",
+                "weight": 1.0
+            }},
+            {{
+                "type": "edge",
+                "source": "THE TEAM",
+                "target": "OPERATION: DULCE",
+                "descripton": "The team is directly involved in Operation: Dulce, executing its evolved objectives and activities.",
+                "weight": 1.0
+            }}
+        ]"""
 
 
 
 The prompt used for extraction can be found here :ref:`entity_extraction_prompt_label`
 
-**document size**
+document size
+^^^^^^^^^^^^^
 
-Typically you cannot feed a whole document into the LLM due to the size of the document. To 
-circumvent we first split the document into smaller parts and extract the entities from each part. 
+Documents are quickly to large to feed a whole document into the LLM due to the size of the
+document. To overcome this we first split the document into smaller parts and extract the entities
+from each part. 
 It's a good idea to have overlap between the splits when splitting the documents, so no entities 
-span two document chunks are missed.
+spanning two document chunks are missed.

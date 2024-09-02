@@ -5,9 +5,19 @@
 import os
 import sys
 
+# Import the directive module
+import docs.custom_directives as custom_directives
+
 sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath('../../graphragzen/prompts/default_prompts'))
+sys.path.insert(0, os.path.abspath('../../graphragzen/prompts/prompt_tuning'))
 
 import graphragzen
+
+
+# Register the custom directive
+def setup(app):
+    app.add_directive('show_variable_with_newlines', custom_directives.ShowVariableWithNewlines)
 
 
 # -- Project information -----------------------------------------------------

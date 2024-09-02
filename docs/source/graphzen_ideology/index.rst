@@ -22,8 +22,8 @@ Intuition
 ------------
 To be intuitive **GraphRAGZen** is organized according to the steps one takes to implement Graph RAG
 
+- load documents
 - preprocessing
-    - load documents
     - clean strings
     - chunk documents
 - make graph
@@ -32,6 +32,10 @@ To be intuitive **GraphRAGZen** is organized according to the steps one takes to
     - parse extracted entities into a graph
 - post-process graph
     - Merge features of entities found multiple times in the documents
-    - cluster graph
+    - Cluster graph
+    - Describe each cluster
+- Embeddings
+    - Text Embed the node and edge descriptions
+    - Text Embed the cluster describtions
 - Query graph
     - to be implemented

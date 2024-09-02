@@ -1,8 +1,0 @@
-The GraphRAGZen logic
-===================================
-
-.. include:: graphragzen_logic/entity_extraction.rst
-.. include:: graphragzen_logic/feature_merging.rst
-.. include:: graphragzen_logic/clustering.rst
-.. include:: graphragzen_logic/prompt_tuning.rst
-.. include:: graphragzen_logic/querying.rst
