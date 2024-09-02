@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional
 
 from graphragzen.feature_merging import _num_tokens_from_string
@@ -7,7 +8,10 @@ from graphragzen.prompts.prompt_tuning import (
     entity_extraction,
     entity_relationship,
 )
+from pydantic._internal._model_construction import ModelMetaclass
 from tqdm import tqdm
+
+from .llm_output_structures import ExtractedCategories
 
 
 def generate_entity_categories(
@@ -16,8 +20,9 @@ def generate_entity_categories(
     domain: str,
     persona: str,
     prompt: str = entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT,
+    output_structure: ModelMetaclass = ExtractedCategories,
     entity_categories: Optional[List[str]] = None,
-) -> str | list[str]:
+) -> list[str]:
     """Generate entity categories from a given set of (small) documents.
 
         Example Output:
@@ -32,11 +37,17 @@ def generate_entity_categories(
         prompt (str, optional): Prompt to use for generating entity categories.
             Defaults to `graphragzen.prompts.prompt_tuning.entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT`
             If `entity_categories` is not specified this will be used to infer the entity categories.
+        output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
+            from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+            reference.
+            Correct = BaseLlamCpp("some text", MyPydanticModel)
+            Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            Defaults to graphragzen.prompt_tuning.llm_output_structures.ExtractedCategories
         entity_categories (List[str], optional): The entity categories relevant to a set of documents.
             If not specified, the `prompt` will be used to infer the entity categories. Defaults to None.
 
     Returns:
-        str | list[str]: entity categories
+        list[str]: entity categories
     """  # noqa: E501
 
     if entity_categories:
@@ -45,8 +56,12 @@ def generate_entity_categories(
 
     docs_str = "\n".join(documents)
     entity_categories_prompt = prompt.format(domain=domain, input_text=docs_str)
+
     chat = llm.format_chat([("model", persona), ("user", entity_categories_prompt)])
-    return llm.run_chat(chat)
+    response = llm.run_chat(chat, output_structure=output_structure)
+
+    categories = json.loads(response).get("categories", [])
+    return categories
 
 
 def generate_entity_relationship_examples(
