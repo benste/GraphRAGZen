@@ -82,11 +82,11 @@ def merge_item_feature(
     prompt: Optional[MergeFeaturesPromptConfig] = MergeFeaturesPromptConfig(),
     **kwargs: Union[dict, MergeFeaturesConfig, Any],
 ) -> Union[str, float]:
-    """Summarize a list of descriptions for a single node or edge
+    """For a single node or edge, merge one feature that is however a list.
 
     Args:
         entity_name (str): Name of the node or edge
-        feature_list (List[str]): feature descriptions to merge
+        feature_list (List[str]): List of values assigned to the one feature
         llm (LLM, optional): Only used if `how` is set to 'LLM'. Dedaults to None.
         prompt (MergeFeaturesPromptConfig, optional): Will be formatted with the feature
             to send to the LLM. Only used if `how` is set to 'LLM'.
@@ -96,8 +96,8 @@ def merge_item_feature(
             'count' takes the feature that occurs most. 'mean' takes the mean of the feature.
             Defaults to 'LLM'..
         max_input_tokens (int, optional): Only used when how=='LLM'. Maximum input tokens until a
-            summary is made. Remaining descriptions will be appended to the summary until
-            max_input_tokens is reached again or no descriptions are left. Defaults to 4000.
+            summary is made. Remaining items in the list will be appended to the summary until
+            max_input_tokens is reached again or no items are left. Defaults to 4000.
         max_output_tokens (int, optional): Only used when how=='LLM'. Maximum number of tokens a
             summary can have. Defaults to 500.
 

@@ -15,7 +15,7 @@ def chunk_documents(
 
     Args:
         dataframe (pd.DataFrame): Containing the documents to chunk
-        llm (LLM)
+        llm (LLM):
         column_to_chunk (str, optional): Column to chunk, Defaults to 'content'.
         results_column (str, optional): Column to write chunks to, Defaults to 'chunk'.
         id_column (str, optional): Column with which to later refence the source chunk.

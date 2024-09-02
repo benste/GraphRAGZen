@@ -18,7 +18,7 @@ def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
         main cluster "4" and has no relation with cluster "2, 11".
 
     Args:
-        graph (nx.Graph)
+        graph (nx.Graph):
         max_comm_size (int, optional): Maximum number of nodes in one cluster. Defaults to 0 (no
             contraint).
         levels (int, optional): Clusters can be split into clusters, how many levels should there
@@ -33,8 +33,8 @@ def leiden(graph: nx.Graph, **kwargs: Union[dict, ClusterConfig, Any]) -> tuple:
     clusters = _leiden(graph, config=config)
 
     # Map back to graphnx
-    for entity_name, cluster in clusters.items():
-        graph.nodes[entity_name]["cluster"] = _int_list_to_string_representation(cluster)
+    for node_name, cluster in clusters.items():
+        graph.nodes[node_name]["cluster"] = _int_list_to_string_representation(cluster)
 
     return graph, _create_cluster_map(graph)
 

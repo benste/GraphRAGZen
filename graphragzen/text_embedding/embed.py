@@ -19,8 +19,8 @@ def embed_graph_features(
     """Text embed features of entities from a graph.
 
     Args:
-        graph (nx.Graph)
-        embedding_model (BaseEmbedder)
+        graph (nx.Graph):
+        embedding_model (BaseEmbedder):
         vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
             vector database.
         features_to_embed (List[str]): Features of the entities (node or edge) the embed
