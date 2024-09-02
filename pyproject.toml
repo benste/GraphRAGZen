@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10, <=3.12"
 llama-cpp-python = "^0.2.87"
-leidenalg = "^0.10.2"
+leidenalg = "0.10.2"
 transformers = "^4.44.0"
 networkx = "^3.3"
 pandas = "^2.2.2"
@@ -17,6 +17,10 @@ einops = "^0.8.0"
 pydantic = ">=2.7.0"
 qdrant-client = {extras = ["fastembed"], version = "^1.11.0"}
 pyarrow = "^17.0.0"
+llama-prompter = "0.2.2"
+openai = "^1.43.0"
+tiktoken = "^0.7.0"
+jsonref = "^1.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

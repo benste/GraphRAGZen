@@ -1,11 +1,11 @@
 from typing import Any, Union
 
-from graphragzen.llm import gemma2, phi35
+from graphragzen.llm import llama_cpp_models, openAI_API_client
 
-from .typing import LlmLoadingConfig
+from .typing import LlmLoadingConfig, LlmAPIClientConfig
 
 
-def load_gemma2_gguf(**kwargs: Union[dict, LlmLoadingConfig, Any]) -> gemma2.Gemma2GGUF:
+def load_gemma2_gguf(**kwargs: Union[dict, LlmLoadingConfig, Any]) -> llama_cpp_models.Gemma2GGUF:
     """Load gguf version of Gemma 2
 
     Args:
@@ -24,10 +24,12 @@ def load_gemma2_gguf(**kwargs: Union[dict, LlmLoadingConfig, Any]) -> gemma2.Gem
     """
     config = LlmLoadingConfig(**kwargs)  # type: ignore
 
-    return gemma2.Gemma2GGUF(config=config)
+    return llama_cpp_models.Gemma2GGUF(config=config)
 
 
-def load_phi35_mini_gguf(**kwargs: Union[dict, LlmLoadingConfig, Any]) -> phi35.Phi35MiniGGUF:
+def load_phi35_mini_gguf(
+    **kwargs: Union[dict, LlmLoadingConfig, Any]
+) -> llama_cpp_models.Phi35MiniGGUF:
     """Load gguf version of Gemma 2
 
     Args:
@@ -46,8 +48,52 @@ def load_phi35_mini_gguf(**kwargs: Union[dict, LlmLoadingConfig, Any]) -> phi35.
     """
     config = LlmLoadingConfig(**kwargs)  # type: ignore
 
-    return phi35.Phi35MiniGGUF(config=config)
+    return llama_cpp_models.Phi35MiniGGUF(config=config)
 
+
+def load_openAI_API_client(
+    **kwargs: Union[dict, LlmAPIClientConfig, Any]
+) -> openAI_API_client.OpenAICompatibleClient:
+    """Initiate a client that can communicate with OpenAI compatible API endpoints. 
+    e.g. llama.cpp server is mostly OpenAI API compatible.
+    
+    Note on tokenizers - The client tries to initiate a tokenizer in the following order, only
+        moving on if the previous step failed:
+        - Load tokenizer from HF using hf_tokenizer_URI
+        - Try to tokenize and de-tokenize using the API endpoints selfbase_url/tokenize
+            and base_url/detokenize
+        - Try to initiate tiktoken, getting encoding from
+            tiktoken.encoding_for_model(model)
+
+    Args:
+        base_url (str, optional): url with API endpoints. Not needed if using openAI. Defaults to 
+            None.
+        model (str, optional): Name of the model to use. Required when using openAI API.
+            Defaults to "placeholder_model_name".
+        context_size (int): Context size of the model. Defaults to 8192.
+        api_key_env_variable (str): Environment variable to read the openAI API key from. 
+            Defaults to "OPENAI_API_KEY".
+        openai_organization_id (str, optional): Organization ID to use when querying the openAI API.
+            Defaults to None.
+        openai_project_id (str, optional): Project ID to use when querying the openAI API.
+            Defaults to None.
+        hf_tokenizer_URI (str, optional): The URI to a tokenizer on HuggingFace. If not provided 
+            the API will be tested on the ability to tokenize. If that also fails a tiktoken is 
+            initiated.
+        max_retries (optional, int): Number of times to retry on timeout. Defaults to 2.
+        use_cache (bool, optional): Use a cache to find output for previously processed inputs in
+            stead of re-generating output from the input. Default to True.
+        cache_persistent (bool, optional): Append the cache to a file on disk so it can be re-used
+            between runs. If False will use only in-memory cache. Default to True
+        persistent_cache_file (str, optional): The file to store the persistent cache.
+            Defaults to './llm_persistent_cache.yaml'.
+
+    Returns:
+        openAI_API_client.OpenAICompatibleClient
+    """
+    config = LlmAPIClientConfig(**kwargs)  # type: ignore
+    
+    return openAI_API_client.OpenAICompatibleClient(config=config)
 
 def load_gemma2_huggingface() -> None:
     """NOT YET IMPLEMENTED"""

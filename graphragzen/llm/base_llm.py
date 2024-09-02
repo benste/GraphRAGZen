@@ -4,9 +4,10 @@ from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
 from hashlib import sha256
-from typing import Any, Iterator, List, Union
+from typing import Any, Iterator, List, Optional, Union
 
 import yaml
+from pydantic import BaseModel
 
 from .typing import ChatNames, LlmLoadingConfig
 
@@ -26,12 +27,37 @@ class LLM:
     def __init__(self) -> None:
         self._initiate_cache()
 
-    def run_chat(self, chat: List[dict], max_tokens: int = -1, stream: bool = False) -> str:
+    def __call__(
+        self, input: Any, output_structure: Optional[BaseModel] = None, **kwargs: Any
+    ) -> Any:
+        """Call the LLM as you would llm(input)
+
+        Args:
+            input (Any): Any input you would normally pass to llm(input, kwargs)
+            output_structure (BaseModel, optional): Output structure to force, e.g. grammars from
+                llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the reference.
+                Correct = BaseLlamCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
+
+        Returns:
+            Any
+        """
+        pass
+
+    def run_chat(
+        self,
+        chat: List[dict],
+        max_tokens: int = -1,
+        output_structure: Optional[BaseModel] = None,
+        stream: bool = False,
+    ) -> str:
         """Runs a chat through the LLM
 
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
             max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+            output_structure (BaseModel): Output structure to force. e.g. grammars from llama.cpp.
             stream (bool, optional): If True, streams the results to console. Defaults to False.
 
         Returns:
@@ -87,7 +113,13 @@ class LLM:
         start = datetime.now()
         num_tokens = 0
         for s in stream:
-            token = s["choices"][0]["text"]
+            try:
+                # llama-cpp-python output
+                token = s["choices"][0]["text"]
+            except Exception(TypeError):
+                # OpenAI compatible output
+                token = s.choices[0].delta.content
+                
             print(token, end="", flush=True)
             full_text += token
             num_tokens += 1
@@ -103,9 +135,9 @@ class LLM:
 
         Args:
             chat (List[tuple]): [(role, content), (role, content)]
-                                role (str): either "user" or "model"
-                                content (str)
-            established_chat (List[dict], optional): Already established chat to append to.
+                                - role (str): either "system", "user" or "model"
+                                - content (str)
+            established_chat (List[dict], optional): Already formatted chat to append to.
                 Defaults to [].
 
         Returns:
@@ -115,8 +147,8 @@ class LLM:
         # Make sure we don't change the input variable
         formatted_chat = deepcopy(established_chat)
 
-        if len(formatted_chat) == 0 and chat[0][0] != "user":
-            # First role MUST be user
+        if len(formatted_chat) == 0 and chat[0][0] not in ["user", "system"]:
+            # First role MUST be user or system
             # TODO: only show warnings if requested
             # warnings.warn("Chat did not start with 'user', adding `'user': ' '` to the chat")
             chat = [("user", " ")] + chat
@@ -147,13 +179,14 @@ class LLM:
             llm_input (str)
             llm_output (str)
         """
-        hash = sha256(llm_input.encode("utf-8")).hexdigest()
-        self.cache.update({hash: llm_output})
+        if self.cache:
+            hash = sha256(llm_input.encode("utf-8")).hexdigest()
+            self.cache.update({hash: llm_output})
 
-        if self.config.cache_persistent:
-            with open(self.config.persistent_cache_file, "a") as cache_file:
-                cache_file.write("\n")
-                cache_file.write(yaml.dump({hash: llm_output}))
+            if self.config.cache_persistent:
+                with open(self.config.persistent_cache_file, "a") as cache_file:
+                    cache_file.write("\n")
+                    cache_file.write(yaml.dump({hash: llm_output}))
 
     def _initiate_cache(self) -> None:
         """If requested creates an in-memory hash(llm_in) -> llm_out cache. Additionally, if
@@ -179,10 +212,10 @@ class LLM:
                         # Might have loaded an empty file
                         self.cache = {}
 
-        else:
-            warnings.warn(
-                f"""LLM initiated with persisten cache but invalid persistent cache file
-                provided.
-                Persistent cache file provided: {self.config.persistent_cache_file}"""
-            )
-            self.cache_persistent = False
+            else:
+                warnings.warn(
+                    f"""LLM initiated with persisten cache but invalid persistent cache file
+                    provided.
+                    Persistent cache file provided: {self.config.persistent_cache_file}"""
+                )
+                self.config.cache_persistent = False
