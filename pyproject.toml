@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "graphragzen"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = ["benste <benstmrs@gmail.com>"]
 readme = "README.md"
+repository = "https://github.com/benste/GraphRAGZen/"
+documentation = "https://benste.github.io/GraphRAGZen/"
+
 
 [tool.poetry.dependencies]
 python = "^3.10, <=3.12"
