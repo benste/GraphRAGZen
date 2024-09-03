@@ -184,7 +184,7 @@ class LLM:
             llm_input (str)
             llm_output (str)
         """
-        if self.cache:
+        if self.use_cache:
             hash = sha256(llm_input.encode("utf-8")).hexdigest()
             self.cache.update({hash: llm_output})
 
