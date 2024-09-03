@@ -246,7 +246,28 @@ Output:"""  # noqa: E501
 
 
 CONTINUE_PROMPT = (
-    "MANY nodes and edges were missed in the last extraction.  Add them below using the same format:\n"
+    """MANY nodes and edges were missed in the last extraction.  Add only THE MISSING entities\n
+    
+    -Steps-
+    1. Identify all MISSING nodes. For each node, extract the following information:
+    - name: Name of the node, capitalized
+    - category: One of the following categories: [{entity_categories}]
+    - description: Comprehensive description of the node's attributes and activities
+    Format each node as a JSON with the following format:
+    {{"type": "node", "name": <name>, "category": <category>, "description": <description>}}
+
+    2. From the nodes identified in step 1, identify all MISSING pairs of (source_node, target_node) that are *clearly related* to each other.
+    For each edge, extract the following information:
+    - source: name of the source node, as identified in step 1
+    - target: name of the target node, as identified in step 1
+    - description: explanation as to why you think the source node and the target node are related to each other
+    - weight: a numeric score indicating strength of the edge between the source node and target node
+    Format each edge as a JSON with the following format:
+    {{"type": "edge", "source": <source>, "target": <target>, "description": <description>, "weight": <weight>}}
+"""
 )
 
-LOOP_PROMPT = "It appears some nodes and edges may have still been missed.  Answer YES | NO if there are still nodes or edges that need to be added.\n"  # noqa: E501
+LOOP_PROMPT = """It appears some nodes and edges may have still been missed.
+Answer YES | NO if there are still nodes or edges that need to be added.
+Do not explain yourself, do not extract more entities, answer only either YES | NO:
+"""  # noqa: E501

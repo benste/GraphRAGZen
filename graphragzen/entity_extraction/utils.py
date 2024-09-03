@@ -44,7 +44,8 @@ def loop_extraction(
 
     # Extract more entities LLM might have missed first time around
     for _ in range(max_gleans):
-        chat = llm.format_chat([("user", prompts.continue_prompt)], chat)
+        continue_prompt = prompts.continue_prompt.format(**prompts_formatting.model_dump())
+        chat = llm.format_chat([("user", continue_prompt)], chat)
         if llm.num_chat_tokens(chat) >= llm.context_size:
             # Context limit reached, can't extract more
             break
