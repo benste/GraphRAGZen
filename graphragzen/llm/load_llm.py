@@ -7,6 +7,7 @@ def load_gemma2_gguf(
     model_storage_path: str,
     tokenizer_URI: str,
     context_size: int = 8192,
+    n_gpu_layers: int = -1,
     use_cache: bool = True,
     cache_persistent: bool = True,
     persistent_cache_file: str = "./llm_persistent_cache.yaml",
@@ -15,12 +16,16 @@ def load_gemma2_gguf(
 
     Args:
         model_storage_path (str): Path to the model on the local filesystem
-        tokenizer_URI (str): URI for the tokenizer
-        context_size (int, optional): Size of the context window in tokens. Defaults to 8192
+        tokenizer_URI (str): HuggingFace URI for the tokenizer
+        context_size (int, optional): Size of the context window in tokens. Defaults to 8192.
+        n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
+            layers are offloaded. You need to install llama-cpp-python with the correct cuda
+            support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
+            Defaults to -1.
         use_cache (bool, optional): Use a cache to find output for previously processed inputs in
             stead of re-generating output from the input. Default to True.
         cache_persistent (bool, optional): Append the cache to a file on disk so it can be re-used
-            between runs. If False will use only in-memory cache. Default to True
+            between runs. If False will use only in-memory cache. Default to True.
         persistent_cache_file (str, optional): The file to store the persistent cache.
             Defaults to './llm_persistent_cache.yaml'.
 
@@ -32,6 +37,7 @@ def load_gemma2_gguf(
         model_storage_path=model_storage_path,
         tokenizer_URI=tokenizer_URI,
         context_size=context_size,
+        n_gpu_layers=n_gpu_layers,
         use_cache=use_cache,
         cache_persistent=cache_persistent,
         persistent_cache_file=persistent_cache_file,
@@ -42,6 +48,7 @@ def load_phi35_mini_gguf(
     model_storage_path: str,
     tokenizer_URI: str,
     context_size: int = 8192,
+    n_gpu_layers: int = -1,
     use_cache: bool = True,
     cache_persistent: bool = True,
     persistent_cache_file: str = "./llm_persistent_cache.yaml",
@@ -50,12 +57,16 @@ def load_phi35_mini_gguf(
 
     Args:
         model_storage_path (str): Path to the model on the local filesystem
-        tokenizer_URI (str): URI for the tokenizer
-        context_size (int, optional): Size of the context window in tokens. Defaults to 8192
+        tokenizer_URI (str): HuggingFace URI for the tokenizer
+        context_size (int, optional): Size of the context window in tokens. Defaults to 8192.
+        n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
+            layers are offloaded. You need to install llama-cpp-python with the correct cuda
+            support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
+            Defaults to -1.
         use_cache (bool, optional): Use a cache to find output for previously processed inputs in
             stead of re-generating output from the input. Default to True.
         cache_persistent (bool, optional): Append the cache to a file on disk so it can be re-used
-            between runs. If False will use only in-memory cache. Default to True
+            between runs. If False will use only in-memory cache. Default to True.
         persistent_cache_file (str, optional): The file to store the persistent cache.
             Defaults to './llm_persistent_cache.yaml'.
 
@@ -67,6 +78,7 @@ def load_phi35_mini_gguf(
         model_storage_path=model_storage_path,
         tokenizer_URI=tokenizer_URI,
         context_size=context_size,
+        n_gpu_layers=n_gpu_layers,
         use_cache=use_cache,
         cache_persistent=cache_persistent,
         persistent_cache_file=persistent_cache_file,

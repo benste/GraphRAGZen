@@ -44,18 +44,44 @@ class BaseLlamCpp(LLM):
         model_storage_path: str,
         tokenizer_URI: str,
         context_size: int = 8192,
+        n_gpu_layers: int = -1,
         use_cache: bool = True,
         cache_persistent: bool = True,
         persistent_cache_file: str = "./llm_persistent_cache.yaml",
     ) -> None:
+        """Initiate a llama cpp model
+
+        Args:
+            model_storage_path (str): Path to the model on the local filesystem
+            tokenizer_URI (str): URI for the tokenizer
+            context_size (int, optional): Size of the context window in tokens. Defaults to 8192
+            use_cache (bool, optional): Use a cache to find output for previously processed inputs
+                in stead of re-generating output from the input. Default to True.
+            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
+                layers are offloaded. You need to install llama-cpp-python with the correct cuda
+                support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
+                Defaults to -1.
+            cache_persistent (bool, optional): Append the cache to a file on disk so it can be
+                re-used between runs. If False will use only in-memory cache. Default to True
+            persistent_cache_file (str, optional): The file to store the persistent cache.
+                Defaults to './llm_persistent_cache.yaml'.
+        """
 
         self.context_size = context_size
         self.use_cache = use_cache
         self.cache_persistent = cache_persistent
         self.persistent_cache_file = persistent_cache_file
 
-        self.model = Llama(model_path=model_storage_path, verbose=False, n_ctx=context_size)
+        self.model = Llama(
+            model_path=model_storage_path,
+            verbose=False,
+            n_ctx=context_size,
+            n_gpu_layers=n_gpu_layers,
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_URI)
+
+        if not self.chatnames:
+            self.chatnames = ChatNames()
 
         super().__init__()
 
@@ -187,10 +213,29 @@ class Gemma2GGUF(BaseLlamCpp):
         model_storage_path: str,
         tokenizer_URI: str,
         context_size: int = 8192,
+        n_gpu_layers: int = -1,
         use_cache: bool = True,
         cache_persistent: bool = True,
         persistent_cache_file: str = "./llm_persistent_cache.yaml",
     ) -> None:
+        """Load the GGUF version of a gemma2 model using llama-cpp-python and it's corresponding
+        tokenizer.
+
+        Args:
+            model_storage_path (str): Path to the model on the local filesystem
+            tokenizer_URI (str): URI for the tokenizer
+            context_size (int, optional): Size of the context window in tokens. Defaults to 8192
+            use_cache (bool, optional): Use a cache to find output for previously processed inputs
+                in stead of re-generating output from the input. Default to True.
+            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
+                layers are offloaded. You need to install llama-cpp-python with the correct cuda
+                support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
+                Defaults to -1.
+            cache_persistent (bool, optional): Append the cache to a file on disk so it can be
+                re-used between runs. If False will use only in-memory cache. Default to True
+            persistent_cache_file (str, optional): The file to store the persistent cache.
+                Defaults to './llm_persistent_cache.yaml'.
+        """
 
         self.chatnames = ChatNames(user="user", model="assistant")
 
@@ -198,6 +243,7 @@ class Gemma2GGUF(BaseLlamCpp):
             model_storage_path,
             tokenizer_URI,
             context_size,
+            n_gpu_layers,
             use_cache,
             cache_persistent,
             persistent_cache_file,
@@ -212,10 +258,29 @@ class Phi35MiniGGUF(BaseLlamCpp):
         model_storage_path: str,
         tokenizer_URI: str,
         context_size: int = 8192,
+        n_gpu_layers: int = -1,
         use_cache: bool = True,
         cache_persistent: bool = True,
         persistent_cache_file: str = "./llm_persistent_cache.yaml",
     ) -> None:
+        """Load the GGUF version of a Phi 3.5 Mini model using llama-cpp-python and it's
+        corresponding tokenizer.
+
+        Args:
+            model_storage_path (str): Path to the model on the local filesystem
+            tokenizer_URI (str): URI for the tokenizer
+            context_size (int, optional): Size of the context window in tokens. Defaults to 8192
+            use_cache (bool, optional): Use a cache to find output for previously processed inputs
+                in stead of re-generating output from the input. Default to True.
+            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
+                layers are offloaded. You need to install llama-cpp-python with the correct cuda
+                support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
+                Defaults to -1.
+            cache_persistent (bool, optional): Append the cache to a file on disk so it can be
+                re-used between runs. If False will use only in-memory cache. Default to True
+            persistent_cache_file (str, optional): The file to store the persistent cache.
+                Defaults to './llm_persistent_cache.yaml'.
+        """
 
         self.chatnames = ChatNames(system="system", user="user", model="assistant")
 
@@ -223,6 +288,7 @@ class Phi35MiniGGUF(BaseLlamCpp):
             model_storage_path,
             tokenizer_URI,
             context_size,
+            n_gpu_layers,
             use_cache,
             cache_persistent,
             persistent_cache_file,
