@@ -91,8 +91,8 @@ def raw_entities_to_graph(
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
             entity extraction. Defaults to 'raw_entities'.
         reference_column (str, optional): Value from this column in the DataFrame will be added to
-            the edged and nodes. This allows to reference to the source where entities were
-            extracted from when quiring the graph. Defaults to 'chunk_id'.
+            the edged and nodes as 'source_id'. This allows to reference to the source where
+            entities were extracted from when quiring the graph. Defaults to 'chunk_id'.
         feature_delimiter (str, optional): When the same node or edge is found multiple times,
             features added to the entity are concatenated using this delimiter. Defaults to '\\n'.
 

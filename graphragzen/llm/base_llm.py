@@ -152,8 +152,8 @@ class LLM:
         # Make sure we don't change the input variable
         formatted_chat = deepcopy(established_chat)
 
+        # First role MUST be user or system
         if len(formatted_chat) == 0 and chat[0][0] not in ["user", "system"]:
-            # First role MUST be user or system
             # TODO: only show warnings if requested
             # warnings.warn("Chat did not start with 'user', adding `'user': ' '` to the chat")
             chat = [("user", " ")] + chat

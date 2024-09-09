@@ -13,7 +13,7 @@ def generate_domain(
     """Generate a domain to use for GraphRAG prompts.
 
     Args:
-        llm (LLM)
+        llm (LLM):
         documents (List[str]): Sample of documents that later will be used to create a graph.
             You likely want this to be chunks of the whole documents.
         prompt (str, optional): Prompt to use for generating a domain.
@@ -44,7 +44,7 @@ def generate_persona(
     """Generate a persona relevant to a domain to use for GraphRAG prompts.
 
     Args:
-        llm (LLM)
+        llm (LLM):
         domain (str): To base the persona on
         prompt (str, optional): Prompt to use for generating a persona.
             Defaults to `graphragzen.prompts.prompt_tuning.persona.GENERATE_PERSONA_PROMPT`.
