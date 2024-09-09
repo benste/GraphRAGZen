@@ -12,6 +12,7 @@ def embed_graph_features(
     graph: nx.Graph,
     embedding_model: BaseEmbedder,
     features_to_embed: Union[List[str], str],
+    entities_to_embed: Union[List[str], str] = ["edge", "node"],
     vector_db_client: Optional[QdrantClient] = None,
 ) -> pd.DataFrame:
     """Text embed features of entities from a graph.
@@ -19,7 +20,9 @@ def embed_graph_features(
     Args:
         graph (nx.Graph):
         embedding_model (BaseEmbedder):
-        features_to_embed (List[str]): Features of the entities (node or edge) the embed
+        features_to_embed (List[str]): Features of the entities the embed.
+        entities_to_embed (List[str], optional): Which type of entities (node or edge) to look for
+        the features to embed. Defaults to ['edge', 'node'].
         vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
             vector database.
 
@@ -33,32 +36,30 @@ def embed_graph_features(
     embeddings = []
     for feature_to_embed in features_to_embed:
         # Get the node features to embed
-        for entity in graph.nodes(data=True):
-            entity_name = entity[0]
-            entity_features = entity[1]
-            if feature_to_embed in entity_features:
-                embeddings.append(
-                    {
-                        "entity_name": entity_name,
-                        "entity_type": "node",
-                        "feature": feature_to_embed,
-                        "uuid": str(uuid4()),
-                        "to_embed": entity_features[feature_to_embed],
-                    }
-                )
+        entity_names = []
+        entity_features = []
+        entity_types = []
+        if "node" in entities_to_embed:
+            for entity in graph.nodes(data=True):
+                entity_names.append(entity[0])
+                entity_features.append(entity[1])
+                entity_types.append("node")
 
-        # Get the edge features to embed
-        for entity in graph.edges(data=True):
-            entity_name = (entity[0], entity[1])
-            entity_features = entity[2]
-            if feature_to_embed in entity_features:
+        if "edge" in entities_to_embed:
+            for entity in graph.edges(data=True):
+                entity_names.append((entity[0], entity[1]))
+                entity_features.append(entity[2])
+                entity_types.append("edge")
+
+        for name, features, type in zip(entity_names, entity_features, entity_types):
+            if feature_to_embed in features:
                 embeddings.append(
                     {
-                        "entity_type": "edge",
-                        "entity_name": entity_name,
+                        "entity_name": name,
+                        "entity_type": type,
                         "feature": feature_to_embed,
                         "uuid": str(uuid4()),
-                        "to_embed": entity_features[feature_to_embed],
+                        "to_embed": features[feature_to_embed],
                     }
                 )
 
