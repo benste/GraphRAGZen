@@ -1,3 +1,4 @@
+import json
 from copy import deepcopy
 
 import networkx as nx
@@ -5,6 +6,7 @@ import pandas as pd
 from graphragzen.llm.base_llm import LLM
 from graphragzen.prompts.default_prompts import cluster_description_prompts
 from pydantic._internal._model_construction import ModelMetaclass
+from tqdm import tqdm
 
 from .llm_output_structures import ClusterDescription
 
@@ -32,14 +34,15 @@ def describe_clusters(
             Defaults to graphragzen.entity_extraction.ClusterDescription
 
     Returns:
-        pd.DataFrame
+        pd.DataFrame:
     """  # noqa: E501
 
-    cluster_entity_map["raw_descriptions"] = None
-
     cluster_entity_map_with_descriptions = deepcopy(cluster_entity_map)
+    cluster_entity_map_with_descriptions["description"] = None
 
-    for index, cluster in cluster_entity_map.iterrows():
+    for index, cluster in tqdm(
+        cluster_entity_map.iterrows(), desc="describing clusters", total=len(cluster_entity_map)
+    ):
         cluster_graph = graph.subgraph(cluster.node_name)
 
         id = 0
@@ -55,11 +58,32 @@ def describe_clusters(
             input_text += f"{id},{edge[0]},{edge[1]},{edge[2].get('description', '')}\n"
             id += 1
 
-        prompt = prompt.format(input_text=input_text)
-        chat = llm.format_chat([("user", prompt)])
-        llm_output = llm.run_chat(chat, output_structure=output_structure)
+        # format prompt and send to LLM
+        formatted_prompt = prompt.format(input_text=input_text)
+        chat = llm.format_chat([("user", formatted_prompt)])
+        raw_description = llm.run_chat(chat, output_structure=output_structure)
 
-        cluster_entity_map_with_descriptions.iloc[index]["raw_descriptions"] = llm_output
+        try:
+            # Try json parsing first
+            structured = json.loads(raw_description)
+
+            # Verify that it adheres to the output structure
+            if output_structure:
+                structured = output_structure(**structured).dict()
+
+        except Exception:
+            Warning(
+                f"""Could not parse a cluster description for cluster {index}
+            The LLM either produced an invalid JSON, or the JSON did not adhere to
+            the output structure, writing raw llm output for this cluster.\n
+            Note: during querying this cluster cannot be used to generate a context (the individual
+            nodes in the cluster still can).
+            Clusters without structured descriptions (i.e. str in stead of dict) should be
+            identified and fixed before using them with graph querying."""
+            )
+            structured = raw_description
+
+        cluster_entity_map_with_descriptions.at[index, "description"] = structured
         # TODO: Findings return the ID that support the findings, couple this back to the
         # correct entity
 

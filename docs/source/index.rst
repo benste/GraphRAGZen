@@ -8,7 +8,6 @@
    getting_started/index.rst
    motivation/index.rst
    graphzen_ideology/index.rst
-   graphragzen_logic/index.rst
    graphragzen_concepts/index.rst
    todo/index.rst
 

@@ -6,10 +6,37 @@ Functions: first class citizens
 
 The python function is king, and the functions are named and located intuitively. 
 
-- A well written python function has a clear purpose, is not too long, and easy to read.
-- Required inputs and produced outputs are easily understood.
-- Flow of data can be easily traced.
+- Each function has a clear purpose and should be easy to read.
+- Required inputs and produced outputs are easily understood; flow of data can be easily traced.
 - No wacky behind the scenes magic.
+
+**GraphRAGZen** utilizes semi-pure python functions to maintain a modular and intuitive library.
+
+This means that:
+
+- It does not modifying global variables.
+- It does not mutate input.
+- If no LLM is not used in a function, the same output is guaranteed for the same input.
+    - If an LLM is used this no longer holds (hence semi-pure)
+
+All function inputs are organized according to:
+
+.. code-block:: python
+
+    def somefunction(
+            data_from_pipeline: type-hint,
+            other_data_from_pipeline: type-hint,
+            parameter_1: str = "some_string",
+            parameter_2: bool = True,
+        )
+
+1. The first *n* inputs are always data as expected from a data-pipeline (loaded documents, LLM
+instance, extracted graph, etc.)
+
+2. The later inputs are always parameters. These are the parameters that determing how the function
+operates.
+
+3. The parameters all sane default values (if possible, e.g. raw_documents_path cannot have a default)
 
 Modularity
 ------------
@@ -40,4 +67,6 @@ To be intuitive **GraphRAGZen** is organized according to the steps one takes to
     - Text Embed the node and edge descriptions
     - Text Embed the cluster describtions
 - Query graph
-    - to be implemented
+    - Load the Graph and optionally cluster report and source documents
+    - Retrieve context relevant to a user input
+    - Add context to the user input in a prompt for an LLM

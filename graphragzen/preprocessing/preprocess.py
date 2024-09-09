@@ -57,7 +57,7 @@ def chunk_documents(
         chunked_df[results_column] = chunked_df[results_column].apply(llm.untokenize)
 
     # Give each chunk a unique ID
-    chunked_df[id_column] = list(range(len(chunked_df)))
+    chunked_df[id_column] = [str(id) for id in range(len(chunked_df))]
 
     # TODO: drop content column to save space?
 

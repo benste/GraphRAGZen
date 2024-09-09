@@ -14,9 +14,9 @@ they are not tuned to the documents.
 Higher quality graphs could be obtained by making
 these prompts more relevant to the domain of the documents. 
 
-Your can provided you own custom prompts, but **GraphRAGZen** does come with functions to create these prompts.
+Your can provided you own custom prompts, but **GraphRAGZen** does come with functions to create these prompts from a sample of your documents.
 
-These functions rely on their own prompts, that ask the LLM to look at sample of the documents and:
+These functions rely on their own prompts that ask the LLM to look at the documents and:
 
 - Create a domain for the documents
 - Create a persona that is an expert in the create domain

@@ -11,11 +11,13 @@ Installation
 Usage examples
 ---------------
 
-These examples are rather intuitive and should get you started fast
+These examples are rather intuitive and should get you started fast (click on source)
+
+:func:`graphragzen.examples.autotune_custom_prompts.create_custom_prompts`
 
 :func:`graphragzen.examples.generate_entity_graph.entity_graph_pipeline`
 
-:func:`graphragzen.examples.create_entity_extraction_prompt.create_entity_extraction_prompt`
+:func:`graphragzen.examples.query.question`
 
 
 LLM

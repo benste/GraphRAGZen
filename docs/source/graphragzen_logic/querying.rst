@@ -1,4 +1,0 @@
-Querying
----------
-
-NOT YET IMPLEMENTED

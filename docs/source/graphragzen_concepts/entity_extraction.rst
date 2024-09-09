@@ -1,19 +1,22 @@
 Entity extraction
 ------------------
 
-Entities are the nodes and edges of a graph. 
+RAG relies on retrieving documents related to a query, and adding those to the query to create a final prompt to be send to an LLM.
+GraphRAG can also retrieve concepts and relations that are extracted from the documents to add those to the query. These concepts and relations contain denser information and can handle more complex queries.
 
-Documents are fed into an LLM with a prompt that asks it to:
+A graph consists of entities. Entities are the nodes (concepts) and edges (relationships between the concepts). These are extracted from the documents in advance, not during query-time.
+
+To extract a graph, documents are fed into an LLM with a prompt that asks it to:
 
 1. Extract the entities in the document
 2. For each entity say if it's a node or and relationship (edge)
 3. Give the entity a name
-4. Give each entity a category (e.g. concept or organization)
+4. Give each entity a category (e.g. concept, location or organization)
 5. Give the entity a description
 6. Format this all in a json string
 
 These steps are in a single prompt. **GraphRAGZen** does query the LLM a few times per document
-To check if all entities have been extracted, so multple json string can be returned per document.
+to check if all entities have been extracted, so multple json strings can be returned per document.
 
 The output strings are parsed to an actual graph by simply loading the json strings, doing some
 simple checks on the contents, and using is as input to networkx.

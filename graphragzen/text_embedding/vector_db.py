@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import PointStruct, VectorParams
-from qdrant_client.models import FieldCondition, Filter, MatchValue
+from qdrant_client.models import FieldCondition, Filter, MatchAny, MatchValue
 
 
 def create_vector_db(
@@ -187,6 +187,7 @@ def search_vector_db(
     query_vector: np.ndarray,
     k: int,
     filters: dict = {},
+    score_threshold: float = 0.0,
     collection_name: str = "default",
 ) -> Any:
     """Search the vector database with optional filters on the metadata attached to the points.
@@ -195,10 +196,12 @@ def search_vector_db(
     `graphragzen.text_embedding.vector_db.create_vector_db()`
 
     Args:
-        client (QdrantClient)
+        client (QdrantClient):
         query_vector (np.ndarray): Shaped (n,) or (n,1) where n is the size of the vectors to search
-        k (int): Max number of results to return
-        filters (dict), optional: {"key": "value_it_should_have", "key2": "value_it .....
+        k (int): Max number of results to return.
+        filters (dict, optional): {"key": "value_it_should_have", "key2": "value_it .....
+        score_threshold (float, optional): Exclude all vector search results with a score worse
+            tthan his. Defaults to 0.0
         collection_name (str, optional): Collection to search vectors in.
             QDrant can have multiple separated collections in one DB,
             each collection containing their own vectors. For the purpose of RAG it's recommended to
@@ -210,14 +213,26 @@ def search_vector_db(
     """
 
     # Format the filters for qdrant
-    query_filter_list = [
-        FieldCondition(key=key, match=MatchValue(value=value)) for key, value in filters.items()
-    ]
+    query_filter_list = []
+    for key, value in filters.items():
+        if isinstance(value, list):
+            query_filter_list.append(FieldCondition(key=key, match=MatchAny(any=value)))
+        else:
+            query_filter_list.append(FieldCondition(key=key, match=MatchValue(value=value)))
+
     query_filter = Filter(must=query_filter_list)  # type: ignore
+
+    # Make sure query vector is the right shape
+    if len(query_vector.shape) > 1:
+        if query_vector.shape[0] == 1:
+            query_vector = query_vector[0]
+        else:
+            raise Exception("multiple query vectors provided, please provide one at a time")
 
     return client.search(
         collection_name=collection_name,
         query_vector=query_vector,
         query_filter=query_filter,
         limit=k,
+        score_threshold=score_threshold,
     )

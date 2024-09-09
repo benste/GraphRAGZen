@@ -1,5 +1,5 @@
 Structured Output
------------------
+------------------
 
 **GraphRAGZen** relies heavily on valid json strings to be produced by the LLM to extract 
 information from the provided documents. 
