@@ -10,7 +10,7 @@ Given a text document that is potentially relevant to this activity and a list o
 1. Identify all nodes. For each identified node, extract the following information:
 - name: Name of the node, capitalized
 - category: One of the following categories: [{entity_categories}]
-- description: Comprehensive description of the node's attributes and activities
+- description: Short, comprehensive description of the node's attributes and activities
 Format each node as a JSON with the following format:
 {{"type": "node", "name": <name>, "category": <category>, "description": <description>}}
 
@@ -18,7 +18,7 @@ Format each node as a JSON with the following format:
 For each edge, extract the following information:
 - source: name of the source node, as identified in step 1
 - target: name of the target node, as identified in step 1
-- description: explanation as to why you think the source node and the target node are related to each other
+- description: Short explanation as to why you think the source node and the target node are related to each other
 - weight: a numeric score indicating strength of the edge between the source node and target node
 Format each edge as a JSON with the following format:
 {{"type": "edge", "source": <source>, "target": <target>, "description": <description>, "weight": <weight>}}
