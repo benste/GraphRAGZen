@@ -43,7 +43,7 @@ def loop_extraction(
     extracted_entities = [llm_output]
 
     # Extract more entities LLM might have missed first time around
-    for _ in range(max_gleans):
+    for i in range(max_gleans):
         continue_prompt = prompts.continue_prompt.format(**prompts_formatting.model_dump())
         chat = llm.format_chat([("user", continue_prompt)], chat)
         if llm.num_chat_tokens(chat) >= llm.context_size:
@@ -56,9 +56,10 @@ def loop_extraction(
         chat = llm.format_chat([("model", llm_output)], chat)
 
         # Check if the LLM thinks there are still entities missing
-        loop_chat = llm.format_chat([("user", prompts.loop_prompt)], chat)
-        continuation = llm.run_chat(loop_chat)
-        if "yes" in continuation.lower():
-            break
+        if i < max_gleans - 1:
+            loop_chat = llm.format_chat([("user", prompts.loop_prompt)], chat)
+            continuation = llm.run_chat(loop_chat)
+            if "yes" in continuation.lower():
+                break
 
     return extracted_entities

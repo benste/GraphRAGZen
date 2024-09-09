@@ -1,14 +1,15 @@
 # mypy: ignore-errors
-
+# flake8: noqa
+import os
 from random import sample
 
 from graphragzen import load_documents, preprocessing, prompt_tuning
 from graphragzen.llm import load_openAI_API_client, load_phi35_mini_gguf  # noqa: F401
 
 
-def create_entity_extraction_prompt() -> str:
+def create_custom_prompts() -> str:
     """
-    Use an LLM to generate a prompt for entity extraction.
+    Use an LLM to generate a prompt for entity extraction comprises the following steps.
     1. Domain: We fist ask the LLM to create the domains that the documents span
     2. Persona: with the domains the LLM can create a persona (e.g. You are an expert {{role}}.
         You are skilled at {{relevant skills}})
@@ -42,7 +43,7 @@ def create_entity_extraction_prompt() -> str:
     # Load raw documents
     print("Loading raw documents")
     raw_documents = load_documents.load_text_documents(
-        raw_documents_folder="/home/bens/projects/DemystifyGraphRAG/data/01_raw/machine_learning_intro"  # noqa: E501
+        raw_documents_folder="/home/bens/projects/GraphRAGZen/documents/sample-python-3.10.13-documentation"  # noqa: E501
     )
 
     # Split documents into chunks based on tokens
@@ -82,13 +83,23 @@ def create_entity_extraction_prompt() -> str:
 
     # Also create a prompt to summarize the descriptions of the entities
     print("Generating description summarization prompt")
-    description_summarization_prompt = prompt_tuning.create_description_summarization_prompt(
-        persona
-    )
+    summarization_prompt = prompt_tuning.create_description_summarization_prompt(persona)
 
-    return entity_extraction_prompt, description_summarization_prompt
+    return entity_extraction_prompt, summarization_prompt
 
 
-# entity_extraction_prompt, description_summarization_prompt = create_entity_extraction_prompt()
+## Uncomment and run the following to create custom prompts
 
-1 + 1
+# entity_extraction_prompt, summarization_prompt = create_custom_prompts()
+
+# # Save the prompts
+# outfol = "graphtest"
+
+# if not os.path.isdir(outfol):
+#     os.makedirs(outfol)
+
+# with open(os.path.join(outfol, "Custom_Entity_Extraction_Prompt.txt"), "w") as text_file:
+#     text_file.write(entity_extraction_prompt)
+
+# with open(os.path.join(outfol, "Custom_Summarization_Prompt.txt"), "w") as text_file:
+#     text_file.write(summarization_prompt)

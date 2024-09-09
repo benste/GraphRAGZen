@@ -1,4 +1,6 @@
 # mypy: ignore-errors
+# flake8: noqa
+import os
 
 import networkx as nx
 from graphragzen import (
@@ -12,8 +14,11 @@ from graphragzen import (
 from graphragzen.llm import load_openAI_API_client, load_phi35_mini_gguf  # noqa: F401
 
 
-def entity_graph_pipeline() -> nx.Graph:
-    # Note: Each function's optional kwargs have sane defaults. Check out their
+def entity_graph_pipeline(
+    custom_entity_extraction_prompt: str = None,
+    custom_summarization_prompt: str = None,
+) -> nx.Graph:
+    # Note: Each function's optional args have sane defaults. Check out their
     # docstrings for their descriptions and see if you want to overwrite any
 
     # Load an LLM locally
@@ -21,7 +26,7 @@ def entity_graph_pipeline() -> nx.Graph:
     llm = load_phi35_mini_gguf(
         model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",  # noqa: E501
         tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
-        persistent_cache_file="./phi35_mini_persistent_cache.yaml",
+        persistent_cache_file="./phi35_mini_instruct_persistent_cache.yaml",
         context_size=32786,
     )
 
@@ -30,7 +35,7 @@ def entity_graph_pipeline() -> nx.Graph:
     #     base_url = "http://localhost:8081",
     #     context_size = 32768,
     #     use_cache=True,
-    #     persistent_cache_file="./phi35_mini_persistent_cache.yaml"
+    #     persistent_cache_file="./phi35_mini_instruct_persistent_cache.yaml"
     # )
 
     # Load text embedder
@@ -56,7 +61,19 @@ def entity_graph_pipeline() -> nx.Graph:
 
     # Extract entities from the chunks
     print("Extracting raw entities")
-    raw_entities = entity_extraction.extract_raw_entities(chunked_documents, llm, max_gleans=3)
+    if custom_entity_extraction_prompt:
+        # Custom prompt if available
+        custom_prompts = entity_extraction.EntityExtractionPrompts(
+            entity_extraction_prompt=custom_entity_extraction_prompt
+        )
+        prompt_config = entity_extraction.EntityExtractionPromptConfig(prompt=custom_prompts)
+    else:
+        # Default prompt
+        prompt_config = entity_extraction.EntityExtractionPromptConfig()
+
+    raw_entities = entity_extraction.extract_raw_entities(
+        chunked_documents, llm, max_gleans=1, prompt_config=prompt_config
+    )
 
     # Create a graph from the raw extracted entities
     print("Creating graph from raw entities")
@@ -65,22 +82,73 @@ def entity_graph_pipeline() -> nx.Graph:
     # Each node and edge could be found multiple times in the documents and thus have
     # multiple descriptions. We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
-    prompt_config = feature_merging.MergeFeaturesPromptConfig()  # default prompt
+    if custom_summarization_prompt:
+        # Custom prompt if available
+        prompt_config = feature_merging.MergeFeaturesPromptConfig(
+            prompt=custom_summarization_prompt
+        )
+    else:
+        # default prompt
+        prompt_config = feature_merging.MergeFeaturesPromptConfig()
+
     entity_graph = feature_merging.merge_graph_features(
-        entity_graph, llm, prompt_config, feature="description", how="LLM"
+        entity_graph, llm, prompt=prompt_config, feature="description", how="LLM"
     )
 
-    # Let's clusted the nodes and assign the cluster ID as a property to each node
+    entity_graph = nx.reag_graphml(os.path.join(outfol, "entity_graph.graphml"))
+
+    # Let's cluster the nodes and assign the cluster ID as a property to each node
     print("Clustering graph")
-    entity_graph, cluster_entity_map = clustering.leiden(entity_graph, max_comm_size=10)
+    entity_graph, cluster_entity_map = clustering.leiden(
+        entity_graph,
+        max_comm_size=20,
+        min_comm_size=5,
+        levels=1,
+    )
 
     # Describe each cluster, creating a so-called cluster report
+    print("Describing clusters")
     cluster_report = clustering.describe_clusters(llm, entity_graph, cluster_entity_map)
 
     # Embed the descriptions of each node and edge
-    embedded_features = text_embedding.embed_graph_features(
+    print("Embedding entity descriptions")
+    _ = text_embedding.embed_graph_features(
         entity_graph, embedder, vector_db_client=vector_db_client, features_to_embed=["description"]
     )
 
     print("Pipeline finished successful \n\n")
-    return entity_graph, cluster_entity_map, cluster_report, embedded_features
+    return (
+        chunked_documents,
+        entity_graph,
+        cluster_entity_map,
+        cluster_report,
+        embedder,
+        vector_db_client,
+    )
+
+
+chunked_documents, entity_graph, cluster_report, vector_db_client = entity_graph_pipeline()
+
+# Uncomment and run the following to create a knowledge graph
+
+# # Load custom prompts if available
+# outfol = "graphtest"
+# with open(os.path.join(outfol, "Custom_Entity_Extraction_Prompt.txt"), "r") as text_file:
+#     entity_extraction_prompt = text_file.read()
+
+# with open(os.path.join(outfol, "Custom_Summarization_Prompt.txt"), "r") as text_file:
+#     summarization_prompt = text_file.read()
+
+# # Extract entities
+# chunked_documents, entity_graph, cluster_report, vector_db_client = (
+#     entity_graph_pipeline(entity_extraction_prompt, summarization_prompt)
+# )
+
+# # Save everything we need for querying
+# if not os.path.isdir(outfol):
+#     os.makedirs(outfol)
+
+# chunked_documents.to_pickle(os.path.join(outfol, "source_documents.pkl"))
+# nx.write_graphml(entity_graph, os.path.join(outfol, "entity_graph.graphml"))
+# cluster_report.to_pickle(os.path.join(outfol, "cluster_report.pkl"))
+# text_embedding.save_vector_db(vector_db_client, os.path.join(outfol, "vector_db"))
