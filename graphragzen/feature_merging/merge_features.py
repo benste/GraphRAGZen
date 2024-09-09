@@ -22,7 +22,8 @@ def merge_graph_features(
     max_input_tokens: int = 4000,
     max_output_tokens: int = 500,
 ) -> nx.Graph:
-    """Summarize lists of descriptions for each node or edge
+    """For each node and edge, the feature is extracted, presumed it's a list, merged, and written
+    back to the node or edge.
 
     Args:
         graph (nx.Graph): With edges and nodes expected to have the feature 'description'.
@@ -194,8 +195,8 @@ def _LLM_merge(
         )
 
     def _summarize(llm: LLM, prompt: MergeFeaturesPromptConfig, max_output_tokens: int) -> str:
-        prompt = prompt.prompt.format(**prompt.formatting.model_dump())  # type: ignore
-        chat = llm.format_chat([("user", prompt)])
+        formatted_prompt = prompt.prompt.format(**prompt.formatting.model_dump())  # type: ignore
+        chat = llm.format_chat([("user", formatted_prompt)])
         return llm.run_chat(chat, max_tokens=max_output_tokens)
 
     usable_tokens = max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
