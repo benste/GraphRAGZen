@@ -1,12 +1,14 @@
 import warnings
+from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
 
-class BaseEmbedder:
+class BaseEmbedder(ABC):
 
+    @abstractmethod
     def embed(
         self, text: Union[str, List[str]], task: Optional[str] = "embed_document"
     ) -> np.ndarray:
@@ -24,7 +26,7 @@ class BaseEmbedder:
 
 
 class NomicTextEmbedder(BaseEmbedder):
-    def __init__(self, model_path_or_huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5"):
+    def __init__(self, huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5"):
         """Initialize the nomic text embedder.
 
         note: Either or both `model_storage_path` or `huggingface_URI` must be set. When both are
@@ -33,11 +35,11 @@ class NomicTextEmbedder(BaseEmbedder):
         Args:
             model_storage_path (str, optional): Path to the model on the local filesystem
             huggingface_URI (str, optional): Huggingface URI of the model.
-                Defaults to "nomic-ai/nomic-embed-text-v1.5".
+                Defaults to HF URI "nomic-ai/nomic-embed-text-v1.5".
         """
 
-        print(f"loading {model_path_or_huggingface_URI}")
-        self.model = SentenceTransformer(model_path_or_huggingface_URI, trust_remote_code=True)
+        print(f"loading {huggingface_URI}")
+        self.model = SentenceTransformer(huggingface_URI, trust_remote_code=True)
         self.task_prefix = {
             "embed_document": "search_document: ",
             "embed_query": "search_query: ",
