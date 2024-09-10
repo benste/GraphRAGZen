@@ -85,7 +85,7 @@ def raw_entities_to_graph(
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
-        input (Union[pd.DataFrame, str]): If a raw extracted entities json string is provided it 
+        input (Union[pd.DataFrame, str]): If a raw extracted entities json string is provided it
             will simply be parsed to a small graph.
             When a dataframe is provided it should contain a column with raw extracted entities
             strings and a reference column whos value will be added to the nodes and edges metadata.
@@ -113,10 +113,10 @@ def raw_entities_to_graph(
         )
     else:
         dataframe = deepcopy(input)
-        
+
     # Go over the json strings and make a graph
     if not graph:
-        graph = nx.Graph()    
+        graph = nx.Graph()
     for raw_extraction_strings, source_id in zip(
         *(dataframe[raw_entities_column], dataframe[reference_column])
     ):
