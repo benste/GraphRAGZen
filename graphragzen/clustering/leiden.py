@@ -34,7 +34,12 @@ def leiden(
         tuple(nx.Graph, cluster_map): nx.Graph has the feature 'cluster' added to the entities.
             cluster_map maps for each cluster the nodes that belong to it.
     """
-    clusters = _leiden(graph, max_comm_size=max_comm_size, levels=levels)
+    clusters = _leiden(
+        graph,
+        max_comm_size=max_comm_size,
+        min_comm_size=min_comm_size,
+        levels=levels,
+    )
 
     clustered_graph = deepcopy(graph)
 
@@ -71,7 +76,7 @@ def _leiden(
         igraph,
         la.ModularityVertexPartition,
         max_comm_size=max_comm_size,
-        n_iterations=10,
+        n_iterations=20,
     )
 
     nodes_list = np.asarray(igraph.vs["_nx_name"])
