@@ -41,4 +41,4 @@ def _string_represented_list_int_to_list(input: str) -> List[int]:
     """Takes a comma separate string representation of integers and turns it into list of integers
     "1,2,3" -> [1,2,3]
     """
-    return [int(num) for num in input.split(",")]
+    return [int(num) for num in input.split(",") if num]
