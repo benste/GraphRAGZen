@@ -4,8 +4,7 @@ from uuid import uuid4
 import networkx as nx
 import pandas as pd
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
-from graphragzen.text_embedding.vector_db import add_points_to_vector_db
-from qdrant_client import QdrantClient
+from graphragzen.text_embedding.vector_databases import VectorDatabase
 
 
 def embed_graph_features(
@@ -13,7 +12,7 @@ def embed_graph_features(
     embedding_model: BaseEmbedder,
     features_to_embed: Union[List[str], str],
     entities_to_embed: Union[List[str], str] = ["edge", "node"],
-    vector_db_client: Optional[QdrantClient] = None,
+    vector_db: Optional[VectorDatabase] = None,
 ) -> pd.DataFrame:
     """Text embed features of entities from a graph.
 
@@ -23,7 +22,7 @@ def embed_graph_features(
         features_to_embed (List[str]): Features of the entities the embed.
         entities_to_embed (List[str], optional): Which type of entities (node or edge) to look for
         the features to embed. Defaults to ['edge', 'node'].
-        vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
+        vector_db (VectorDatabase, optional): If provided, will add the embedding to the
             vector database.
 
     Returns:
@@ -74,8 +73,8 @@ def embed_graph_features(
     embeddings_df["metadata"] = (
         embeddings_df[["entity_type", "entity_name", "feature"]].T.to_dict().values()
     )
-    if vector_db_client:
-        add_points_to_vector_db(vector_db_client, embeddings_df)
+    if vector_db:
+        vector_db.add_vectors(embeddings_df.to_dict(orient="records"))
 
     return embeddings_df
 
@@ -83,15 +82,15 @@ def embed_graph_features(
 def embed_dataframe(
     dataframe: pd.DataFrame,
     embedding_model: BaseEmbedder,
-    vector_db_client: Optional[QdrantClient] = None,
+    vector_db: Optional[VectorDatabase] = None,
     columns_to_embed: List[str] = [],
 ) -> pd.DataFrame:
-    """_summary_
+    """Embed specific columns of a database, and add each embedding to the vector DB
 
     Args:
         dataframe (pd.DataFrame)
         embedding_model (BaseEmbedder)
-        vector_db_client (QdrantClient, optional): If provided, will add the embedding to the
+        vector_db_client (VectorDatabase, optional): If provided, will add the embedding to the
             vector database.
         columns_to_embed (List[str], optional): Which columns to embed. If not provided embeds all
             columns of that contain strings or Null. Defaults to [].
@@ -121,9 +120,12 @@ def embed_dataframe(
         dataframe[f"{to_embed}_vector"] = vectors.tolist()
 
         # If vector database is provided, add the vectors to it
-        if vector_db_client:
-            dataframe["uuid"] = [str(uuid4()) for _ in range(len(dataframe))]
-            add_points_to_vector_db(vector_db_client, dataframe)
-            dataframe.rename(columns={"uuid", f"{to_embed}_uuid"}, inplace=True)
+        if vector_db:
+            dataframe[f"{to_embed}_uuid"] = [str(uuid4()) for _ in range(len(dataframe))]
+
+            for_vector_db = dataframe[[f"{to_embed}_vector", f"{to_embed}_uuid"]].rename(
+                columns={f"{to_embed}_vector": "vector", f"{to_embed}_uuid": "uuid"}
+            )
+            vector_db.add_vectors(for_vector_db.to_dict(orient="records"))
 
     return dataframe

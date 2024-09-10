@@ -25,6 +25,16 @@ class BaseEmbedder:
 
 class NomicTextEmbedder(BaseEmbedder):
     def __init__(self, model_path_or_huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5"):
+        """Initialize the nomic text embedder.
+
+        note: Either or both `model_storage_path` or `huggingface_URI` must be set. When both are
+        set `model_storage_path` takes precedence.
+
+        Args:
+            model_storage_path (str, optional): Path to the model on the local filesystem
+            huggingface_URI (str, optional): Huggingface URI of the model.
+                Defaults to "nomic-ai/nomic-embed-text-v1.5".
+        """
 
         print(f"loading {model_path_or_huggingface_URI}")
         self.model = SentenceTransformer(model_path_or_huggingface_URI, trust_remote_code=True)
