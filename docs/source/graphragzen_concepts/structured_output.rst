@@ -30,10 +30,10 @@ Loading an LLM locally or an API client:
 
 .. code-block:: python
 
-    from graphragzen.llm import load_phi35_mini_gguf, load_openAI_API_client
+    from graphragzen.llm import Phi35MiniGGUF, OpenAICompatibleClient
 
     # Load LLM locally
-    llm = load_phi35_mini_gguf(
+    llm = Phi35MiniGGUF(
         model_storage_path="/path/to/Phi-3.5-mini-instruct-Q4_K_M.gguf",
         tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
         persistent_cache_file="./phi35_mini_persistent_cache.yaml",
@@ -41,7 +41,7 @@ Loading an LLM locally or an API client:
     )
 
     # Communicate with OpenAI API endpoint 
-    llm = load_openAI_API_client(
+    llm = OpenAICompatibleClient(
         api_key_env_variable = "OPENAI_API_KEY"  # the env variable, not the actual key!
         model_name="gpt-4o-mini",
         context_size = 32768,
@@ -54,7 +54,7 @@ Loading an LLM locally or an API client:
     )
 
     # If you're running your own server running an LLM
-    llm = load_openAI_API_client(
+    llm = OpenAICompatibleClient(
         base_url = "http://localhost:8081",
         context_size = 32768,
         # Caches responses locally, saving time and server load if the same request is made twice

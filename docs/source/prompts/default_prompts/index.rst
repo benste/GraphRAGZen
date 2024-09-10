@@ -10,3 +10,4 @@ These are the default prompts used to create a graph using an LLM
 
     entity_extraction.rst
     summarization_prompt.rst
+    querying.rst

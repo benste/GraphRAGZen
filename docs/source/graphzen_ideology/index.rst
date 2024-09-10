@@ -40,12 +40,17 @@ operates.
 
 Modularity
 ------------
-In order to be modular functions should not presume a specific use-case. 
+Modularity is achieved by adhering to the following rules
+
+1. Functions should not presume a specific use-case. 
 
 e.g. there is no **load_documents** function that presumes documents are in text format, rather 
 there is a **load_text_documents** function.
 
-Intuition
+2. Any interaction with backends (LLM, Embedding Model, Vector Database, etc.) goes through an AbstractBaseClass. 
+This way any backend not supported out of the box can be easily implemented by inheriting from the relevant AbstractBaseClass and writing custrom versions of the abstracmethods.
+
+Intuitive
 ------------
 To be intuitive **GraphRAGZen** is organized according to the steps one takes to implement Graph RAG
 
@@ -56,7 +61,7 @@ To be intuitive **GraphRAGZen** is organized according to the steps one takes to
     - clean strings
     - chunk documents
 - make graph
-    - optionally adjust the LLM prompts to the documents
+    - optionally make custom prompts for the domain of the documents
     - extract entities (nodes and edges) using LLM
     - parse extracted entities into a graph
 - post-process graph

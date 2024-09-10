@@ -68,8 +68,7 @@ The prompt used for extraction can be found here :ref:`entity_extraction_prompt_
 document size
 ^^^^^^^^^^^^^
 
-Documents are quickly to large to feed a whole document into the LLM due to the size of the
-document. To overcome this we first split the document into smaller parts and extract the entities
-from each part. 
-It's a good idea to have overlap between the splits when splitting the documents, so no entities 
-spanning two document chunks are missed.
+While extracting a graph, each document is quickly to large to feed to the LLM in go.
+To overcome this we first split the document into smaller chunks and extract the entities
+from each chunk. 
+It's a good idea to have overlap between the chunks so no entities spanning two chunks are missed.

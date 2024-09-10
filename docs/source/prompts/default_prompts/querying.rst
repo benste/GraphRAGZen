@@ -1,5 +1,3 @@
-.. _entity_extraction_prompt_label:
-
 Querying
 ==================
 
