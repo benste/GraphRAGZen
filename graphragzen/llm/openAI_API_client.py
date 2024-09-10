@@ -159,6 +159,7 @@ class OpenAICompatibleClient(LLM):
         max_tokens: Optional[int] = None,
         output_structure: Optional[ModelMetaclass] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> str:
         """Runs a chat through the LLM
 
@@ -171,6 +172,7 @@ class OpenAICompatibleClient(LLM):
                 Correct = llm.run_chat("some text", MyPydanticModel)
                 Wrong = llm.run_chat("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
 
         Returns:
             str: Generated content
@@ -204,9 +206,9 @@ class OpenAICompatibleClient(LLM):
                 messages=chat,
                 model=self.model_name,
                 response_format=response_format,
-                frequency_penalty=1.0,
                 max_tokens=max_tokens,
                 stream=stream,
+                **kwargs,
             )
 
             if stream:

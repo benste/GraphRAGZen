@@ -118,6 +118,7 @@ class BaseLlamCpp(LLM):
         max_tokens: int = -1,
         output_structure: Optional[ModelMetaclass] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> str:
         """Runs a chat through the LLM
 
@@ -130,6 +131,7 @@ class BaseLlamCpp(LLM):
                 Correct = BaseLlamCpp.run_chat("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp.run_chat("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
 
         Returns:
             str: Generated content
@@ -147,13 +149,13 @@ class BaseLlamCpp(LLM):
         else:
             # Use LLM if not in cache
             results = self(
-                llm_input,
+                input=llm_input,
                 output_structure=output_structure,
                 stop=["<eos>"],
                 echo=False,
-                repeat_penalty=1.0,
                 max_tokens=max_tokens,
                 stream=stream,
+                **kwargs,
             )
 
             if stream:

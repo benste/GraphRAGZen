@@ -1,5 +1,6 @@
 import os
 import warnings
+from abc import ABC, abstractmethod
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
@@ -13,8 +14,10 @@ from .typing import ChatNames
 
 
 @dataclass
-class LLM:
-    """Be carefull when using the same persistent cache file while switching or updating models or
+class LLM(ABC):
+    """Base class to communicate with local or remote LLM's
+
+    Be carefull when using the same persistent cache file while switching or updating models or
     tokenizers. The LLM will search for cached llm-in -> llm-out in in the cache file and not
     re-process input.
     """
@@ -30,6 +33,7 @@ class LLM:
     def __init__(self) -> None:
         self._initiate_cache()
 
+    @abstractmethod
     def __call__(
         self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
     ) -> Any:
@@ -49,12 +53,14 @@ class LLM:
         """
         pass
 
+    @abstractmethod
     def run_chat(
         self,
         chat: List[dict],
         max_tokens: int = -1,
         output_structure: Optional[ModelMetaclass] = None,
         stream: bool = False,
+        **kwargs: Any,
     ) -> str:
         """Runs a chat through the LLM
 
@@ -64,12 +70,14 @@ class LLM:
             output_structure (ModelMetaclass): Output structure to force. e.g. grammars from
                 llama.cpp.
             stream (bool, optional): If True, streams the results to console. Defaults to False.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
 
         Returns:
             str: Generated content
         """
         return ""
 
+    @abstractmethod
     def tokenize(self, content: str) -> Union[List[str], List[int]]:
         """Tokenize a string
 
@@ -81,6 +89,7 @@ class LLM:
         """
         return [""]
 
+    @abstractmethod
     def untokenize(self, tokens: List[str]) -> str:
         """Generate a string from a list of tokens
 
@@ -92,6 +101,7 @@ class LLM:
         """
         return ""
 
+    @abstractmethod
     def num_chat_tokens(self, chat: List[dict]) -> int:
         """Return the length of the tokenized chat
 
