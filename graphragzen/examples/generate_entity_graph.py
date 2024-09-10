@@ -125,8 +125,8 @@ def entity_graph_pipeline(
 
 # # Uncomment and run the following to create a knowledge graph
 
-# Load custom prompts if available
-outfol = "graphtest2"
+# # Load custom prompts if available
+# outfol = "graphtest2"
 # with open(os.path.join(outfol, "Custom_Entity_Extraction_Prompt.txt"), "r") as text_file:
 #     entity_extraction_prompt = text_file.read()
 
@@ -138,13 +138,14 @@ outfol = "graphtest2"
 #     entity_extraction_prompt, summarization_prompt
 # )
 
-chunked_documents, entity_graph, cluster_report, vector_db = entity_graph_pipeline()
+# # Or use with default prompts
+# chunked_documents, entity_graph, cluster_report, vector_db = entity_graph_pipeline()
 
-# Save everything we need for querying
-if not os.path.isdir(outfol):
-    os.makedirs(outfol)
+# # Save everything we need for querying
+# if not os.path.isdir(outfol):
+#     os.makedirs(outfol)
 
-chunked_documents.to_pickle(os.path.join(outfol, "source_documents.pkl"))
-nx.write_graphml(entity_graph, os.path.join(outfol, "entity_graph.graphml"))
-cluster_report.to_pickle(os.path.join(outfol, "cluster_report.pkl"))
-vector_db.save(os.path.join(outfol, "vector_db"))
+# chunked_documents.to_pickle(os.path.join(outfol, "source_documents.pkl"))
+# nx.write_graphml(entity_graph, os.path.join(outfol, "entity_graph.graphml"))
+# cluster_report.to_pickle(os.path.join(outfol, "cluster_report.pkl"))
+# vector_db.save(os.path.join(outfol, "vector_db"))
