@@ -77,6 +77,7 @@ def extract_raw_entities(
 
 def raw_entities_to_graph(
     input: Union[pd.DataFrame, str],
+    graph: Optional[nx.Graph] = None,
     raw_entities_column: str = "raw_entities",
     reference_column: str = "chunk_id",
     feature_delimiter: str = "\n",
@@ -84,10 +85,12 @@ def raw_entities_to_graph(
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
-        input (Union[pd.DataFrame, str]): If a raw extracted entities string is provided it will
-            simply be parsed to a graph.
+        input (Union[pd.DataFrame, str]): If a raw extracted entities json string is provided it 
+            will simply be parsed to a small graph.
             When a dataframe is provided it should contain a column with raw extracted entities
-            strings and a reference column whos value will be added to the nodes and edged.
+            strings and a reference column whos value will be added to the nodes and edges metadata.
+        graph (nx.Graph, optional): Pre-established graph to add the extracted entities to. If not
+            provided will create a new graph. Defaults to None.
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
             entity extraction. Defaults to 'raw_entities'.
         reference_column (str, optional): Value from this column in the DataFrame will be added to
@@ -110,8 +113,10 @@ def raw_entities_to_graph(
         )
     else:
         dataframe = deepcopy(input)
-
-    graph = nx.Graph()
+        
+    # Go over the json strings and make a graph
+    if not graph:
+        graph = nx.Graph()    
     for raw_extraction_strings, source_id in zip(
         *(dataframe[raw_entities_column], dataframe[reference_column])
     ):
