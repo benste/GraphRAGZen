@@ -4,7 +4,7 @@ import os
 from random import sample
 
 from graphragzen import load_documents, preprocessing, prompt_tuning
-from graphragzen.llm import load_openAI_API_client, load_phi35_mini_gguf  # noqa: F401
+from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
 
 
 def create_custom_prompts() -> str:
@@ -25,19 +25,18 @@ def create_custom_prompts() -> str:
     """
     # Load an LLM locally
     print("Loading LLM")
-    llm = load_phi35_mini_gguf(
-        model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",  # noqa: E501
+    llm = Phi35MiniGGUF(
+        model_storage_path="/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf",
         tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
-        persistent_cache_file="./phi35_mini_persistent_cache.yaml",
         context_size=32786,
+        persistent_cache_file="./phi35_mini_instruct_persistent_cache.yaml",
     )
 
     # # Communicate with an LLM running on a server
-    # llm = load_openAI_API_client(
+    # llm = OpenAICompatibleClient(
     #     base_url = "http://localhost:8081",
     #     context_size = 32768,
-    #     use_cache=True,
-    #     persistent_cache_file="./phi35_mini_persistent_cache.yaml"
+    #     persistent_cache_file="./phi35_mini_instruct_persistent_cache.yaml"
     # )
 
     # Load raw documents

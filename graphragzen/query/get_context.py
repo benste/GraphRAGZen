@@ -5,13 +5,12 @@ from typing import List
 import networkx as nx
 import pandas as pd
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
-from graphragzen.text_embedding.vector_db import search_vector_db
-from qdrant_client import QdrantClient
+from graphragzen.text_embedding.vector_databases import VectorDatabase
 
 
 def semantic_similar_entities(
     embedding_model: BaseEmbedder,
-    vector_db_client: QdrantClient,
+    vector_db: VectorDatabase,
     query: str,
     k: int,
     entity_types: List[str] = ["node", "edge"],
@@ -22,7 +21,7 @@ def semantic_similar_entities(
 
     Args:
         embedding_model (BaseEmbedder): The embedding model used to compute the query vector.
-        vector_db_client (QdrantClient): The vector database client to search for similar entities.
+        vector_db (VectorDatabase): The vector database to search for similar entities.
         query (str): The query string to find similar entities.
         k (int): Maximum number of entities (nodes and edges) to return.
         entity_types (List[str], optional): Which entities to search. Defaults to ['node', 'edge'].
@@ -32,20 +31,19 @@ def semantic_similar_entities(
             than this. Defaults to 0.0.
 
     Returns:
-        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name', 'similarity'.
+        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name', 'score'.
     """
 
     query_vector = embedding_model.embed(query, task="embed_query")
 
-    results = search_vector_db(
-        vector_db_client,
+    results = vector_db.search(
         query_vector,
         k,
         filters={"feature": features_to_match, "entity_type": entity_types},
         score_threshold=score_threshold,
     )
 
-    return [result.payload | {"similarity": result.score} for result in results]
+    return [result["metadata"] | {"score": result["score"]} for result in results[0]]
 
 
 def extra_inside_edges(
@@ -64,7 +62,7 @@ def extra_inside_edges(
             thus output length might be less than k. Defaults to True.
 
     Returns:
-        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name', 'similarity'.
+        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name'.
     """
 
     return _extra_edges(graph, entities, k, "inside", only_new_edges)
@@ -86,7 +84,7 @@ def extra_outside_edges(
             this output length might be less than k. Defaults to True.
 
     Returns:
-        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name', 'similarity'.
+        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name'.
     """
 
     return _extra_edges(graph, entities, k, "outside", only_new_edges)
@@ -112,7 +110,7 @@ def _extra_edges(
             output length might be less than k.
 
     Returns:
-        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name', 'similarity'.
+        List[dict]: A list of dictionaries containing 'entity_type', 'entity_name'.
     """
 
     if k <= 0:

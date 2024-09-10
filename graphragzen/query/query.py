@@ -1,12 +1,11 @@
-from typing import Optional, Union
+from typing import Optional
 
 import networkx as nx
 import pandas as pd
 from graphragzen.prompts.default_prompts.local_search_prompts import LOCAL_SEARCH_PROMPT
 from graphragzen.query import get_context
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
-from graphragzen.text_embedding.vector_db import load_vector_db
-from qdrant_client import QdrantClient
+from graphragzen.text_embedding.vector_databases import VectorDatabase
 
 
 class PromptBuilder:
@@ -17,7 +16,7 @@ class PromptBuilder:
     Attributes:
         embedding_model (BaseEmbedder): An embedding model used to generate embeddings for text and
             queries.
-        vector_db_client (QdrantClient): A client for interacting with the vector database.
+        vector_db (VectorDatabase): A client for interacting with the vector database.
         graph (nx.Graph): A graph containing nodes and edges that represent entities and their
             relationships.
         source_documents (Optional[pd.DataFrame]): A DataFrame containing source documents for
@@ -29,7 +28,7 @@ class PromptBuilder:
     def __init__(
         self,
         embedding_model: BaseEmbedder,
-        vector_db_client_or_location: Union[QdrantClient, str],
+        vector_db: VectorDatabase,
         graph: nx.Graph,
         source_documents: Optional[pd.DataFrame] = None,
         cluster_report: Optional[pd.DataFrame] = None,
@@ -39,9 +38,7 @@ class PromptBuilder:
         Args:
             embedding_model (BaseEmbedder): An embedding model to generate embeddings for text and
                 queries.
-            vector_db_client_or_location (Union[QdrantClient, str]): Either a QdrantClient instance
-                for interacting with an existing vector database or a string representing the
-                location of the vector database to be loaded.
+            vector_db (VectorDatabase):
             graph (nx.Graph): A graph containing nodes and edges that represent entities and their
                 relationships.
             source_documents (pd.DataFrame, optional): A DataFrame containing source
@@ -50,12 +47,8 @@ class PromptBuilder:
                 for additional context. Defaults to None.
         """
 
-        if isinstance(vector_db_client_or_location, str):
-            self.vector_db_client = load_vector_db(vector_db_client_or_location)
-        elif isinstance(vector_db_client_or_location, QdrantClient):
-            self.vector_db_client = vector_db_client_or_location
-
         self.embedding_model = embedding_model
+        self.vector_db = vector_db
         self.graph = graph
         self.source_documents = source_documents
         self.cluster_report = cluster_report
@@ -104,7 +97,7 @@ class PromptBuilder:
         """
         similar_entities = get_context.semantic_similar_entities(
             embedding_model=self.embedding_model,
-            vector_db_client=self.vector_db_client,
+            vector_db=self.vector_db,
             query=query,
             k=top_k_similar_entities,
             score_threshold=score_threshold,
