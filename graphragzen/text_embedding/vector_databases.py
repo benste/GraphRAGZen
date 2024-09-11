@@ -105,7 +105,7 @@ class QdrantLocalVectorDatabase(VectorDatabase):
         self.client = QdrantClient(path=database_location)
 
         # Save some variables internally
-        self.vector_size = vector_size
+        self.vector_size = vector_size  # type: ignore
         self.distance_measure = distance_measure
         self.database_location = database_location
 
@@ -115,7 +115,7 @@ class QdrantLocalVectorDatabase(VectorDatabase):
 
         # Make sure vector size is set correct
         self.client.get_collection("default").config.params.vectors.size  # type: ignore # noqa:E501
-        
+
     def add_vectors(self, vectors: List[dict]) -> None:
         """Add vectors to the database
 

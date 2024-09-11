@@ -1,6 +1,5 @@
 # mypy: ignore-errors
 # flake8: noqa
-import os
 from random import sample
 
 from graphragzen import load_documents, preprocessing, prompt_tuning

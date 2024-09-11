@@ -225,7 +225,7 @@ class Gemma2GGUF(BaseLlamCpp):
 
         Args:
             model_storage_path (str): Path to the model on the local filesystem
-            tokenizer_URI (str): URI for the tokenizer
+            tokenizer_URI (str): HuggingFace URI for the tokenizer
             context_size (int, optional): Size of the context window in tokens. Defaults to 8192
             use_cache (bool, optional): Use a cache to find output for previously processed inputs
                 in stead of re-generating output from the input. Default to True.
@@ -270,7 +270,7 @@ class Phi35MiniGGUF(BaseLlamCpp):
 
         Args:
             model_storage_path (str): Path to the model on the local filesystem
-            tokenizer_URI (str): URI for the tokenizer
+            tokenizer_URI (str): HuggingFace URI for the tokenizer
             context_size (int, optional): Size of the context window in tokens. Defaults to 8192
             use_cache (bool, optional): Use a cache to find output for previously processed inputs
                 in stead of re-generating output from the input. Default to True.

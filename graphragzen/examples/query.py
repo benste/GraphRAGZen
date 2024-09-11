@@ -6,7 +6,6 @@ import networkx as nx
 import pandas as pd
 from graphragzen import text_embedding
 from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
-from graphragzen.prompts.default_prompts.local_search_prompts import LOCAL_SEARCH_PROMPT
 from graphragzen.query.query import PromptBuilder
 
 
