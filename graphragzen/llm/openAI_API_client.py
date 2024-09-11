@@ -157,7 +157,7 @@ class OpenAICompatibleClient(LLM):
         self,
         chat: List[dict],
         max_tokens: Optional[int] = None,
-        output_structure: Optional[ModelMetaclass] = None,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
         stream: bool = False,
         **kwargs: Any,
     ) -> str:
@@ -186,7 +186,7 @@ class OpenAICompatibleClient(LLM):
             if not max_tokens or max_tokens < 0:
                 max_tokens = 10**10
 
-            if output_structure:
+            if isinstance(output_structure, ModelMetaclass):
                 # Output structure cannot be a ModelMetaclass for llama cpp server
                 # Let's convert it to something OpenAI and llama cpp server both understand
                 unrefed_schema = jsonref.replace_refs(output_structure.model_json_schema())  # type: ignore # noqa: E501
@@ -199,6 +199,8 @@ class OpenAICompatibleClient(LLM):
                         "required": output_structure.model_json_schema()["required"],  # type: ignore # noqa: E501
                     },
                 }
+            elif isinstance(output_structure, dict):
+                response_format = output_structure
             else:
                 response_format = None
 
@@ -275,6 +277,81 @@ class OpenAICompatibleClient(LLM):
         """
 
         return self.tokenizer.convert_tokens_to_string(tokens)
+
+
+class OllamaClient(OpenAICompatibleClient):
+    """Interact with an LLM running on an Ollama Server.
+
+
+    !!During inference this class can force json output, but not the structure of the json.!!
+
+    The only reason this class exists is because the Ollama server does not have the
+    'response_format' feature; it can only be forced to output some json, but not force its
+    structure. Forcing an output structure significantly increases the quality of generated
+    graphs, concider using llama.cpp for serving your model.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:  # type: ignore
+        """Interact with an LLM running on an Ollama Server.
+
+        !!During inference this class can force json output, but not the structure of the json.!!
+
+        The only reason this class exists is because the Ollama server does not have the
+        'response_format' feature; it can only be forced to output some json, but not force its
+        structure. Forcing an output structure significantly increases the quality of generated
+        graphs, concider using llama.cpp for serving your model.
+
+        Args:
+            base_url (str, optional): url with API endpoints. Not needed if using openAI.
+                Defaults to None.
+            model_name (str, optional): Name of the model to use. Required when using openAI API.
+                Defaults to "placeholder_model_name".
+            context_size (int): Context size of the model. Defaults to 8192.
+            api_key_env_variable (str): Environment variable to read the openAI API key from.
+                Defaults to "OPENAI_API_KEY".
+            openai_organization_id (str, optional): Organization ID to use when querying the openAI
+                API. Defaults to None.
+            openai_project_id (str, optional): Project ID to use when querying the openAI API.
+                Defaults to None.
+            hf_tokenizer_URI (str, optional): The URI to a tokenizer on HuggingFace. If not provided
+                the API will be tested on the ability to tokenize. If that also fails a tiktoken is
+                initiated.
+            max_retries (optional, int): Number of times to retry on timeout. Defaults to 2.
+            use_cache (bool, optional): Use a cache to find output for previously processed inputs
+                in stead of re-generating output from the input. Default to True.
+            cache_persistent (bool, optional): Append the cache to a file on disk so it can be
+                re-used between runs. If False will use only in-memory cache. Default to True
+            persistent_cache_file (str, optional): The file to store the persistent cache.
+                Defaults to './llm_persistent_cache.yaml'.
+        """
+        super().__init__(*args, **kwargs)
+
+    def run_chat(
+        self,
+        chat: List[dict],
+        max_tokens: Optional[int] = None,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        stream: bool = False,
+        **kwargs: Any,
+    ) -> str:
+        """Runs a chat through the LLM
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to None
+            output_structure (ModelMetaclass, optional): Output structure to force. Ollama
+                can only force some json, not the structure of the json. Making this non-empty
+                forces a json output. Defaults to None.
+            stream (bool, optional): If True, streams the results to console. Defaults to False.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
+
+        Returns:
+            str: Generated content
+        """
+        if output_structure:
+            output_structure = {"type": "json_object"}
+
+        return super().run_chat(chat, max_tokens, output_structure, stream, **kwargs)
 
 
 class ApiTokenizer:
