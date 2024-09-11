@@ -23,50 +23,15 @@ class as an output structure for the LLM to adhere to.
 
    The output structure should NOT be passed as an instance of the pydantic model, just the
     reference.
+    
         Correct = LLM("some text", output_structure=MyPydanticModel)
+
         Wrong = LLM("some text", output_structure=MyPydanticModel())
 
-Loading an LLM locally or an API client:
-
-.. code-block:: python
-
-    from graphragzen.llm import Phi35MiniGGUF, OpenAICompatibleClient
-
-    # Load LLM locally
-    llm = Phi35MiniGGUF(
-        model_storage_path="/path/to/Phi-3.5-mini-instruct-Q4_K_M.gguf",
-        tokenizer_URI="microsoft/Phi-3.5-mini-instruct",
-        persistent_cache_file="./phi35_mini_persistent_cache.yaml",
-        context_size=32786,
-    )
-
-    # Communicate with OpenAI API endpoint 
-    llm = OpenAICompatibleClient(
-        api_key_env_variable = "OPENAI_API_KEY"  # the env variable, not the actual key!
-        model_name="gpt-4o-mini",
-        context_size = 32768,
-        # Caches responses locally, saving time and OpenAI credits if the same request is made twice
-        use_cache=True,
-        # Append the cache to a file on disk so it can be re-used between runs.
-        cache_persistent=True,
-        # The file to store the persistent cache.
-        persistent_cache_file="./OpenAI_persistent_cache.yaml"
-    )
-
-    # If you're running your own server running an LLM
-    llm = OpenAICompatibleClient(
-        base_url = "http://localhost:8081",
-        context_size = 32768,
-        # Caches responses locally, saving time and server load if the same request is made twice
-        use_cache=True,
-        # Append the cache to a file on disk so it can be re-used between runs.
-        cache_persistent=True,
-        # The file to store the persistent cache.
-        persistent_cache_file="./openAI_persistent_cache.yaml"
-    )
+For initializing interaction with an LLM see :ref:`llm_interaction_label` 
 
 Extract raw entities using a custom output structure:
-(By default graphragzen.entity_extraction.extract_raw_entities() already uses a build-in structure
+(By default graphragzen.entity_extraction.extract_raw_entities() already uses a build-in output structure
 see :py:class:`graphragzen.entity_extraction.llm_output_structures.ExtractedEntities`)
 
 .. code-block:: python

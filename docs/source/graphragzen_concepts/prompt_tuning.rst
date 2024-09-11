@@ -30,3 +30,6 @@ A similar method is used to create a description summarization prompt.
 The default prompts: :ref:`default_prompts_label`
 
 The prompts used to create new prompts: :ref:`prompt_tuning_prompts_label`
+
+See this example on how to create prompts specific to the domain of your documents (click on source)
+:func:`graphragzen.examples.autotune_custom_prompts.create_custom_prompts`

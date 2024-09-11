@@ -20,9 +20,9 @@ Needed for full version
 
 ✔  graph embeddings - text embeddings
 
--  graph querying
+✔  graph querying
 
--  test with GPU
+✔  test with GPU
 
 quality improvements
 --------------------

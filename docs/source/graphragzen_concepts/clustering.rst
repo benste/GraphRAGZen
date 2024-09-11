@@ -13,6 +13,7 @@ When **GraphRAGZen** first creates a graph these clusters are not yet known.
 :raw-html:`<br />`
 We don't want to go through the graph manually and assign each node to a topic. We rather use 
 unsupervised clustering for this, specifically the `leiden algorithm <https://arxiv.org/abs/1810.08473>`_
+see see :func:`graphragzen.clustering.leiden.leiden`
 
 This algorithm only assigns a number to each node, indicating to which cluster it belongs. 
 The semantic topic of each cluster still needs to be extracted. This can be done using

@@ -1,8 +1,9 @@
 Entity extraction
 ------------------
 
-RAG relies on retrieving documents related to a query, and adding those to the query to create a final prompt to be send to an LLM.
-GraphRAG can also retrieve concepts and relations that are extracted from the documents to add those to the query. These concepts and relations contain denser information and can handle more complex queries.
+RAG relies on retrieving documents related to a query and adding those to the query to create a final prompt to be send to an LLM.
+
+GraphRAG differs by first retrieving concepts and relations that are extracted from the documents, and adds the relevant concepts and relations to the query to create a final prompt. These concepts and relations contain denser information and can handle more complex queries.
 
 A graph consists of entities. Entities are the nodes (concepts) and edges (relationships between the concepts). These are extracted from the documents in advance, not during query-time.
 
@@ -18,8 +19,12 @@ To extract a graph, documents are fed into an LLM with a prompt that asks it to:
 These steps are in a single prompt. **GraphRAGZen** does query the LLM a few times per document
 to check if all entities have been extracted, so multple json strings can be returned per document.
 
+see :func:`graphragzen.entity_extraction.extract_entities.extract_raw_entities`
+
 The output strings are parsed to an actual graph by simply loading the json strings, doing some
 simple checks on the contents, and using is as input to networkx.
+
+see :func:`graphragzen.entity_extraction.extract_entities.raw_entities_to_graph`
 
 .. collapse:: example output
 
@@ -68,7 +73,9 @@ The prompt used for extraction can be found here :ref:`entity_extraction_prompt_
 document size
 ^^^^^^^^^^^^^
 
-While extracting a graph, each document is quickly to large to feed to the LLM in go.
-To overcome this we first split the document into smaller chunks and extract the entities
-from each chunk. 
+While extracting a graph, we could feed each document one at a time into the LLM and ask it to extract the entities. However, if documents are large we run the risk of exceeding the LLM context size.
+
+To overcome this we first split each document into smaller chunks and extract the entities from each chunk. 
 It's a good idea to have overlap between the chunks so no entities spanning two chunks are missed.
+
+see :func:`graphragzen.preprocessing.preprocess.chunk_documents`

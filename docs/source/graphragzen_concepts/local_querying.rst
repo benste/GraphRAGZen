@@ -5,6 +5,9 @@ The Graph RAG library provides a robust mechanism for querying and retrieving co
 
 Querying can be devided in local search (specific information from a small part of the graph) and global search (information from summaries of the whole graph)
 
+see the following example on how to query using your graph for added context (click on source)
+:func:`graphragzen.examples.query.question`
+
 Overview of the Local Search Process
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
