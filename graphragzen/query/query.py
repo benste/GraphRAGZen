@@ -44,7 +44,9 @@ class PromptBuilder:
             source_documents (pd.DataFrame, optional): A DataFrame containing source
                 documents for additional context. Defaults to None.
             cluster_report (pd.DataFrame, optional): A DataFrame containing cluster reports
-                for additional context. Defaults to None.
+                for additional context. Should contain the columns 'cluster' (string identifier of
+                each cluster), 'node_name' (lists of node names that belong to a cluster) and
+                'description' (a string describing the cluster). Defaults to None.
         """
 
         self.embedding_model = embedding_model
@@ -56,13 +58,16 @@ class PromptBuilder:
     def build_prompt(
         self,
         query: str,
+        prompt: str = LOCAL_SEARCH_PROMPT,
         score_threshold: float = 0.0,
         top_k_similar_entities: int = 10,
         top_k_inside_edges: int = 3,
         top_k_outside_edges: int = 3,
-        top_k_source_documents: int = 3,
         top_k_cluster_descriptions: int = 3,
-        prompt: str = LOCAL_SEARCH_PROMPT,
+        top_k_source_documents: int = 3,
+        source_documents_id_key: str = "chunk_id",
+        source_documents_source_key: str = "chunk",
+        source_documents_feature_delimiter: str = "\n",
     ) -> str:
         """
         Builds a prompt based on the query, graph data, vector searches, and additional documents or
@@ -70,6 +75,8 @@ class PromptBuilder:
 
         Args:
             query (str): The query for which a prompt is being constructed.
+            prompt (str, optional): The base prompt template to be filled with the context data and
+                query. Defaults to LOCAL_SEARCH_PROMPT.
             score_threshold (float, optional): The minimum score threshold for including vector
                 search results. Entities with scores below this threshold are excluded. Defaults to
                 0.0.
@@ -84,12 +91,16 @@ class PromptBuilder:
                 to the similar entities to include in the prompt.
                 An outside edge is defined as an edge of whom's nodes extactly 1 is already in the
                 entities retrieved through vector search. Defaults to 3.
-            top_k_source_documents (int, optional): The number of top source documents by occurence
-                to include in the prompt. Defaults to 3.
             top_k_cluster_descriptions (int, optional): The number of top cluster descriptions by
                 occurence, followed by rank, to include in the prompt. Defaults to 3.
-            prompt (str, optional): The base prompt template to be filled with the context data and
-                query. Defaults to LOCAL_SEARCH_PROMPT.
+            top_k_source_documents (int, optional): The number of top source documents by occurence
+                to include in the prompt. Defaults to 3.
+            source_documents_id_key (str): The column name in `source_documents` that represents
+                unique document IDs. Defaults to "chunk_id".
+            source_documents_source_key (str): The column name in `source_documents` containing the
+                source text. Defaults to "chunk".
+            source_documents_feature_delimiter (str): The delimiter used to split the "source_id"
+                values in the Graph metadata. Default is newline.
 
         Returns:
             str: The final constructed prompt with context data and the original query formatted
@@ -119,6 +130,9 @@ class PromptBuilder:
                 self.graph,
                 similar_entities,
                 k=top_k_source_documents,
+                id_key=source_documents_id_key,
+                source_key=source_documents_source_key,
+                feature_delimiter=source_documents_feature_delimiter,
             )
         else:
             source_texts = None
