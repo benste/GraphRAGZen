@@ -14,7 +14,7 @@ from .utils import loop_extraction
 
 
 def extract_raw_entities(
-    dataframe: pd.DataFrame,
+    input: Union[pd.DataFrame, List[str], str],
     llm: LLM,
     prompt_config: Optional[EntityExtractionPromptConfig] = EntityExtractionPromptConfig(),
     max_gleans: int = 5,
@@ -26,15 +26,16 @@ def extract_raw_entities(
     parsed to extract structured data.
 
     Args:
-        dataframe (pd.DataFrame):
+        input (Union[pd.DataFrame, List[str], str]): If a dataframe is provided, column_to_extract
+            cannot be None.
         llm (LLM):
         prompt_config (EntityExtractionPromptConfig, optional): See
             graphragzen.entity_extraction.EntityExtractionPromptConfig. Defaults to
             EntityExtractionPromptConfig().
         max_gleans (int, optional): How often the LLM can be asked if all entities have been
             extracted from a single text. Defaults to 5.
-        column_to_extract (str, optional): Column in a DataFrame that contains the texts to extract
-            entities from. Defaults to 'chunk'.
+        column_to_extract (str, optional): Only used if input is a dataframe. Column in the
+            DataFrame that contains the texts to extract entities from. Defaults to 'chunk'.
         results_column (str, optional): Column to write the output of the LLM to.
             Defaults to 'raw_entities'.
         output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
@@ -45,11 +46,16 @@ def extract_raw_entities(
             Defaults to graphragzen.entity_extraction.ExtractedEntities
 
     Returns:
-        pd.DataFrame: Input document with new column containing the raw entities extracted
+        pd.DataFrame: Input dataframe with new column containing the raw entities extracted
     """
     prompt_config = prompt_config or EntityExtractionPromptConfig()
 
-    raw_entities_df = deepcopy(dataframe)
+    if isinstance(input, str):
+        raw_entities_df = pd.DataFrame({column_to_extract: [input]})
+    elif isinstance(input, list):
+        raw_entities_df = pd.DataFrame({column_to_extract: input})
+    else:
+        raw_entities_df = deepcopy(input)
 
     # Extract raw entities from each document
     raw_entities_df.reset_index(inplace=True, drop=True)
@@ -76,7 +82,7 @@ def extract_raw_entities(
 
 
 def raw_entities_to_graph(
-    input: Union[pd.DataFrame, str],
+    input: Union[pd.DataFrame, List[str], str],
     graph: Optional[nx.Graph] = None,
     raw_entities_column: str = "raw_entities",
     reference_column: str = "chunk_id",
@@ -85,10 +91,9 @@ def raw_entities_to_graph(
     """Parse the result from raw entity extraction to create an undirected unipartite graph
 
     Args:
-        input (Union[pd.DataFrame, str]): If a raw extracted entities json string is provided it
-            will simply be parsed to a small graph.
-            When a dataframe is provided it should contain a column with raw extracted entities
-            strings and a reference column whos value will be added to the nodes and edges metadata.
+        input (Union[pd.DataFrame, List[str], str]): If a dataframe is provided it should contain a
+            raw_entities_column column (json strings) and a reference_column (whos value will be
+            added to the nodes and edges metadata).
         graph (nx.Graph, optional): Pre-established graph to add the extracted entities to. If not
             provided will create a new graph. Defaults to None.
         raw_entities_column (str, optional): Column in a DataFrame that contains the output of
@@ -108,6 +113,13 @@ def raw_entities_to_graph(
         dataframe = pd.DataFrame(
             {
                 raw_entities_column: [input],
+                reference_column: [None],
+            }
+        )
+    elif isinstance(input, list):
+        dataframe = pd.DataFrame(
+            {
+                raw_entities_column: input,
                 reference_column: [None],
             }
         )

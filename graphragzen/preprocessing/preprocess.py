@@ -1,14 +1,14 @@
 import html
 import re
 from copy import deepcopy
-from typing import Any, Sequence
+from typing import Any, List, Sequence, Union
 
 import pandas as pd
 from graphragzen.llm.base_llm import LLM
 
 
 def chunk_documents(
-    dataframe: pd.DataFrame,
+    input: Union[pd.DataFrame, List[str]],
     llm: LLM,
     column_to_chunk: str = "content",
     results_column: str = "chunk",
@@ -20,9 +20,9 @@ def chunk_documents(
     """Chunk documents based on number of tokens
 
     Args:
-        dataframe (pd.DataFrame): Containing the documents to chunk
+        input (Union[pd.DataFrame, List[str]]): Containing the documents to chunk
         llm (LLM):
-        column_to_chunk (str, optional): Column to chunk, Defaults to 'content'.
+        column_to_chunk (str, optional): Column to chunk. Defaults to 'content'.
         results_column (str, optional): Column to write chunks to, Defaults to 'chunk'.
         id_column (str, optional): Column to write chunk ID's to. Can later be used to refence the
             source chunk. Defaults to 'chunk_id'.
@@ -36,7 +36,10 @@ def chunk_documents(
         allowing referencing
     """
 
-    chunked_df = deepcopy(dataframe)
+    if isinstance(input, list):
+        chunked_df = pd.DataFrame({column_to_chunk: input})
+    else:
+        chunked_df = deepcopy(input)
 
     len_column: str = results_column + "_len"
 

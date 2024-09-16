@@ -23,7 +23,8 @@ def describe_clusters(
     Args:
         llm (LLM):
         graph (nx.Graph):
-        cluster_entity_map (pd.DataFrame):
+        cluster_entity_map (pd.DataFrame): Containing the columns 'cluster' (string identifier of
+            each cluster) and 'node_name' (lists of node names that belong to a cluster).
         prompt (str, optional): The prompt to use for the LLM to describe a cluster. Defaults to
             `graphragzen.prompts.default_prompts.cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT`
         output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
