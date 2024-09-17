@@ -1,6 +1,8 @@
 Motivation
 ==========
 
+If you are not familiar with Graph RAG yet, I found `this to be a good write-up <https://www.analyticsvidhya.com/blog/2024/07/graph-rag/>`_
+
 `GraphRAG from Microsoft <https://github.com/microsoft/graphrag>`_
 makes it easy to get started with automated Graph RAG.
 
