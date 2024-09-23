@@ -21,8 +21,7 @@ class as an output structure for the LLM to adhere to.
 
 .. note::
 
-   The output structure should NOT be passed as an instance of the pydantic model, just the
-    reference.
+   The output structure should NOT be passed as an instance of the pydantic model, just the reference.
     
         Correct = LLM("some text", output_structure=MyPydanticModel)
 

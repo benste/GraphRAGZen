@@ -8,23 +8,18 @@ LLM interaction
 
 **GraphRAGZen** uses an LLM for the following:
 
-- Creating custom prompts that are specific to the domain of your documents for extracting graphs. 
-
-- Extracting a graph from your documents.
-
-- Summarizing a node or edge feature that has multiple descriptions of that feature. :raw-html:`<br />` (this happens when a node or edge is found multiple times in your documents. The features assigned to this entity are concatenated when creating the graph, where the entity exists only once.)
-
-- Creating descriptions of graph clusters.
-
-- Querying while adding context from the graph.
+* Creating custom prompts for extracting graphs. These prompts are specific to the domain of your documents . 
+* Extracting a graph from your documents.
+* Summarizing a node or edge feature that has multiple descriptions of that feature. :raw-html:`<br />` (this happens when a node or edge is found multiple times in your documents. The features assigned to this entity are concatenated when creating the graph, where the entity exists only once.)
+* Creating descriptions of graph clusters.
+* Querying while adding context from the graph.
 
 Two methods are supported to interact with an LLM:
 
-1. By loading a model locally in-memory.
+#. By loading a model locally in-memory.
+#. With an LLM running on a server through an openAI API compatible endpoint.
 
-2. With an LLM running on a server through an openAI API compatible endpoint.
-:raw-html:`<br />`
-This server can be remote or deployed locally depending on your own preference.
+A server can be remote or deployed locally depending on your own preference.
 
 Loading a model in-memory uses llama-cpp-python and is unlikely to use your GPU unless configured well. Thus, using locally in-memory is good for development and testing, but for production deployment it is recommended to communicate with an LLM that is properly set-up on a server.
 
@@ -84,6 +79,27 @@ Though Phi 3.5 mini instruct worked well in my tests, the domain of your documen
 `Gemma 2 2B it Q4 M <https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/blob/main/gemma-2-2b-it-Q4_K_M.gguf>`_
 
 `Gemma 2 9B it Q4 XS <https://huggingface.co/bartowski/gemma-2-9b-it-GGUF/blob/main/gemma-2-9b-it-IQ4_XS.gguf>`_
+
+
+Async LLM calls
+^^^^^^^^^^^^^^^^
+
+When interacting with an LLM on a server, aync LLM calls can significantly speed up the graph generation process.
+
+Functions that make LLM calls have a `async_llm_calls` parameter that, when set to True, will call the LLM async.
+
+The follow functions support this feature:
+
+* extract_raw_entities (:func:`graphragzen.entity_extraction.extract_entities.extract_raw_entities`)
+* describe_clusters (:func:`graphragzen.clustering.describe.describe_clusters`)
+* generate_entity_relationship_examples (:func:`graphragzen.prompt_tuning.entities.generate_entity_relationship_examples`)
+
+
+Of the LLM classes, only the `OpenAICompatibleClient` has async implemented, since it's the only class that interacts with an LLM on a server.
+
+When calling it directly for text completion, i.e. llm('input text to complete'), the class checks if it is called in an async context and calls the server async or sync accordingly.
+
+For chat functionality there is an async version, see :func:`graphragzen.llm.openAI_API_client.OpenAICompatibleClient.a_run_chat`
 
 
 Implementing your own local LLM class

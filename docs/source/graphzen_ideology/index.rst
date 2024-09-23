@@ -16,7 +16,7 @@ This means that:
 
 - It does not modifying global variables.
 - It does not mutate input.
-- If no LLM is not used in a function, the same output is guaranteed for the same input.
+- If no LLM is used in a function, the same output is guaranteed for the same input.
     - If an LLM is used this no longer holds (hence semi-pure)
 
 All function inputs are organized according to:
@@ -30,24 +30,21 @@ All function inputs are organized according to:
             parameter_2: bool = True,
         )
 
-1. The first *n* inputs are always data as expected from a data-pipeline (loaded documents, LLM
-instance, extracted graph, etc.)
 
-2. The later inputs are always parameters. These are the parameters that determing how the function
-operates.
-
-3. The parameters all sane default values (if possible, e.g. raw_documents_path cannot have a default)
+#. The first *n* inputs are always data as expected from a data-pipeline (loaded documents, LLM instance, extracted graph, etc.).
+#. The later inputs are always parameters. These are the parameters that determing how the function operates.
+#. The parameters have sane default values (if possible, e.g. raw_documents_path cannot have a default)
 
 Modularity
 ------------
 Modularity is achieved by adhering to the following rules
 
-1. Functions should not presume a specific use-case. 
+- Functions should not presume a specific use-case. 
 
 e.g. there is no **load_documents** function that presumes documents are in text format, rather 
 there is a **load_text_documents** function.
 
-2. Any interaction with backends (LLM, Embedding Model, Vector Database, etc.) goes through an AbstractBaseClass. 
+- Any interaction with backends (LLM, Embedding Model, Vector Database, etc.) goes through an AbstractBaseClass. 
 This way any backend not supported out of the box can be easily implemented by inheriting from the relevant AbstractBaseClass and writing custrom versions of the abstracmethods.
 
 Intuitive
