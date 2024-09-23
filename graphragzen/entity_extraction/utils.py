@@ -38,7 +38,7 @@ def loop_extraction(
     # First entity extraction
     prompt = prompts.entity_extraction_prompt.format(**prompts_formatting.model_dump())
     chat = llm.format_chat([("user", prompt)])
-    llm_output = llm.run_chat(chat, output_structure=output_structure, max_tokens=20)
+    llm_output = llm.run_chat(chat, output_structure=output_structure, stream=True)
     chat = llm.format_chat([("model", llm_output)], chat)
     extracted_entities = [llm_output]
 
@@ -50,7 +50,7 @@ def loop_extraction(
             # Context limit reached, can't extract more
             break
 
-        llm_output = llm.run_chat(chat, output_structure=output_structure, max_tokens=20)
+        llm_output = llm.run_chat(chat, output_structure=output_structure)
 
         extracted_entities.append(llm_output or "")
         chat = llm.format_chat([("model", llm_output)], chat)
@@ -58,7 +58,7 @@ def loop_extraction(
         # Check if the LLM thinks there are still entities missing
         if i < max_gleans - 1:
             loop_chat = llm.format_chat([("user", prompts.loop_prompt)], chat)
-            continuation = llm.run_chat(loop_chat, max_tokens=20)
+            continuation = llm.run_chat(loop_chat)
             if "yes" in continuation.lower():
                 break
 
@@ -97,7 +97,7 @@ async def a_loop_extraction(
     # First entity extraction
     prompt = prompts.entity_extraction_prompt.format(**prompts_formatting.model_dump())
     chat = llm.format_chat([("user", prompt)])
-    llm_output = await llm.a_run_chat(chat, output_structure=output_structure, max_tokens=20)
+    llm_output = await llm.a_run_chat(chat, output_structure=output_structure)
     chat = llm.format_chat([("model", llm_output)], chat)
     extracted_entities = [llm_output]
 
@@ -109,7 +109,7 @@ async def a_loop_extraction(
             # Context limit reached, can't extract more
             break
 
-        llm_output = await llm.a_run_chat(chat, output_structure=output_structure, max_tokens=20)
+        llm_output = await llm.a_run_chat(chat, output_structure=output_structure)
 
         extracted_entities.append(llm_output or "")
         chat = llm.format_chat([("model", llm_output)], chat)
@@ -117,7 +117,7 @@ async def a_loop_extraction(
         # Check if the LLM thinks there are still entities missing
         if i < max_gleans - 1:
             loop_chat = llm.format_chat([("user", prompts.loop_prompt)], chat)
-            continuation = await llm.a_run_chat(loop_chat, max_tokens=20)
+            continuation = await llm.a_run_chat(loop_chat)
             if "yes" in continuation.lower():
                 break
 
