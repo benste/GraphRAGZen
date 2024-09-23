@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 from typing import Any, List, Optional, Union
@@ -7,7 +8,7 @@ import jsonref
 import requests
 import tiktoken
 from graphragzen.llm.base_llm import LLM
-from openai import OpenAI
+from openai import AsyncOpenAI, OpenAI
 from pydantic._internal._model_construction import ModelMetaclass
 from transformers import AutoTokenizer
 
@@ -24,7 +25,7 @@ class OpenAICompatibleClient(LLM):
         openai_organization_id: Optional[str] = None,
         openai_project_id: Optional[str] = None,
         hf_tokenizer_URI: Optional[str] = None,
-        max_retries: int = 2,
+        max_retries: int = 3,
         use_cache: bool = True,
         cache_persistent: bool = True,
         persistent_cache_file: str = "./phi35_mini_persistent_cache.yaml",
@@ -45,7 +46,7 @@ class OpenAICompatibleClient(LLM):
             hf_tokenizer_URI (str, optional): The URI to a tokenizer on HuggingFace. If not provided
                 the API will be tested on the ability to tokenize. If that also fails a tiktoken is
                 initiated.
-            max_retries (optional, int): Number of times to retry on timeout. Defaults to 2.
+            max_retries (optional, int): Number of times to retry on timeout. Defaults to 3.
             use_cache (bool, optional): Use a cache to find output for previously processed inputs
                 in stead of re-generating output from the input. Default to True.
             cache_persistent (bool, optional): Append the cache to a file on disk so it can be
@@ -66,7 +67,15 @@ class OpenAICompatibleClient(LLM):
             # Set a fake key that will load the client but won't authenticate to openAI
             openai_api_key = "sk-proj-ZNBiANHU9ilDCsySC0fVeTD76Vc5DNPbstPThgSdtgI0QV51FBBLeNgL2IZVEFfNX548MqAhnAWfJnlEQtzCelsGL73fx8NBuxc3ZTrP8Ux6qgX4c4emqcIrGTnz"  # noqa: E501
 
-        self.client = OpenAI(
+        self.client: OpenAI = OpenAI(
+            base_url=base_url,
+            api_key=openai_api_key,
+            organization=openai_organization_id,
+            project=openai_project_id,
+            max_retries=max_retries,
+        )
+
+        self.async_client: AsyncOpenAI = AsyncOpenAI(
             base_url=base_url,
             api_key=openai_api_key,
             organization=openai_organization_id,
@@ -77,27 +86,35 @@ class OpenAICompatibleClient(LLM):
         super().__init__()
 
     def __call__(
-        self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
+        self,
+        input: Any,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        **kwargs: Any,
     ) -> Any:
         """Call the LLM as you would llm(input) for simple completion.
 
         Args:
             input (Any): Any input you would normally pass to llm(input, kwargs)
-            output_structure (ModelMetaclass, optional): Ignored
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Ignored
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
 
         Returns:
             Any
         """
 
-        result = self.client.completions.create(
+        if asyncio.get_event_loop().is_running():
+            client = self.async_client
+        else:
+            client = self.client  # type: ignore
+
+        result = client.completions.create(
             prompt=input,
             model=self.model_name,
             **kwargs,
         )
 
         # Format and return
-        return {"choices": [{"text": result.content}]}
+        return {"choices": [{"text": result.content}]}  # type: ignore
 
     def _initiate_tokenizer(
         self,
@@ -153,10 +170,33 @@ class OpenAICompatibleClient(LLM):
                 "Failed to load any of huggingface tokenizer, API tokenizer and tiktoken"
             )
 
+    def _format_output_structure(
+        self,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+    ) -> Union[dict, None]:
+        if isinstance(output_structure, dict):
+            return output_structure
+
+        if isinstance(output_structure, ModelMetaclass):
+            # Output structure cannot be a ModelMetaclass for llama cpp server
+            # Let's convert it to something OpenAI and llama cpp server both understand
+            unrefed_schema = jsonref.replace_refs(output_structure.model_json_schema())  # type: ignore # noqa: E501
+            properties = json.loads(json.dumps(unrefed_schema["properties"], indent=2))
+            return {
+                "type": "json_object",
+                "schema": {
+                    "type": "object",
+                    "properties": properties,
+                    "required": output_structure.model_json_schema()["required"],  # type: ignore # noqa: E501
+                },
+            }
+
+        return None
+
     def run_chat(
         self,
         chat: List[dict],
-        max_tokens: Optional[int] = None,
+        max_tokens: int = -1,
         output_structure: Optional[Union[ModelMetaclass, dict]] = None,
         stream: bool = False,
         **kwargs: Any,
@@ -165,12 +205,12 @@ class OpenAICompatibleClient(LLM):
 
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
-            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to None
-            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
-                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
-                reference.
-                Correct = llm.run_chat("some text", MyPydanticModel)
-                Wrong = llm.run_chat("some text", MyPydanticModel())
+            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
+                Correct = BaseLlamCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamCpp("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
             kwargs (Any): Any keyword arguments to add to the lmm call.
 
@@ -183,26 +223,12 @@ class OpenAICompatibleClient(LLM):
             results = cache_results
         else:  # Use LLM if not in cache
             # Make sure max_tokens is set correctly
-            if not max_tokens or max_tokens < 0:
+            if max_tokens < 0:
                 max_tokens = 10**10
 
-            if isinstance(output_structure, ModelMetaclass):
-                # Output structure cannot be a ModelMetaclass for llama cpp server
-                # Let's convert it to something OpenAI and llama cpp server both understand
-                unrefed_schema = jsonref.replace_refs(output_structure.model_json_schema())  # type: ignore # noqa: E501
-                properties = json.loads(json.dumps(unrefed_schema["properties"], indent=2))
-                response_format = {
-                    "type": "json_object",
-                    "schema": {
-                        "type": "object",
-                        "properties": properties,
-                        "required": output_structure.model_json_schema()["required"],  # type: ignore # noqa: E501
-                    },
-                }
-            elif isinstance(output_structure, dict):
-                response_format = output_structure
-            else:
-                response_format = None
+            # Though OpenAI API can handle Pydantic ModelMetaClass, not all API's can. Let's
+            # transform it into a dict most OpenAI compatible API's can handle
+            response_format = self._format_output_structure(output_structure)
 
             results = self.client.chat.completions.create(  # type: ignore
                 messages=chat,
@@ -222,6 +248,59 @@ class OpenAICompatibleClient(LLM):
             self.write_item_to_cache(str(chat), results)
 
         return results
+
+    async def a_run_chat(
+        self,
+        chat: List[dict],
+        max_tokens: int = -1,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        stream: bool = False,
+        **kwargs: Any,
+    ) -> str:
+        """Runs a chat through the LLM asynchonously
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
+                Correct = BaseLlamCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            stream (bool, optional): Placeholder for compatibility with sync version, not used.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
+
+        Returns:
+            str: Generated content
+        """
+
+        cache_results = self.check_cache(str(chat))
+        if cache_results:  # Check cache first
+            content = cache_results
+        else:  # Use LLM if not in cache
+            # Make sure max_tokens is set correctly
+            if max_tokens < 0:
+                max_tokens = 10**10
+
+            # Though OpenAI API can handle Pydantic ModelMetaClass, not all API's can. Let's
+            # transform it into a dict most OpenAI compatible API's can handle
+            response_format = self._format_output_structure(output_structure)
+
+            results = await self.async_client.chat.completions.create(  # type: ignore
+                messages=chat,
+                model=self.model_name,
+                response_format=response_format,
+                max_tokens=max_tokens,
+                stream=False,
+                **kwargs,
+            )
+
+            content = results.choices[0].message.content  # type: ignore
+
+            # And add the result to cache
+            self.write_item_to_cache(str(chat), content)
+
+        return content
 
     def num_chat_tokens(self, chat: List[dict]) -> int:
         """Return the length of the tokenized chat
@@ -329,7 +408,7 @@ class OllamaClient(OpenAICompatibleClient):
     def run_chat(
         self,
         chat: List[dict],
-        max_tokens: Optional[int] = None,
+        max_tokens: int = -1,
         output_structure: Optional[Union[ModelMetaclass, dict]] = None,
         stream: bool = False,
         **kwargs: Any,
@@ -338,7 +417,8 @@ class OllamaClient(OpenAICompatibleClient):
 
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
-            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to None
+            max_tokens (int, optional): Maximum number of tokens to generate.
+                Defaults to -1 (infinite).
             output_structure (ModelMetaclass, optional): Output structure to force. Ollama
                 can only force some json, not the structure of the json. Making this non-empty
                 forces a json output. Defaults to None.
@@ -352,6 +432,35 @@ class OllamaClient(OpenAICompatibleClient):
             output_structure = {"type": "json_object"}
 
         return super().run_chat(chat, max_tokens, output_structure, stream, **kwargs)
+
+    async def a_run_chat(
+        self,
+        chat: List[dict],
+        max_tokens: int = -1,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        stream: bool = False,
+        **kwargs: Any,
+    ) -> str:
+        """Runs a chat through the LLM asynchonously
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+            max_tokens (int, optional): Maximum number of tokens to generate.
+                Defaults to -1 (infinite).
+            output_structure (ModelMetaclass, optional): Output structure to force. Ollama
+                can only force some json, not the structure of the json. Making this non-empty
+                forces a json output. Defaults to None.
+            stream (bool, optional): Placeholder for compatibility with sync version, not used.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
+
+        Returns:
+            str: Generated content
+        """
+
+        if output_structure:
+            output_structure = {"type": "json_object"}
+
+        return await super().a_run_chat(chat, max_tokens, output_structure, stream, **kwargs)
 
 
 class ApiTokenizer:

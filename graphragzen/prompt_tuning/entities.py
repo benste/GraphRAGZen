@@ -1,6 +1,8 @@
+import asyncio
 import json
 from typing import List, Optional
 
+from graphragzen.async_tools import async_loop
 from graphragzen.feature_merging import _num_tokens_from_string
 from graphragzen.llm.base_llm import LLM
 from graphragzen.prompts.prompt_tuning import (
@@ -72,6 +74,7 @@ def generate_entity_relationship_examples(
     prompt: str = entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT,
     example_template: str = entity_relationship.EXAMPLE_RELATION_TEMPLATE,
     max_examples: int = 5,
+    async_llm_calls: bool = False,
 ) -> list[str]:
     """Generate a list of entity/relationships examples for use in generating an entity
     extraction prompt.
@@ -90,6 +93,9 @@ def generate_entity_relationship_examples(
             be formatted using, among others, the entity relationships extracted using the
             prompt. Defaults to `graphragzen.prompts.prompt_tuning.entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE`
         max_examples (int, optional): Number of examples to create. Defaults to 5.
+        async_llm_calls: If True will call the LLM asynchronously. Only applies to communication
+            with an LLM using `OpenAICompatibleClient`, in-memory LLM's loaded using
+            llama-cpp-python will always be called synchronously. Defaults to False.
 
     Returns:
         list[str]: Entity relationship examples
@@ -105,9 +111,16 @@ def generate_entity_relationship_examples(
     ]
 
     chats = [llm.format_chat([("user", message)], history) for message in messages]
-    entity_relations = [
-        llm.run_chat(chat) for chat in tqdm(chats, desc="generating example entity relations")
-    ]
+
+    if async_llm_calls:
+        loop = asyncio.get_event_loop()
+        entity_relations = loop.run_until_complete(
+            async_loop(llm.a_run_chat, chats, "generating example entity relations asynchronously")
+        )
+    else:
+        entity_relations = [
+            llm.run_chat(chat) for chat in tqdm(chats, desc="generating example entity relations")
+        ]
 
     # Format the examples and return
     return [

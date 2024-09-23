@@ -35,15 +35,18 @@ class LLM(ABC):
 
     @abstractmethod
     def __call__(
-        self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
+        self,
+        input: Any,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        **kwargs: Any,
     ) -> Any:
         """Call the LLM as you would llm(input)
 
         Args:
             input (Any): Any input you would normally pass to llm(input, kwargs)
-            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
-                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
-                reference.
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
                 Correct = BaseLlamCpp("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp("some text", MyPydanticModel())
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
@@ -58,7 +61,7 @@ class LLM(ABC):
         self,
         chat: List[dict],
         max_tokens: int = -1,
-        output_structure: Optional[ModelMetaclass] = None,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
         stream: bool = False,
         **kwargs: Any,
     ) -> str:
@@ -67,8 +70,11 @@ class LLM(ABC):
         Args:
             chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
             max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.
-            output_structure (ModelMetaclass): Output structure to force. e.g. grammars from
-                llama.cpp.
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
+                Correct = BaseLlamCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamCpp("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
             kwargs (Any): Any keyword arguments to add to the lmm call.
 
@@ -76,6 +82,34 @@ class LLM(ABC):
             str: Generated content
         """
         return ""
+
+    @abstractmethod
+    async def a_run_chat(
+        self,
+        chat: List[dict],
+        max_tokens: int = -1,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        stream: bool = False,
+        **kwargs: Any,
+    ) -> str:
+        """Runs a chat through the LLM asynchonously
+
+        Args:
+            chat (List[dict]): in form [{"role": ..., "content": ...}, {"role": ..., "content": ...
+            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to None
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
+                Correct = BaseLlamCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            stream (bool, optional): Placeholder for compatibility with sync version, not used.
+            kwargs (Any): Any keyword arguments to add to the lmm call.
+
+        Returns:
+            str: Generated content
+        """
+
+        return self.run_chat(chat, max_tokens, output_structure, stream, **kwargs)
 
     @abstractmethod
     def tokenize(self, content: str) -> Union[List[str], List[int]]:

@@ -1,16 +1,18 @@
+import asyncio
 import json
 from copy import deepcopy
 from typing import List, Optional, Tuple, Union
 
 import networkx as nx
 import pandas as pd
+from graphragzen.async_tools import async_loop
 from graphragzen.llm.base_llm import LLM
 from pydantic._internal._model_construction import ModelMetaclass
 from tqdm import tqdm
 
 from .llm_output_structures import ExtractedEntities
 from .typing import EntityExtractionPromptConfig
-from .utils import loop_extraction
+from .utils import a_loop_extraction, loop_extraction
 
 
 def extract_raw_entities(
@@ -21,6 +23,7 @@ def extract_raw_entities(
     column_to_extract: str = "chunk",
     results_column: str = "raw_entities",
     output_structure: ModelMetaclass = ExtractedEntities,  # type: ignore
+    async_llm_calls: bool = False,
 ) -> tuple:
     """Let the LLM extract entities in the form of strings, output still needs to be
     parsed to extract structured data.
@@ -44,6 +47,9 @@ def extract_raw_entities(
             Correct = BaseLlamCpp("some text", MyPydanticModel)
             Wrong = BaseLlamCpp("some text", MyPydanticModel())
             Defaults to graphragzen.entity_extraction.ExtractedEntities
+        async_llm_calls: If True will call the LLM asynchronously. Only applies to communication
+            with an LLM using `OpenAICompatibleClient`, in-memory LLM's loaded using
+            llama-cpp-python will always be called synchronously. Defaults to False.
 
     Returns:
         pd.DataFrame: Input dataframe with new column containing the raw entities extracted
@@ -57,23 +63,39 @@ def extract_raw_entities(
     else:
         raw_entities_df = deepcopy(input)
 
+    if async_llm_calls:
+        loop = asyncio.get_event_loop()
+
     # Extract raw entities from each document
     raw_entities_df.reset_index(inplace=True, drop=True)
-    raw_extracted_entities = []
-    for document in tqdm(
-        raw_entities_df[column_to_extract], total=len(raw_entities_df), desc="extracting entities"
-    ):
-        # Extract entities through LLM
-        raw_extracted_entities.append(
-            loop_extraction(
-                document,
+
+    if async_llm_calls:
+        loop = asyncio.get_event_loop()
+        raw_extracted_entities = loop.run_until_complete(
+            async_loop(
+                a_loop_extraction,
+                raw_entities_df[column_to_extract],
+                "extracting raw entities asynchronously",
                 prompt_config.prompts,
                 prompt_config.formatting,
                 llm,
                 max_gleans,
                 output_structure,
-            ),
+            )
         )
+    else:
+        raw_extracted_entities = []
+        for document in tqdm(raw_entities_df[column_to_extract], desc="extracting raw entities"):
+            raw_extracted_entities.append(
+                loop_extraction(
+                    document,
+                    prompt_config.prompts,
+                    prompt_config.formatting,
+                    llm,
+                    max_gleans,
+                    output_structure,
+                )
+            )
 
     # Map LLM output to correct df column
     raw_entities_df[results_column] = raw_extracted_entities

@@ -1,8 +1,10 @@
+import asyncio
 import json
 from copy import deepcopy
 
 import networkx as nx
 import pandas as pd
+from graphragzen.async_tools import async_loop
 from graphragzen.llm.base_llm import LLM
 from graphragzen.prompts.default_prompts import cluster_description_prompts
 from pydantic._internal._model_construction import ModelMetaclass
@@ -17,6 +19,7 @@ def describe_clusters(
     cluster_entity_map: pd.DataFrame,
     prompt: str = cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT,
     output_structure: ModelMetaclass = ClusterDescription,  # type: ignore
+    async_llm_calls: bool = False,
 ) -> pd.DataFrame:
     """Describe each cluster in the graph using the node descriptions.
 
@@ -33,6 +36,9 @@ def describe_clusters(
             Correct = BaseLlamCpp("some text", MyPydanticModel)
             Wrong = BaseLlamCpp("some text", MyPydanticModel())
             Defaults to graphragzen.entity_extraction.ClusterDescription
+        async_llm_calls: If True will call the LLM asynchronously. Only applies to communication
+            with an LLM using `OpenAICompatibleClient`, in-memory LLM's loaded using
+            llama-cpp-python will always be called synchronously. Defaults to False.
 
     Returns:
         pd.DataFrame:
@@ -41,7 +47,9 @@ def describe_clusters(
     cluster_entity_map_with_descriptions = deepcopy(cluster_entity_map)
     cluster_entity_map_with_descriptions["description"] = None
 
-    for index, cluster in tqdm(
+    # First gather the chats so they can be run against the LLM synchronously or asynchronously
+    chats = []
+    for _, cluster in tqdm(
         cluster_entity_map.iterrows(), desc="describing clusters", total=len(cluster_entity_map)
     ):
         cluster_graph = graph.subgraph(cluster.node_name)
@@ -61,9 +69,24 @@ def describe_clusters(
 
         # format prompt and send to LLM
         formatted_prompt = prompt.format(input_text=input_text)
-        chat = llm.format_chat([("user", formatted_prompt)])
-        raw_description = llm.run_chat(chat, output_structure=output_structure)
+        chats.append(llm.format_chat([("user", formatted_prompt)]))
 
+    # call the LLM synchronously or asynchronously
+    if async_llm_calls:
+        loop = asyncio.get_event_loop()
+        raw_descriptions = loop.run_until_complete(
+            async_loop(
+                llm.a_run_chat,
+                chats,
+                "describing clusters asynchronously",
+                output_structure=output_structure,
+            )
+        )
+    else:
+        raw_descriptions = [llm.run_chat(chat, output_structure=output_structure) for chat in chats]
+
+    # Parse the raw descriptions and write to the cluster map
+    for index, raw_description in zip(cluster_entity_map.index, raw_descriptions):
         try:
             # Try json parsing first
             structured = json.loads(raw_description)

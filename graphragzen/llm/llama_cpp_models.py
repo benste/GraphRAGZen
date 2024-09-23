@@ -3,7 +3,7 @@ import sys
 from typing import Any, List, Optional, Union
 
 from graphragzen.llm.base_llm import LLM
-from llama_cpp import Llama
+from llama_cpp import Llama, LlamaGrammar
 from pydantic._internal._fields import PydanticMetadata
 from pydantic._internal._model_construction import ModelMetaclass
 from transformers import AutoTokenizer
@@ -21,7 +21,12 @@ from llama_prompter import Prompter  # noqa: F401, E402
 # It calls llama_cpp.llama_grammar.LlamaGrammar.from_string with verbosity to False, but sadly
 # that function did not implement a verbosity check and still prints to the terminal.
 # The following function will suppressing sys.stdout
-def suppress_prompter_output(output_structure: ModelMetaclass) -> Prompter:
+def suppress_prompter_output(
+    output_structure: Union[ModelMetaclass, dict]
+) -> Union[LlamaGrammar, dict, None]:
+    if isinstance(output_structure, dict):
+        return output_structure
+
     # Save the current stdout
     original_stdout = sys.stdout
     try:
@@ -33,7 +38,7 @@ def suppress_prompter_output(output_structure: ModelMetaclass) -> Prompter:
         # Restore the original stdout
         sys.stdout = original_stdout
 
-    return result
+    return result._grammar
 
 
 class BaseLlamCpp(LLM):
@@ -86,15 +91,18 @@ class BaseLlamCpp(LLM):
         super().__init__()
 
     def __call__(
-        self, input: Any, output_structure: Optional[ModelMetaclass] = None, **kwargs: Any
+        self,
+        input: Any,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
+        **kwargs: Any,
     ) -> Any:
         """Call the LLM as you would llm(input), but allow to force an output structure.
 
         Args:
             input (Any): Any input you would normally pass to llm(input, kwargs)
-            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
-                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
-                reference.
+            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
+                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+                should be passed.
                 Correct = BaseLlamCpp("some text", MyPydanticModel)
                 Wrong = BaseLlamCpp("some text", MyPydanticModel())
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
@@ -104,7 +112,7 @@ class BaseLlamCpp(LLM):
         """
 
         if output_structure is not None:
-            grammar = suppress_prompter_output(output_structure)._grammar
+            grammar = suppress_prompter_output(output_structure)
             kwargs.update({"grammar": grammar})
 
         return self.model(
@@ -116,7 +124,7 @@ class BaseLlamCpp(LLM):
         self,
         chat: List[dict],
         max_tokens: int = -1,
-        output_structure: Optional[ModelMetaclass] = None,
+        output_structure: Optional[Union[ModelMetaclass, dict]] = None,
         stream: bool = False,
         **kwargs: Any,
     ) -> str:
