@@ -32,11 +32,11 @@ quality improvements
 ✔  structured output, e.g. force Json
    (https://til.simonwillison.net/llms/llama-cpp-python-grammars)
 
+✔  Async
+
 -  graph embeddings - node2vec
 
 -  Find semantically similar nodes and combine them
-
--  Async
 
 -  graph visualization
 
