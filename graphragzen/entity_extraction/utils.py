@@ -38,7 +38,7 @@ def loop_extraction(
     # First entity extraction
     prompt = prompts.entity_extraction_prompt.format(**prompts_formatting.model_dump())
     chat = llm.format_chat([("user", prompt)])
-    llm_output = llm.run_chat(chat, output_structure=output_structure, stream=True)
+    llm_output = llm.run_chat(chat, output_structure=output_structure)
     chat = llm.format_chat([("model", llm_output)], chat)
     extracted_entities = [llm_output]
 
