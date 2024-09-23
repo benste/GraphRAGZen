@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "graphragzen"
-version = "0.2.1"
+version = "0.2.3"
 description = ""
 authors = ["benste <benstmrs@gmail.com>"]
 readme = "README.md"
