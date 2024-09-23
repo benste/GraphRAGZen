@@ -169,7 +169,8 @@ class LLM(ABC):
                 token = s.choices[0].delta.content
 
             print(token, end="", flush=True)
-            full_text += token
+            if token:
+                full_text += token
             num_tokens += 1
 
         elapsed_time = datetime.now() - start
