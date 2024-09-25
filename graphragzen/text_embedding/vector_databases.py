@@ -52,6 +52,7 @@ class VectorDatabase(ABC):
             List[List[dict]]: Per query List[dict] with each dict containing
                 {"uuid": ..., "score": ..., "metadata": ...}
         """
+        pass
 
 
 class QdrantLocalVectorDatabase(VectorDatabase):

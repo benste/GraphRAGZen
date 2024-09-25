@@ -8,7 +8,7 @@ from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
 from graphragzen.prompts.default_prompts.local_search_prompts import LOCAL_SEARCH_PROMPT
 from graphragzen.query.query import PromptBuilder
 
-from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF, Gemma2GGUF, BaseLlamCpp
+from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF, Gemma2GGUF, BaseLlamaCpp
 
 from huggingface_hub import hf_hub_download
 
@@ -70,7 +70,7 @@ if __name__=="__main__":
             elif "gemma-2" in args.gguf_model_path.lower():
                 loader_class = Gemma2GGUF
             else:
-                loader_class = BaseLlamCpp
+                loader_class = BaseLlamaCpp
         
             llm = loader_class(
                 model_storage_path=args.gguf_model_path,

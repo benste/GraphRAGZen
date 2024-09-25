@@ -209,8 +209,8 @@ class OpenAICompatibleClient(LLM):
             output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
                 force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
                 should be passed.
-                Correct = BaseLlamCpp("some text", MyPydanticModel)
-                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+                Correct = BaseLlamaCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamaCpp("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
             kwargs (Any): Any keyword arguments to add to the lmm call.
 
@@ -265,8 +265,8 @@ class OpenAICompatibleClient(LLM):
             output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
                 force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
                 should be passed.
-                Correct = BaseLlamCpp("some text", MyPydanticModel)
-                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+                Correct = BaseLlamaCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamaCpp("some text", MyPydanticModel())
             stream (bool, optional): Placeholder for compatibility with sync version, not used.
             kwargs (Any): Any keyword arguments to add to the lmm call.
 

@@ -42,8 +42,8 @@ def generate_entity_categories(
         output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
             from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
             reference.
-            Correct = BaseLlamCpp("some text", MyPydanticModel)
-            Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            Correct = BaseLlamaCpp("some text", MyPydanticModel)
+            Wrong = BaseLlamaCpp("some text", MyPydanticModel())
             Defaults to graphragzen.prompt_tuning.llm_output_structures.ExtractedCategories
         entity_categories (List[str], optional): The entity categories relevant to a set of documents.
             If not specified, the `prompt` will be used to infer the entity categories. Defaults to None.

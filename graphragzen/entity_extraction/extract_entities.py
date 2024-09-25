@@ -44,8 +44,8 @@ def extract_raw_entities(
         output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars
             from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
             reference.
-            Correct = BaseLlamCpp("some text", MyPydanticModel)
-            Wrong = BaseLlamCpp("some text", MyPydanticModel())
+            Correct = BaseLlamaCpp("some text", MyPydanticModel)
+            Wrong = BaseLlamaCpp("some text", MyPydanticModel())
             Defaults to graphragzen.entity_extraction.ExtractedEntities
         async_llm_calls: If True will call the LLM asynchronously. Only applies to communication
             with an LLM using `OpenAICompatibleClient`, in-memory LLM's loaded using

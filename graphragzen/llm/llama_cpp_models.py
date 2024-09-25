@@ -41,7 +41,7 @@ def suppress_prompter_output(
     return result._grammar
 
 
-class BaseLlamCpp(LLM):
+class BaseLlamaCpp(LLM):
     """Loads a GGUF model using llama cpp python and it's corresponding tokenizer from HF"""
 
     def __init__(
@@ -103,8 +103,8 @@ class BaseLlamCpp(LLM):
             output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to
                 force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
                 should be passed.
-                Correct = BaseLlamCpp("some text", MyPydanticModel)
-                Wrong = BaseLlamCpp("some text", MyPydanticModel())
+                Correct = BaseLlamaCpp("some text", MyPydanticModel)
+                Wrong = BaseLlamaCpp("some text", MyPydanticModel())
             kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)
 
         Returns:
@@ -136,8 +136,8 @@ class BaseLlamCpp(LLM):
             output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammar
                 from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
                 reference.
-                Correct = BaseLlamCpp.run_chat("some text", MyPydanticModel)
-                Wrong = BaseLlamCpp.run_chat("some text", MyPydanticModel())
+                Correct = BaseLlamaCpp.run_chat("some text", MyPydanticModel)
+                Wrong = BaseLlamaCpp.run_chat("some text", MyPydanticModel())
             stream (bool, optional): If True, streams the results to console. Defaults to False.
             kwargs (Any): Any keyword arguments to add to the lmm call.
 
@@ -215,7 +215,7 @@ class BaseLlamCpp(LLM):
         return self.tokenizer.convert_tokens_to_string(tokens)
 
 
-class Gemma2GGUF(BaseLlamCpp):
+class Gemma2GGUF(BaseLlamaCpp):
     """Loads the GGUF version of a gemma2 model using llama-cpp-python"""
 
     def __init__(
@@ -260,7 +260,7 @@ class Gemma2GGUF(BaseLlamCpp):
         )
 
 
-class Phi35MiniGGUF(BaseLlamCpp):
+class Phi35MiniGGUF(BaseLlamaCpp):
     """Loads the GGUF version of a Phi 3.5 Mini model using llama-cpp-python"""
 
     def __init__(
