@@ -1,3 +1,8 @@
+.. image:: graphragzen_banner/project_image_small.png
+    :alt: Graphragzen banner
+    :align: center
+    :class: graphragzen-banner
+
 .. include:: introduction/index.rst
 
 .. Table of contents
