@@ -118,7 +118,7 @@ class LLM(ABC):
             int: number of tokens
         """
         return 0
-    
+
     async def a_run_chat(
         self,
         chat: List[dict],
