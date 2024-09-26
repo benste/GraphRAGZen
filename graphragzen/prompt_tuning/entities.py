@@ -3,8 +3,8 @@ import json
 from typing import List, Optional
 
 from graphragzen.async_tools import async_loop
-from graphragzen.feature_merging import _num_tokens_from_string
 from graphragzen.llm.base_llm import LLM
+from graphragzen.merge import _num_tokens_from_string
 from graphragzen.prompts.prompt_tuning import (
     entity_categories,
     entity_extraction,

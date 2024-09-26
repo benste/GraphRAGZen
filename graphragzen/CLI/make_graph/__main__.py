@@ -5,7 +5,7 @@ import networkx as nx
 from graphragzen import (
     clustering,
     entity_extraction,
-    feature_merging,
+    merge,
     load_documents,
     preprocessing,
     text_embedding,
@@ -154,10 +154,10 @@ if __name__=="__main__":
     # Each node and edge could be found multiple times in the documents and thus have
     # multiple descriptions. We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
-    prompt_config = feature_merging.MergeFeaturesPromptConfig(
+    prompt_config = merge.MergeFeaturesPromptConfig(
             prompt=summarization_prompt
         )
-    entity_graph = feature_merging.merge_graph_features(
+    entity_graph = merge.merge_graph_features(
         entity_graph, llm, feature="description", how="LLM", prompt=prompt_config
     )
 
