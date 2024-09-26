@@ -1,0 +1,31 @@
+graphragzen.entity\_extraction.llm\_output\_structures
+======================================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.entity_extraction.llm_output_structures
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      ExtractedEdge
+      ExtractedEntities
+      ExtractedNode
+   
+   
+
+   
+   
+   
+
+
+

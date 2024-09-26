@@ -1,0 +1,6 @@
+graphragzen.merge.merge\_nodes.isempty
+======================================
+
+.. currentmodule:: graphragzen.merge.merge_nodes
+
+.. autofunction:: isempty

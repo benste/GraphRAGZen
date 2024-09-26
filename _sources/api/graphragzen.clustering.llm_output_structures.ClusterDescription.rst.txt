@@ -1,0 +1,60 @@
+graphragzen.clustering.llm\_output\_structures.ClusterDescription
+=================================================================
+
+.. currentmodule:: graphragzen.clustering.llm_output_structures
+
+.. autoclass:: ClusterDescription
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ClusterDescription.model_computed_fields
+      ~ClusterDescription.model_config
+      ~ClusterDescription.model_extra
+      ~ClusterDescription.model_fields
+      ~ClusterDescription.model_fields_set
+      ~ClusterDescription.title
+      ~ClusterDescription.summary
+      ~ClusterDescription.rating
+      ~ClusterDescription.rating_explanation
+      ~ClusterDescription.findings
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ClusterDescription.construct
+      ~ClusterDescription.copy
+      ~ClusterDescription.dict
+      ~ClusterDescription.from_orm
+      ~ClusterDescription.json
+      ~ClusterDescription.model_construct
+      ~ClusterDescription.model_copy
+      ~ClusterDescription.model_dump
+      ~ClusterDescription.model_dump_json
+      ~ClusterDescription.model_json_schema
+      ~ClusterDescription.model_parametrized_name
+      ~ClusterDescription.model_post_init
+      ~ClusterDescription.model_rebuild
+      ~ClusterDescription.model_validate
+      ~ClusterDescription.model_validate_json
+      ~ClusterDescription.model_validate_strings
+      ~ClusterDescription.parse_file
+      ~ClusterDescription.parse_obj
+      ~ClusterDescription.parse_raw
+      ~ClusterDescription.schema
+      ~ClusterDescription.schema_json
+      ~ClusterDescription.update_forward_refs
+      ~ClusterDescription.validate
+   
+   

@@ -1,0 +1,32 @@
+graphragzen.text\_embedding.vector\_databases.QdrantLocalVectorDatabase
+=======================================================================
+
+.. currentmodule:: graphragzen.text_embedding.vector_databases
+
+.. autoclass:: QdrantLocalVectorDatabase
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~QdrantLocalVectorDatabase.distance_measure
+      ~QdrantLocalVectorDatabase.vector_size
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~QdrantLocalVectorDatabase.add_vectors
+      ~QdrantLocalVectorDatabase.save
+      ~QdrantLocalVectorDatabase.search
+   
+   

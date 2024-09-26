@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.llm.llama_cpp_models.BaseLlamaCpp &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="graphragzen.llm.llama_cpp_models.Gemma2GGUF" href="graphragzen.llm.llama_cpp_models.Gemma2GGUF.html" />
+    <link rel="prev" title="graphragzen.llm.llama_cpp_models.suppress_prompter_output" href="graphragzen.llm.llama_cpp_models.suppress_prompter_output.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="graphragzen.html">graphragzen</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.async_tools.html">graphragzen.async_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.clustering.html">graphragzen.clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.entity_extraction.html">graphragzen.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.examples.html">graphragzen.examples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="graphragzen.llm.html">graphragzen.llm</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.llm.base_llm.html">graphragzen.llm.base_llm</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="graphragzen.llm.llama_cpp_models.html">graphragzen.llm.llama_cpp_models</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.llm.llama_cpp_models.suppress_prompter_output.html">graphragzen.llm.llama_cpp_models.suppress_prompter_output</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">graphragzen.llm.llama_cpp_models.BaseLlamaCpp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.llm.llama_cpp_models.Gemma2GGUF.html">graphragzen.llm.llama_cpp_models.Gemma2GGUF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.llm.llama_cpp_models.Phi35MiniGGUF.html">graphragzen.llm.llama_cpp_models.Phi35MiniGGUF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.llm.openAI_API_client.html">graphragzen.llm.openAI_API_client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.llm.typing.html">graphragzen.llm.typing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.load_documents.html">graphragzen.load_documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.merge.html">graphragzen.merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.preprocessing.html">graphragzen.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompts.html">graphragzen.prompts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.query.html">graphragzen.query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.text_embedding.html">graphragzen.text_embedding</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="graphragzen.html">graphragzen</a> &raquo;</li>
+        
+          <li><a href="graphragzen.llm.html">graphragzen.llm</a> &raquo;</li>
+        
+          <li><a href="graphragzen.llm.llama_cpp_models.html">graphragzen.llm.llama_cpp_models</a> &raquo;</li>
+        
+      <li>graphragzen.llm.llama_cpp_models.BaseLlamaCpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphragzen-llm-llama-cpp-models-basellamacpp">
+<h1>graphragzen.llm.llama_cpp_models.BaseLlamaCpp<a class="headerlink" href="#graphragzen-llm-llama-cpp-models-basellamacpp" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphragzen.llm.llama_cpp_models.</span></span><span class="sig-name descname"><span class="pre">BaseLlamaCpp</span></span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp" title="Link to this definition"></a></dt>
+<dd><p>Loads a GGUF model using llama cpp python and it’s corresponding tokenizer from HF</p>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.cache_persistent" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.cache_persistent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cache_persistent</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.chatnames" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.chatnames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chatnames</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.context_size" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.context_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context_size</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.model_name" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.model_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model_name</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.persistent_cache_file" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.persistent_cache_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">persistent_cache_file</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenizer" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokenizer</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.use_cache" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.use_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">use_cache</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.a_run_chat" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.a_run_chat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_run_chat</span></code></a>(chat[, max_tokens, ...])</p></td>
+<td><p>Runs a chat through the LLM asynchonously</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.check_cache" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.check_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_cache</span></code></a>(llm_input)</p></td>
+<td><p>Checks the hash(llm_in) -&gt; llm_out cache and returns stored output if found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.format_chat" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.format_chat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_chat</span></code></a>(chat[, established_chat])</p></td>
+<td><p>format chat with the correct names ready for <cite>tokenizer.apply_chat_template</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.num_chat_tokens" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.num_chat_tokens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_chat_tokens</span></code></a>(chat)</p></td>
+<td><p>Return the length of the tokenized chat</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.print_streamed" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.print_streamed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_streamed</span></code></a>(stream[, timeit])</p></td>
+<td><p>Streams the generated tokens to the terminal and returns the full generated text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.run_chat" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.run_chat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_chat</span></code></a>(chat[, max_tokens, ...])</p></td>
+<td><p>Runs a chat through the LLM</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenize" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokenize</span></code></a>(content)</p></td>
+<td><p>Tokenize a string</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.untokenize" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.untokenize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">untokenize</span></code></a>(tokens)</p></td>
+<td><p>Generate a string from a list of tokens</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.write_item_to_cache" title="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.write_item_to_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_item_to_cache</span></code></a>(llm_input, llm_output)</p></td>
+<td><p>If a persistent cache file exists, this function can be used to append llm output to it.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_storage_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer_URI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8192</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_gpu_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_persistent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent_cache_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./llm_persistent_cache.yaml'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initiate a llama cpp model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_storage_path</strong> (<em>str</em>) – Path to the model on the local filesystem</p></li>
+<li><p><strong>tokenizer_URI</strong> (<em>str</em>) – URI for the tokenizer</p></li>
+<li><p><strong>context_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the context window in tokens. Defaults to 8192</p></li>
+<li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use a cache to find output for previously processed inputs
+in stead of re-generating output from the input. Default to True.</p></li>
+<li><p><strong>n_gpu_layers</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of layers to offload to GPU (-ngl). If -1, all
+layers are offloaded. You need to install llama-cpp-python with the correct cuda
+support. Out of the box GraphRAGZen’s llama-cpp-python is the CPU version only.
+Defaults to -1.</p></li>
+<li><p><strong>cache_persistent</strong> (<em>bool</em><em>, </em><em>optional</em>) – Append the cache to a file on disk so it can be
+re-used between runs. If False will use only in-memory cache. Default to True</p></li>
+<li><p><strong>persistent_cache_file</strong> (<em>str</em><em>, </em><em>optional</em>) – The file to store the persistent cache.
+Defaults to ‘./llm_persistent_cache.yaml’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.a_run_chat">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">a_run_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_structure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.a_run_chat" title="Link to this definition"></a></dt>
+<dd><p>Runs a chat through the LLM asynchonously</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – in form [{“role”: …, “content”: …}, {“role”: …, “content”: …</p></li>
+<li><p><strong>max_tokens</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of tokens to generate. Defaults to None</p></li>
+<li><p><strong>output_structure</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>ModelMetaclass</em><em>, </em><em>dict</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Output structure to
+force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference
+should be passed.
+Correct = BaseLlamaCpp(“some text”, MyPydanticModel)
+Wrong = BaseLlamaCpp(“some text”, MyPydanticModel())</p></li>
+<li><p><strong>stream</strong> (<em>bool</em><em>, </em><em>optional</em>) – Placeholder for compatibility with sync version, not used.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Any keyword arguments to add to the lmm call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated content</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.cache_persistent">
+<span class="sig-name descname"><span class="pre">cache_persistent</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.cache_persistent" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.chatnames">
+<span class="sig-name descname"><span class="pre">chatnames</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="graphragzen.llm.typing.ChatNames.html#graphragzen.llm.typing.ChatNames" title="graphragzen.llm.typing.ChatNames"><span class="pre">ChatNames</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">ChatNames(system='system',</span> <span class="pre">user='user',</span> <span class="pre">model='model')</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.chatnames" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.check_cache">
+<span class="sig-name descname"><span class="pre">check_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">llm_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.check_cache" title="Link to this definition"></a></dt>
+<dd><p>Checks the hash(llm_in) -&gt; llm_out cache and returns stored output if found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>llm_input</strong> (<em>str</em>) – To check in cache for existing cached output.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Union[str, None]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.context_size">
+<span class="sig-name descname"><span class="pre">context_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.context_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.format_chat">
+<span class="sig-name descname"><span class="pre">format_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">established_chat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.format_chat" title="Link to this definition"></a></dt>
+<dd><p>format chat with the correct names ready for <cite>tokenizer.apply_chat_template</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat</strong> (<em>List</em><em>[</em><em>tuple</em><em>]</em>) – [(role, content), (role, content)]
+- role (str): either “system”, “user” or “model”
+- content (str)</p></li>
+<li><p><strong>established_chat</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Already formatted chat to append to.
+Defaults to [].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[{“role”: …, “content”: …}, {“role”: …, “content”: …}]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.model_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.num_chat_tokens">
+<span class="sig-name descname"><span class="pre">num_chat_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp.num_chat_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.num_chat_tokens" title="Link to this definition"></a></dt>
+<dd><p>Return the length of the tokenized chat</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>chat</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – in form [{“role”: …, “content”: …}, {“role”: …, “content”: …</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of tokens</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.persistent_cache_file">
+<span class="sig-name descname"><span class="pre">persistent_cache_file</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.persistent_cache_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.print_streamed">
+<span class="sig-name descname"><span class="pre">print_streamed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.print_streamed" title="Link to this definition"></a></dt>
+<dd><p>Streams the generated tokens to the terminal and returns the full generated text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream</strong> (<em>Iterator</em>)</p></li>
+<li><p><strong>timeit</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True display the number of tokens generated / sec.
+Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated text</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.run_chat">
+<span class="sig-name descname"><span class="pre">run_chat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_structure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp.run_chat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.run_chat" title="Link to this definition"></a></dt>
+<dd><p>Runs a chat through the LLM</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chat</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – in form [{“role”: …, “content”: …}, {“role”: …, “content”: …</p></li>
+<li><p><strong>max_tokens</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of tokens to generate. Defaults to -1.</p></li>
+<li><p><strong>output_structure</strong> (<em>ModelMetaclass</em><em>, </em><em>optional</em>) – Output structure to force, e.g. grammar
+from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the
+reference.
+Correct = BaseLlamaCpp.run_chat(“some text”, MyPydanticModel)
+Wrong = BaseLlamaCpp.run_chat(“some text”, MyPydanticModel())</p></li>
+<li><p><strong>stream</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, streams the results to console. Defaults to False.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Any keyword arguments to add to the lmm call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Generated content</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenize">
+<span class="sig-name descname"><span class="pre">tokenize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp.tokenize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenize" title="Link to this definition"></a></dt>
+<dd><p>Tokenize a string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>content</strong> (<em>str</em>) – String to tokenize</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tokenized string</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenizer">
+<span class="sig-name descname"><span class="pre">tokenizer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenizer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.untokenize">
+<span class="sig-name descname"><span class="pre">untokenize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tokens</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/llm/llama_cpp_models.html#BaseLlamaCpp.untokenize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.untokenize" title="Link to this definition"></a></dt>
+<dd><p>Generate a string from a list of tokens</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tokens</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Tokenized string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Untokenized string</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.use_cache">
+<span class="sig-name descname"><span class="pre">use_cache</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.use_cache" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.llm.llama_cpp_models.BaseLlamaCpp.write_item_to_cache">
+<span class="sig-name descname"><span class="pre">write_item_to_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">llm_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.write_item_to_cache" title="Link to this definition"></a></dt>
+<dd><p>If a persistent cache file exists, this function can be used to append llm output to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>llm_input</strong> (<em>str</em>)</p></li>
+<li><p><strong>llm_output</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graphragzen.llm.llama_cpp_models.suppress_prompter_output.html" class="btn btn-neutral float-left" title="graphragzen.llm.llama_cpp_models.suppress_prompter_output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="graphragzen.llm.llama_cpp_models.Gemma2GGUF.html" class="btn btn-neutral float-right" title="graphragzen.llm.llama_cpp_models.Gemma2GGUF" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

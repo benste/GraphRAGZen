@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entity categories &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Entity relationship" href="entity_relationship.html" />
+    <link rel="prev" title="Persona" href="persona.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Prompt tuning Prompts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="domain.html">Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="persona.html">Persona</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Entity categories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-entity-categories-prompt">GENERATE_ENTITY_CATEGORIES_PROMPT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="entity_relationship.html">Entity relationship</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entity_extraction.html">Entity extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="summarization_prompt.html">Summarization</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Prompt tuning Prompts</a> &raquo;</li>
+        
+      <li>Entity categories</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/prompts/prompt_tuning/entity_categories.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entity-categories">
+<h1>Entity categories<a class="headerlink" href="#entity-categories" title="Link to this heading"></a></h1>
+<section id="generate-entity-categories-prompt">
+<h2>GENERATE_ENTITY_CATEGORIES_PROMPT<a class="headerlink" href="#generate-entity-categories-prompt" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="n">The</span> <span class="n">goal</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">study</span> <span class="n">the</span> <span class="n">connections</span> <span class="ow">and</span> <span class="n">relations</span> <span class="n">between</span> <span class="n">the</span> <span class="n">entity</span> <span class="n">categories</span> <span class="ow">and</span> <span class="n">their</span> <span class="n">features</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">understand</span> <span class="nb">all</span> <span class="n">available</span> <span class="n">information</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">text</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">user</span><span class="s1">&#39;s task is to Identify the relations and structure of the community of interest, specifically within the </span><span class="si">{domain}</span><span class="s1"> domain.</span>
+<span class="n">As</span> <span class="n">part</span> <span class="n">of</span> <span class="n">the</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">identify</span> <span class="n">the</span> <span class="n">entity</span> <span class="n">categories</span> <span class="n">present</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">following</span> <span class="n">text</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">entity</span> <span class="n">categories</span> <span class="n">must</span> <span class="n">be</span> <span class="n">relevant</span> <span class="n">to</span> <span class="n">the</span> <span class="n">user</span> <span class="n">task</span><span class="o">.</span>
+<span class="n">Avoid</span> <span class="n">general</span> <span class="n">entity</span> <span class="n">categories</span> <span class="n">such</span> <span class="k">as</span> <span class="s2">&quot;other&quot;</span> <span class="ow">or</span> <span class="s2">&quot;unknown&quot;</span><span class="o">.</span>
+<span class="n">This</span> <span class="ow">is</span> <span class="n">VERY</span> <span class="n">IMPORTANT</span><span class="p">:</span> <span class="n">Do</span> <span class="ow">not</span> <span class="n">generate</span> <span class="n">redundant</span> <span class="ow">or</span> <span class="n">overlapping</span> <span class="n">entity</span> <span class="n">categories</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="k">if</span> <span class="n">the</span> <span class="n">text</span> <span class="n">contains</span> <span class="s2">&quot;company&quot;</span> <span class="ow">and</span> <span class="s2">&quot;organization&quot;</span> <span class="n">entity</span> <span class="n">categories</span><span class="p">,</span> <span class="n">you</span> <span class="n">should</span> <span class="k">return</span> <span class="n">only</span> <span class="n">one</span> <span class="n">of</span> <span class="n">them</span><span class="o">.</span>
+<span class="n">Don</span><span class="s1">&#39;t worry about quantity, always choose quality over quantity. And make sure EVERYTHING in your answer is relevant to the context of entity extraction.</span>
+<span class="n">And</span> <span class="n">remember</span><span class="p">,</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">ENTITY</span> <span class="n">CATEGORIES</span> <span class="n">what</span> <span class="n">we</span> <span class="n">need</span><span class="o">.</span>
+<span class="n">Return</span> <span class="n">the</span> <span class="n">entity</span> <span class="n">categories</span> <span class="ow">in</span> <span class="k">as</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">comma</span> <span class="n">separated</span> <span class="n">strings</span><span class="o">.</span>
+<span class="o">=====================================================================</span>
+<span class="n">EXAMPLE</span> <span class="n">SECTION</span><span class="p">:</span> <span class="n">The</span> <span class="n">following</span> <span class="n">section</span> <span class="n">includes</span> <span class="n">example</span> <span class="n">output</span><span class="o">.</span> <span class="n">These</span> <span class="n">examples</span> <span class="o">**</span><span class="n">must</span> <span class="n">be</span> <span class="n">excluded</span> <span class="kn">from</span> <span class="nn">your</span> <span class="n">answer</span><span class="o">**.</span>
+
+<span class="n">EXAMPLE</span> <span class="mi">1</span>
+<span class="n">Task</span><span class="p">:</span> <span class="n">Determine</span> <span class="n">the</span> <span class="n">connections</span> <span class="ow">and</span> <span class="n">organizational</span> <span class="n">hierarchy</span> <span class="n">within</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">community</span><span class="o">.</span>
+<span class="n">Text</span><span class="p">:</span> <span class="n">Example_Org_A</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">company</span> <span class="ow">in</span> <span class="n">Sweden</span><span class="o">.</span> <span class="n">Example_Org_A</span><span class="s1">&#39;s director is Example_Individual_B.</span>
+<span class="n">RESPONSE</span><span class="p">:</span>
+<span class="n">organization</span><span class="p">,</span> <span class="n">person</span>
+<span class="n">END</span> <span class="n">OF</span> <span class="n">EXAMPLE</span> <span class="mi">1</span>
+
+<span class="n">EXAMPLE</span> <span class="mi">2</span>
+<span class="n">Task</span><span class="p">:</span> <span class="n">Identify</span> <span class="n">the</span> <span class="n">key</span> <span class="n">concepts</span><span class="p">,</span> <span class="n">principles</span><span class="p">,</span> <span class="ow">and</span> <span class="n">arguments</span> <span class="n">shared</span> <span class="n">among</span> <span class="n">different</span> <span class="n">philosophical</span> <span class="n">schools</span> <span class="n">of</span> <span class="n">thought</span><span class="p">,</span> <span class="ow">and</span> <span class="n">trace</span> <span class="n">the</span> <span class="n">historical</span> <span class="ow">or</span> <span class="n">ideological</span> <span class="n">influences</span> <span class="n">they</span> <span class="n">have</span> <span class="n">on</span> <span class="n">each</span> <span class="n">other</span><span class="o">.</span>
+<span class="n">Text</span><span class="p">:</span> <span class="n">Rationalism</span><span class="p">,</span> <span class="n">epitomized</span> <span class="n">by</span> <span class="n">thinkers</span> <span class="n">such</span> <span class="k">as</span> <span class="n">René</span> <span class="n">Descartes</span><span class="p">,</span> <span class="n">holds</span> <span class="n">that</span> <span class="n">reason</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">primary</span> <span class="n">source</span> <span class="n">of</span> <span class="n">knowledge</span><span class="o">.</span> <span class="n">Key</span> <span class="n">concepts</span> <span class="n">within</span> <span class="n">this</span> <span class="n">school</span> <span class="n">include</span> <span class="n">the</span> <span class="n">emphasis</span> <span class="n">on</span> <span class="n">the</span> <span class="n">deductive</span> <span class="n">method</span> <span class="n">of</span> <span class="n">reasoning</span><span class="o">.</span>
+<span class="n">RESPONSE</span><span class="p">:</span>
+<span class="n">concept</span><span class="p">,</span> <span class="n">person</span><span class="p">,</span> <span class="n">school</span> <span class="n">of</span> <span class="n">thought</span>
+<span class="n">END</span> <span class="n">OF</span> <span class="n">EXAMPLE</span> <span class="mi">2</span>
+
+<span class="n">EXAMPLE</span> <span class="mi">3</span>
+<span class="n">Task</span><span class="p">:</span> <span class="n">Identify</span> <span class="n">the</span> <span class="n">full</span> <span class="nb">range</span> <span class="n">of</span> <span class="n">basic</span> <span class="n">forces</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="ow">and</span> <span class="n">trends</span> <span class="n">that</span> <span class="n">would</span> <span class="n">indirectly</span> <span class="n">shape</span> <span class="n">an</span> <span class="n">issue</span><span class="o">.</span>
+<span class="n">Text</span><span class="p">:</span> <span class="n">Industry</span> <span class="n">leaders</span> <span class="n">such</span> <span class="k">as</span> <span class="n">Panasonic</span> <span class="n">are</span> <span class="n">vying</span> <span class="k">for</span> <span class="n">supremacy</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">battery</span> <span class="n">production</span> <span class="n">sector</span><span class="o">.</span> <span class="n">They</span> <span class="n">are</span> <span class="n">investing</span> <span class="n">heavily</span> <span class="ow">in</span> <span class="n">research</span> <span class="ow">and</span> <span class="n">development</span> <span class="ow">and</span> <span class="n">are</span> <span class="n">exploring</span> <span class="n">new</span> <span class="n">technologies</span> <span class="n">to</span> <span class="n">gain</span> <span class="n">a</span> <span class="n">competitive</span> <span class="n">edge</span><span class="o">.</span>
+<span class="n">RESPONSE</span><span class="p">:</span>
+<span class="n">organization</span><span class="p">,</span> <span class="n">technology</span><span class="p">,</span> <span class="n">sectors</span><span class="p">,</span> <span class="n">investment</span> <span class="n">strategies</span>
+<span class="n">END</span> <span class="n">OF</span> <span class="n">EXAMPLE</span> <span class="mi">3</span>
+<span class="o">======================================================================</span>
+
+<span class="o">======================================================================</span>
+<span class="n">REAL</span> <span class="n">DATA</span><span class="p">:</span> <span class="n">The</span> <span class="n">following</span> <span class="n">section</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">real</span> <span class="n">data</span><span class="o">.</span> <span class="n">You</span> <span class="n">should</span> <span class="n">use</span> <span class="n">only</span> <span class="n">this</span> <span class="n">real</span> <span class="n">data</span> <span class="n">to</span> <span class="n">prepare</span> <span class="n">your</span> <span class="n">answer</span><span class="o">.</span> <span class="n">Generate</span> <span class="n">Entity</span> <span class="n">Categories</span> <span class="n">only</span><span class="o">.</span>
+<span class="n">Task</span><span class="p">:</span> <span class="n">Identify</span> <span class="n">the</span> <span class="n">relations</span> <span class="ow">and</span> <span class="n">structure</span> <span class="n">of</span> <span class="n">the</span> <span class="n">community</span> <span class="n">of</span> <span class="n">interest</span><span class="p">,</span> <span class="n">specifically</span> <span class="n">within</span> <span class="n">the</span> <span class="p">{</span><span class="n">domain</span><span class="p">}</span> <span class="n">domain</span><span class="o">.</span>
+<span class="n">Text</span><span class="p">:</span> <span class="p">{</span><span class="n">input_text</span><span class="p">}</span>
+<span class="n">RESPONSE</span><span class="p">:</span>
+<span class="p">{{</span><span class="o">&lt;</span><span class="n">entity_categories</span><span class="o">&gt;</span><span class="p">}}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="persona.html" class="btn btn-neutral float-left" title="Persona" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="entity_relationship.html" class="btn btn-neutral float-right" title="Entity relationship" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

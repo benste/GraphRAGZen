@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.query.query.PromptBuilder &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="graphragzen.text_embedding" href="graphragzen.text_embedding.html" />
+    <link rel="prev" title="graphragzen.query.query" href="graphragzen.query.query.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="graphragzen.html">graphragzen</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.async_tools.html">graphragzen.async_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.clustering.html">graphragzen.clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.entity_extraction.html">graphragzen.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.examples.html">graphragzen.examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.llm.html">graphragzen.llm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.load_documents.html">graphragzen.load_documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.merge.html">graphragzen.merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.preprocessing.html">graphragzen.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompts.html">graphragzen.prompts</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="graphragzen.query.html">graphragzen.query</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.query.get_context.html">graphragzen.query.get_context</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="graphragzen.query.query.html">graphragzen.query.query</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">graphragzen.query.query.PromptBuilder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.text_embedding.html">graphragzen.text_embedding</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="graphragzen.html">graphragzen</a> &raquo;</li>
+        
+          <li><a href="graphragzen.query.html">graphragzen.query</a> &raquo;</li>
+        
+          <li><a href="graphragzen.query.query.html">graphragzen.query.query</a> &raquo;</li>
+        
+      <li>graphragzen.query.query.PromptBuilder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/graphragzen.query.query.PromptBuilder.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphragzen-query-query-promptbuilder">
+<h1>graphragzen.query.query.PromptBuilder<a class="headerlink" href="#graphragzen-query-query-promptbuilder" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphragzen.query.query.</span></span><span class="sig-name descname"><span class="pre">PromptBuilder</span></span><a class="reference internal" href="../_modules/graphragzen/query/query.html#PromptBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.query.query.PromptBuilder" title="Link to this definition"></a></dt>
+<dd><p>A class used to build a prompt based on graph data, vector searches, and additional documents or
+cluster reports.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.embedding_model">
+<span class="sig-name descname"><span class="pre">embedding_model</span></span><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.embedding_model" title="Link to this definition"></a></dt>
+<dd><p>An embedding model used to generate embeddings for text and
+queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="graphragzen.text_embedding.embedding_models.BaseEmbedder.html#graphragzen.text_embedding.embedding_models.BaseEmbedder" title="graphragzen.text_embedding.embedding_models.BaseEmbedder">BaseEmbedder</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.vector_db">
+<span class="sig-name descname"><span class="pre">vector_db</span></span><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.vector_db" title="Link to this definition"></a></dt>
+<dd><p>A client for interacting with the vector database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase" title="graphragzen.text_embedding.vector_databases.VectorDatabase">VectorDatabase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.graph" title="Link to this definition"></a></dt>
+<dd><p>A graph containing nodes and edges that represent entities and their
+relationships.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>nx.Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.source_documents">
+<span class="sig-name descname"><span class="pre">source_documents</span></span><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.source_documents" title="Link to this definition"></a></dt>
+<dd><p>A DataFrame containing source documents for
+additional context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.cluster_report">
+<span class="sig-name descname"><span class="pre">cluster_report</span></span><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.cluster_report" title="Link to this definition"></a></dt>
+<dd><p>A DataFrame containing cluster reports for
+additional context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.query.query.PromptBuilder.build_prompt" title="graphragzen.query.query.PromptBuilder.build_prompt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_prompt</span></code></a>(query[, prompt, ...])</p></td>
+<td><p>Builds a prompt based on the query, graph data, vector searches, and additional documents or cluster reports.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vector_db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_documents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_report</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/query/query.html#PromptBuilder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the PromptBuilder instance with the necessary components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding_model</strong> (<a class="reference internal" href="graphragzen.text_embedding.embedding_models.BaseEmbedder.html#graphragzen.text_embedding.embedding_models.BaseEmbedder" title="graphragzen.text_embedding.embedding_models.BaseEmbedder"><em>BaseEmbedder</em></a>) – An embedding model to generate embeddings for text and
+queries.</p></li>
+<li><p><strong>vector_db</strong> (<a class="reference internal" href="graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase" title="graphragzen.text_embedding.vector_databases.VectorDatabase"><em>VectorDatabase</em></a>)</p></li>
+<li><p><strong>graph</strong> (<em>nx.Graph</em>) – A graph containing nodes and edges that represent entities and their
+relationships.</p></li>
+<li><p><strong>source_documents</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – A DataFrame containing source
+documents for additional context. Defaults to None.</p></li>
+<li><p><strong>cluster_report</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – A DataFrame containing cluster reports
+for additional context. Should contain the columns ‘cluster’ (string identifier of
+each cluster), ‘node_name’ (lists of node names that belong to a cluster) and
+‘description’ (a string describing the cluster). Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.query.query.PromptBuilder.build_prompt">
+<span class="sig-name descname"><span class="pre">build_prompt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&quot;\n---Role---\n\nYou</span> <span class="pre">are</span> <span class="pre">a</span> <span class="pre">helpful</span> <span class="pre">assistant</span> <span class="pre">responding</span> <span class="pre">to</span> <span class="pre">questions</span> <span class="pre">about</span> <span class="pre">data</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">tables</span> <span class="pre">provided.\n\n\n---Goal---\n\nGenerate</span> <span class="pre">a</span> <span class="pre">response</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">target</span> <span class="pre">length</span> <span class="pre">and</span> <span class="pre">format</span> <span class="pre">that</span> <span class="pre">responds</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">user's</span> <span class="pre">question,</span> <span class="pre">summarizing</span> <span class="pre">all</span> <span class="pre">information</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">input</span> <span class="pre">data</span> <span class="pre">tables</span> <span class="pre">appropriate</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">response</span> <span class="pre">length</span> <span class="pre">and</span> <span class="pre">format,</span> <span class="pre">and</span> <span class="pre">incorporating</span> <span class="pre">any</span> <span class="pre">relevant</span> <span class="pre">general</span> <span class="pre">knowledge.\n\nIf</span> <span class="pre">you</span> <span class="pre">don't</span> <span class="pre">know</span> <span class="pre">the</span> <span class="pre">answer,</span> <span class="pre">just</span> <span class="pre">say</span> <span class="pre">so.</span> <span class="pre">Do</span> <span class="pre">not</span> <span class="pre">make</span> <span class="pre">anything</span> <span class="pre">up.\n\nDo</span> <span class="pre">not</span> <span class="pre">include</span> <span class="pre">information</span> <span class="pre">where</span> <span class="pre">the</span> <span class="pre">supporting</span> <span class="pre">evidence</span> <span class="pre">for</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">provided.\n\n\n---Data</span> <span class="pre">tables---\n{context_data}\n\n\n---Query---\n\n{query}\n&quot;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_similar_entities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_inside_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_outside_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_cluster_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k_source_documents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_documents_id_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chunk_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_documents_source_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chunk'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_documents_feature_delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/query/query.html#PromptBuilder.build_prompt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.query.query.PromptBuilder.build_prompt" title="Link to this definition"></a></dt>
+<dd><p>Builds a prompt based on the query, graph data, vector searches, and additional documents or
+cluster reports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – The query for which a prompt is being constructed.</p></li>
+<li><p><strong>prompt</strong> (<em>str</em><em>, </em><em>optional</em>) – The base prompt template to be filled with the context data and
+query. Defaults to LOCAL_SEARCH_PROMPT.</p></li>
+<li><p><strong>score_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum score threshold for including vector
+search results. Entities with scores below this threshold are excluded. Defaults to
+0.0.</p></li>
+<li><p><strong>top_k_similar_entities</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of top similar entities
+from the graph (retreived through vector search) to include in the prompt.
+Defaults to 10.</p></li>
+<li><p><strong>top_k_inside_edges</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of inside edges by weight related to the
+similar entities to include in the prompt.
+An iside edge is defined as an edge whom’s both nodes are already in the entities
+retrieved through vector search. Defaults to 3.</p></li>
+<li><p><strong>top_k_outside_edges</strong> (<em>int</em><em>, </em><em>optional</em>) – The top number of outside edges by weight related
+to the similar entities to include in the prompt.
+An outside edge is defined as an edge of whom’s nodes extactly 1 is already in the
+entities retrieved through vector search. Defaults to 3.</p></li>
+<li><p><strong>top_k_cluster_descriptions</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of top cluster descriptions by
+occurence, followed by rank, to include in the prompt. Defaults to 3.</p></li>
+<li><p><strong>top_k_source_documents</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of top source documents by occurence
+to include in the prompt. Defaults to 3.</p></li>
+<li><p><strong>source_documents_id_key</strong> (<em>str</em>) – The column name in <cite>source_documents</cite> that represents
+unique document IDs. Defaults to “chunk_id”.</p></li>
+<li><p><strong>source_documents_source_key</strong> (<em>str</em>) – The column name in <cite>source_documents</cite> containing the
+source text. Defaults to “chunk”.</p></li>
+<li><p><strong>source_documents_feature_delimiter</strong> (<em>str</em>) – The delimiter used to split the “source_id”
+values in the Graph metadata. Default is newline.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The final constructed prompt with context data and the original query formatted
+within the prompt template.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graphragzen.query.query.html" class="btn btn-neutral float-left" title="graphragzen.query.query" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="graphragzen.text_embedding.html" class="btn btn-neutral float-right" title="graphragzen.text_embedding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

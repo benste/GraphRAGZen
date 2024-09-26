@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.preprocessing.preprocess &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.preprocessing.preprocess</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.preprocessing.preprocess</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">html</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm.base_llm</span> <span class="kn">import</span> <span class="n">LLM</span>
+
+
+<div class="viewcode-block" id="chunk_documents">
+<a class="viewcode-back" href="../../../api/graphragzen.preprocessing.preprocess.chunk_documents.html#graphragzen.preprocessing.preprocess.chunk_documents">[docs]</a>
+<span class="k">def</span> <span class="nf">chunk_documents</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+    <span class="n">column_to_chunk</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;content&quot;</span><span class="p">,</span>
+    <span class="n">results_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk&quot;</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk_id&quot;</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="n">overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tokens&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Chunk documents based on number of tokens</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (Union[pd.DataFrame, List[str]]): Containing the documents to chunk</span>
+<span class="sd">        llm (LLM):</span>
+<span class="sd">        column_to_chunk (str, optional): Column to chunk. Defaults to &#39;content&#39;.</span>
+<span class="sd">        results_column (str, optional): Column to write chunks to, Defaults to &#39;chunk&#39;.</span>
+<span class="sd">        id_column (str, optional): Column to write chunk ID&#39;s to. Can later be used to refence the</span>
+<span class="sd">            source chunk. Defaults to &#39;chunk_id&#39;.</span>
+<span class="sd">        window_size (str, optional): Number of tokens in each chunk, Defaults to 300.</span>
+<span class="sd">        overlap (str, optional): Number of tokens chunks overlap, Defaults to 100.</span>
+<span class="sd">        method (str, optional): What to chunk. Currently only &#39;tokens&#39; is implemented meaning</span>
+<span class="sd">            column_to_chunk is first tokenized and the tokens are chunked.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: All columns in the input dataframe are exploded with the chunks</span>
+<span class="sd">        allowing referencing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">chunked_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">column_to_chunk</span><span class="p">:</span> <span class="nb">input</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chunked_df</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+
+    <span class="n">len_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">results_column</span> <span class="o">+</span> <span class="s2">&quot;_len&quot;</span>
+
+    <span class="c1"># Method of chunking</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
+        <span class="n">to_chunk</span> <span class="o">=</span> <span class="n">chunked_df</span><span class="p">[</span><span class="n">column_to_chunk</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">tokenize</span><span class="p">)</span>
+
+    <span class="c1"># Apply chunking per document, also saving the length of each chunk</span>
+    <span class="n">chunked_df</span><span class="p">[</span><span class="n">results_column</span><span class="p">],</span> <span class="n">chunked_df</span><span class="p">[</span><span class="n">len_column</span><span class="p">]</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">to_chunk</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">chunk</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">overlap</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Map each chunk back to the correct row</span>
+    <span class="n">chunked_df</span> <span class="o">=</span> <span class="n">chunked_df</span><span class="o">.</span><span class="n">explode</span><span class="p">([</span><span class="n">results_column</span><span class="p">,</span> <span class="n">len_column</span><span class="p">])</span>
+
+    <span class="c1"># &#39;untokenize&#39; if required</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
+        <span class="n">chunked_df</span><span class="p">[</span><span class="n">results_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunked_df</span><span class="p">[</span><span class="n">results_column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">untokenize</span><span class="p">)</span>
+
+    <span class="c1"># Give each chunk a unique ID</span>
+    <span class="n">chunked_df</span><span class="p">[</span><span class="n">id_column</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunked_df</span><span class="p">))]</span>
+
+    <span class="c1"># TODO: drop content column to save space?</span>
+
+    <span class="k">return</span> <span class="n">chunked_df</span></div>
+
+
+
+<div class="viewcode-block" id="chunk">
+<a class="viewcode-back" href="../../../api/graphragzen.preprocessing.preprocess.chunk.html#graphragzen.preprocessing.preprocess.chunk">[docs]</a>
+<span class="k">def</span> <span class="nf">chunk</span><span class="p">(</span>
+    <span class="n">inp</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="n">overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Chunk an sequence using a sliding window</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        inp (Iterable): Iterable to chunk</span>
+<span class="sd">        window_size (int, optional): size of the chunk window. Defaults to 300.</span>
+<span class="sd">        overlap (int, optional): overlap between windows. Defaults to 100.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[list, list]: (chunks, chunk lengths)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">chunk_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">start_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp</span><span class="p">),</span> <span class="n">window_size</span> <span class="o">-</span> <span class="n">overlap</span><span class="p">):</span>
+        <span class="n">chunk</span> <span class="o">=</span> <span class="n">inp</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">window_size</span><span class="p">]</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+        <span class="n">chunk_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">chunks</span><span class="p">,</span> <span class="n">chunk_lengths</span></div>
+
+
+
+<div class="viewcode-block" id="clean_str">
+<a class="viewcode-back" href="../../../api/graphragzen.preprocessing.preprocess.clean_str.html#graphragzen.preprocessing.preprocess.clean_str">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_str</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clean an input string by removing HTML escapes, control characters, and other unwanted</span>
+<span class="sd">    characters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If we get non-string input, just give it back</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">input</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">html</span><span class="o">.</span><span class="n">unescape</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+    <span class="c1"># https://stackoverflow.com/questions/4324790/removing-control-characters-from-a-string-in-python  # noqa: E501</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\x00-\x1f\x7f-\x9f]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

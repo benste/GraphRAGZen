@@ -1,0 +1,31 @@
+graphragzen.entity\_extraction.typing
+=====================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.entity_extraction.typing
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      EntityExtractionPromptConfig
+      EntityExtractionPromptFormatting
+      EntityExtractionPrompts
+   
+   
+
+   
+   
+   
+
+
+

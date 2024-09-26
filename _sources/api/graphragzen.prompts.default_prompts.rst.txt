@@ -1,0 +1,32 @@
+graphragzen.prompts.default\_prompts
+====================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts.default_prompts
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   cluster_description_prompts
+   entity_extraction_prompts
+   local_search_prompts
+   summarization_prompts
+

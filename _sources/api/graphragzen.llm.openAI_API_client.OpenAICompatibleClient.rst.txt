@@ -1,0 +1,43 @@
+graphragzen.llm.openAI\_API\_client.OpenAICompatibleClient
+==========================================================
+
+.. currentmodule:: graphragzen.llm.openAI_API_client
+
+.. autoclass:: OpenAICompatibleClient
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~OpenAICompatibleClient.cache_persistent
+      ~OpenAICompatibleClient.chatnames
+      ~OpenAICompatibleClient.context_size
+      ~OpenAICompatibleClient.model_name
+      ~OpenAICompatibleClient.persistent_cache_file
+      ~OpenAICompatibleClient.tokenizer
+      ~OpenAICompatibleClient.use_cache
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OpenAICompatibleClient.a_run_chat
+      ~OpenAICompatibleClient.check_cache
+      ~OpenAICompatibleClient.format_chat
+      ~OpenAICompatibleClient.num_chat_tokens
+      ~OpenAICompatibleClient.print_streamed
+      ~OpenAICompatibleClient.run_chat
+      ~OpenAICompatibleClient.tokenize
+      ~OpenAICompatibleClient.untokenize
+      ~OpenAICompatibleClient.write_item_to_cache
+   
+   

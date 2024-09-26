@@ -1,0 +1,29 @@
+graphragzen.text\_embedding.embedding\_models.NomicTextEmbedder
+===============================================================
+
+.. currentmodule:: graphragzen.text_embedding.embedding_models
+
+.. autoclass:: NomicTextEmbedder
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NomicTextEmbedder.vector_size
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NomicTextEmbedder.embed
+   
+   

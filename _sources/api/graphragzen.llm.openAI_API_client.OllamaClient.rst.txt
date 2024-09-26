@@ -1,0 +1,43 @@
+graphragzen.llm.openAI\_API\_client.OllamaClient
+================================================
+
+.. currentmodule:: graphragzen.llm.openAI_API_client
+
+.. autoclass:: OllamaClient
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~OllamaClient.cache_persistent
+      ~OllamaClient.chatnames
+      ~OllamaClient.context_size
+      ~OllamaClient.model_name
+      ~OllamaClient.persistent_cache_file
+      ~OllamaClient.tokenizer
+      ~OllamaClient.use_cache
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OllamaClient.a_run_chat
+      ~OllamaClient.check_cache
+      ~OllamaClient.format_chat
+      ~OllamaClient.num_chat_tokens
+      ~OllamaClient.print_streamed
+      ~OllamaClient.run_chat
+      ~OllamaClient.tokenize
+      ~OllamaClient.untokenize
+      ~OllamaClient.write_item_to_cache
+   
+   

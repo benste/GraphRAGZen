@@ -1,0 +1,6 @@
+graphragzen.llm.llama\_cpp\_models.suppress\_prompter\_output
+=============================================================
+
+.. currentmodule:: graphragzen.llm.llama_cpp_models
+
+.. autofunction:: suppress_prompter_output

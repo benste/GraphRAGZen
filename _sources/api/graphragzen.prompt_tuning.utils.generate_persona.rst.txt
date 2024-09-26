@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.utils.generate\_persona
+==================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.utils
+
+.. autofunction:: generate_persona

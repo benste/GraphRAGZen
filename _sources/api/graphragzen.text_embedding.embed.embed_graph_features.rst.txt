@@ -1,0 +1,6 @@
+graphragzen.text\_embedding.embed.embed\_graph\_features
+========================================================
+
+.. currentmodule:: graphragzen.text_embedding.embed
+
+.. autofunction:: embed_graph_features

@@ -1,0 +1,61 @@
+graphragzen.entity\_extraction.typing.EntityExtractionPromptConfig
+==================================================================
+
+.. currentmodule:: graphragzen.entity_extraction.typing
+
+.. autoclass:: EntityExtractionPromptConfig
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~EntityExtractionPromptConfig.model_computed_fields
+      ~EntityExtractionPromptConfig.model_config
+      ~EntityExtractionPromptConfig.model_extra
+      ~EntityExtractionPromptConfig.model_fields
+      ~EntityExtractionPromptConfig.model_fields_set
+      ~EntityExtractionPromptConfig.prompts
+      ~EntityExtractionPromptConfig.formatting
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EntityExtractionPromptConfig.construct
+      ~EntityExtractionPromptConfig.copy
+      ~EntityExtractionPromptConfig.dict
+      ~EntityExtractionPromptConfig.from_orm
+      ~EntityExtractionPromptConfig.get
+      ~EntityExtractionPromptConfig.items
+      ~EntityExtractionPromptConfig.json
+      ~EntityExtractionPromptConfig.keys
+      ~EntityExtractionPromptConfig.model_construct
+      ~EntityExtractionPromptConfig.model_copy
+      ~EntityExtractionPromptConfig.model_dump
+      ~EntityExtractionPromptConfig.model_dump_json
+      ~EntityExtractionPromptConfig.model_json_schema
+      ~EntityExtractionPromptConfig.model_parametrized_name
+      ~EntityExtractionPromptConfig.model_post_init
+      ~EntityExtractionPromptConfig.model_rebuild
+      ~EntityExtractionPromptConfig.model_validate
+      ~EntityExtractionPromptConfig.model_validate_json
+      ~EntityExtractionPromptConfig.model_validate_strings
+      ~EntityExtractionPromptConfig.parse_file
+      ~EntityExtractionPromptConfig.parse_obj
+      ~EntityExtractionPromptConfig.parse_raw
+      ~EntityExtractionPromptConfig.schema
+      ~EntityExtractionPromptConfig.schema_json
+      ~EntityExtractionPromptConfig.update_forward_refs
+      ~EntityExtractionPromptConfig.validate
+      ~EntityExtractionPromptConfig.values
+   
+   

@@ -1,0 +1,30 @@
+graphragzen.clustering.llm\_output\_structures
+==============================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.clustering.llm_output_structures
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      ClusterDescription
+      Finding
+   
+   
+
+   
+   
+   
+
+
+

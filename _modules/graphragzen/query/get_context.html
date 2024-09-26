@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.query.get_context &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.query.get_context</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.query.get_context</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">graphragzen.text_embedding.embedding_models</span> <span class="kn">import</span> <span class="n">BaseEmbedder</span>
+<span class="kn">from</span> <span class="nn">graphragzen.text_embedding.vector_databases</span> <span class="kn">import</span> <span class="n">VectorDatabase</span>
+
+
+<div class="viewcode-block" id="semantic_similar_entities">
+<a class="viewcode-back" href="../../../api/graphragzen.query.get_context.semantic_similar_entities.html#graphragzen.query.get_context.semantic_similar_entities">[docs]</a>
+<span class="k">def</span> <span class="nf">semantic_similar_entities</span><span class="p">(</span>
+    <span class="n">embedding_model</span><span class="p">:</span> <span class="n">BaseEmbedder</span><span class="p">,</span>
+    <span class="n">vector_db</span><span class="p">:</span> <span class="n">VectorDatabase</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">entity_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;edge&quot;</span><span class="p">],</span>
+    <span class="n">features_to_match</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">],</span>
+    <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get entities with the highest semantic similarity to the query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        embedding_model (BaseEmbedder): The embedding model used to compute the query vector.</span>
+<span class="sd">        vector_db (VectorDatabase): The vector database to search for similar entities.</span>
+<span class="sd">        query (str): The query string to find similar entities.</span>
+<span class="sd">        k (int): Maximum number of entities (nodes and edges) to return.</span>
+<span class="sd">        entity_types (List[str], optional): Which entities to search. Defaults to [&#39;node&#39;, &#39;edge&#39;].</span>
+<span class="sd">        features_to_match (List[str], optional): Entity features to perform semantic similarity</span>
+<span class="sd">            search on with regards to the query. Defaults to [&quot;description&quot;].</span>
+<span class="sd">        score_threshold (float, optional): Exclude all vector search results with a score worse</span>
+<span class="sd">            than this. Defaults to 0.0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries containing &#39;entity_type&#39;, &#39;entity_name&#39;, &#39;score&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">query_vector</span> <span class="o">=</span> <span class="n">embedding_model</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;embed_query&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">vector_db</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+        <span class="n">query_vector</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">,</span>
+        <span class="n">filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;feature&quot;</span><span class="p">:</span> <span class="n">features_to_match</span><span class="p">,</span> <span class="s2">&quot;entity_type&quot;</span><span class="p">:</span> <span class="n">entity_types</span><span class="p">},</span>
+        <span class="n">score_threshold</span><span class="o">=</span><span class="n">score_threshold</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span></div>
+
+
+
+<div class="viewcode-block" id="extra_inside_edges">
+<a class="viewcode-back" href="../../../api/graphragzen.query.get_context.extra_inside_edges.html#graphragzen.query.get_context.extra_inside_edges">[docs]</a>
+<span class="k">def</span> <span class="nf">extra_inside_edges</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">only_new_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return top edges by weight where both nodes are in the specified entities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (nx.Graph): The graph containing nodes and edges.</span>
+<span class="sd">        entities (List[dict]): List of entities who&#39;s nodes to check for connected edges.</span>
+<span class="sd">        k (int): Maximum number of edges to return.</span>
+<span class="sd">        only_new_edges (bool, optional): If True, returns only edges not yet in the entities,</span>
+<span class="sd">            thus output length might be less than k. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries containing &#39;entity_type&#39;, &#39;entity_name&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">_extra_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;inside&quot;</span><span class="p">,</span> <span class="n">only_new_edges</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extra_outside_edges">
+<a class="viewcode-back" href="../../../api/graphragzen.query.get_context.extra_outside_edges.html#graphragzen.query.get_context.extra_outside_edges">[docs]</a>
+<span class="k">def</span> <span class="nf">extra_outside_edges</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">only_new_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return top edges by weight where only one node is in the specified entities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (nx.Graph): The graph containing nodes and edges.</span>
+<span class="sd">        entities (List[dict]): List of entities who&#39;s nodes to check for connected edges.</span>
+<span class="sd">        k (int): Maximum number of edges to return.</span>
+<span class="sd">        only_new_edges (bool, optional): If True, returns only edges not yet in the entities,</span>
+<span class="sd">            this output length might be less than k. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries containing &#39;entity_type&#39;, &#39;entity_name&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">_extra_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">entities</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="n">only_new_edges</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_extra_edges</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">inside_outside</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">only_new_edges</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find top edges by weight, filtered by inside or outside criteria.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (nx.Graph): The graph containing nodes and edges.</span>
+<span class="sd">        entities (List[dict]): List of entities who&#39;s nodes to check for connected edges.</span>
+<span class="sd">        k (int): Maximum number of edges to return.</span>
+<span class="sd">        inside_outside (str): &#39;inside&#39; to filter edges where both nodes are in the entities,</span>
+<span class="sd">            or &#39;outside&#39; to filter edges where only one node is in the entities.</span>
+<span class="sd">            If left empty there will be no filtering before finding the top k edges.</span>
+<span class="sd">        only_new_edges (bool): If True, returns only edges not yet in the entities, thus</span>
+<span class="sd">            output length might be less than k.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries containing &#39;entity_type&#39;, &#39;entity_name&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Get all the edges coupled to each nodes in the entities</span>
+    <span class="n">node_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">node_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>
+            <span class="n">node_edges</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">node_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;edge&quot;</span><span class="p">:</span>
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Keep only the inside or outside edges</span>
+    <span class="k">if</span> <span class="n">inside_outside</span> <span class="o">==</span> <span class="s2">&quot;inside&quot;</span><span class="p">:</span>
+        <span class="n">node_edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">edge</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">node_edges</span> <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_names</span> <span class="ow">and</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_names</span>
+        <span class="p">]</span>
+    <span class="k">elif</span> <span class="n">inside_outside</span> <span class="o">==</span> <span class="s2">&quot;outside&quot;</span><span class="p">:</span>
+        <span class="n">node_edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">edge</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">node_edges</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_names</span> <span class="ow">and</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">node_names</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">node_edges</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Put edge information in a dataframe for easier manipulation and get the edge weight</span>
+    <span class="n">node_edges_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">node_edges</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node1&quot;</span><span class="p">,</span> <span class="s2">&quot;node2&quot;</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+    <span class="n">node_edges_df</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_edges_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">edge</span><span class="p">:</span> <span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">node1</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">node2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">node_edges_df</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_edges_df</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">only_new_edges</span><span class="p">:</span>
+        <span class="c1"># Keep edges that are not yet in the entities</span>
+        <span class="n">node_edges_df</span> <span class="o">=</span> <span class="n">node_edges_df</span><span class="p">[</span>
+            <span class="n">node_edges_df</span><span class="o">.</span><span class="n">entity_name</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">edge</span><span class="p">:</span> <span class="n">edge</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># Make sure we don&#39;t have duplicate edges</span>
+    <span class="n">node_edges_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s2">&quot;entity_name&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Return the top edges by weight</span>
+    <span class="n">top_edges</span> <span class="o">=</span> <span class="n">node_edges_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;entity_type&quot;</span><span class="p">:</span> <span class="s2">&quot;edge&quot;</span><span class="p">,</span> <span class="s2">&quot;entity_name&quot;</span><span class="p">:</span> <span class="n">entity_name</span><span class="p">}</span> <span class="k">for</span> <span class="n">entity_name</span> <span class="ow">in</span> <span class="n">top_edges</span><span class="o">.</span><span class="n">entity_name</span>
+    <span class="p">]</span>
+
+
+<div class="viewcode-block" id="source_texts">
+<a class="viewcode-back" href="../../../api/graphragzen.query.get_context.source_texts.html#graphragzen.query.get_context.source_texts">[docs]</a>
+<span class="k">def</span> <span class="nf">source_texts</span><span class="p">(</span>
+    <span class="n">source_documents</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">id_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk_id&quot;</span><span class="p">,</span>
+    <span class="n">source_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk&quot;</span><span class="p">,</span>
+    <span class="n">feature_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the top source texts by frequency related to the specified entities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source_documents (pd.DataFrame): DataFrame containing the source documents with unique</span>
+<span class="sd">            identifiers.</span>
+<span class="sd">        graph (nx.Graph): A networkx graph containing nodes and edges.</span>
+<span class="sd">        entities (List[dict]): A list of dictionaries representing entities, with each entity having</span>
+<span class="sd">            &#39;entity_type&#39;: A string that is either &#39;node&#39; or &#39;edge&#39;.</span>
+<span class="sd">            &#39;entity_name&#39;: A string representing the name of the entity.</span>
+<span class="sd">        k (int): The number of top source texts to return, based on their frequency of occurrence.</span>
+<span class="sd">        id_key (str): The column name in `source_documents` that represents unique document IDs.</span>
+<span class="sd">            Defaults to &quot;chunk_id&quot;.</span>
+<span class="sd">        source_key (str): The column name in `source_documents` containing the source text. Defaults</span>
+<span class="sd">            to &quot;chunk&quot;.</span>
+<span class="sd">        feature_delimiter (str): The delimiter used to split the &quot;source_id&quot; values in the Graph</span>
+<span class="sd">            metadata. Default is newline.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[str]: A list of source texts corresponding to the top most frequent occurring sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># First get all the source id&#39;s</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;edge&quot;</span><span class="p">:</span>
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">])</span>
+
+    <span class="n">source_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">)(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">+</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">edges</span><span class="p">)(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
+        <span class="n">source_ids</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">feature_delimiter</span><span class="p">)</span>
+    <span class="n">source_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">source_ids</span> <span class="k">if</span> <span class="nb">id</span><span class="p">]</span>  <span class="c1"># Get rid of None&#39;s</span>
+
+    <span class="c1"># Now get the k most occuring ID&#39;s and return the source text</span>
+    <span class="n">top_ids</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">source_ids</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">top_ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">top_ids</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">source_documents</span><span class="p">[</span><span class="n">source_documents</span><span class="p">[</span><span class="n">id_key</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">key</span><span class="p">:</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">top_ids</span><span class="p">)][</span>
+        <span class="n">source_key</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="cluster_summaries">
+<a class="viewcode-back" href="../../../api/graphragzen.query.get_context.cluster_summaries.html#graphragzen.query.get_context.cluster_summaries">[docs]</a>
+<span class="k">def</span> <span class="nf">cluster_summaries</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">cluster_report</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">entities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the top cluster summaries by occurence, followed by rank, related to the specified</span>
+<span class="sd">    entities.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        graph (nx.Graph): A networkx graph containing nodes with metadata about cluster associations</span>
+<span class="sd">        cluster_report (pd.DataFrame): DataFrame containing the cluster information, including</span>
+<span class="sd">            summaries and ratings.</span>
+<span class="sd">        entities (List[dict]): A list of dictionaries representing entities, with each entity having</span>
+<span class="sd">            &#39;entity_type&#39;: A string that is &#39;node&#39;.</span>
+<span class="sd">            &#39;entity_name&#39;: A string representing the name of the entity.</span>
+<span class="sd">        k (int): The number of top cluster summaries to return, based on frequency and rank.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[str]: A list of dictionaries, each containing the title and summary of a cluster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get the clusters the entities are related to</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">entities</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">])</span>
+
+    <span class="n">clusters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">)(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+        <span class="n">clusters</span> <span class="o">+=</span> <span class="n">entity</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cluster&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># Find the by number of times each cluster was found in a node</span>
+    <span class="n">clusters_count</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">cluster_candidates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;cluster&quot;</span><span class="p">:</span> <span class="n">clusters_count</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">clusters_count</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Add the rank of each cluster</span>
+    <span class="n">cluster_candidates</span> <span class="o">=</span> <span class="n">cluster_candidates</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cluster_report</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;cluster&quot;</span><span class="p">)</span>
+    <span class="n">cluster_candidates</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_candidates</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rating&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Sort, first on count followed by rank, and keep top k</span>
+    <span class="n">top_clusters</span> <span class="o">=</span> <span class="n">cluster_candidates</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="c1"># Join title and summaries per cluster and return</span>
+    <span class="k">return</span> <span class="n">top_clusters</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

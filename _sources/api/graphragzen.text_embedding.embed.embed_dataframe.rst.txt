@@ -1,0 +1,6 @@
+graphragzen.text\_embedding.embed.embed\_dataframe
+==================================================
+
+.. currentmodule:: graphragzen.text_embedding.embed
+
+.. autofunction:: embed_dataframe

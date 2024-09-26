@@ -1,0 +1,6 @@
+graphragzen.merge.merge\_features.merge\_item\_feature
+======================================================
+
+.. currentmodule:: graphragzen.merge.merge_features
+
+.. autofunction:: merge_item_feature

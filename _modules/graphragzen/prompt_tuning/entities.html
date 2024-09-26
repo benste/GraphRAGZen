@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.prompt_tuning.entities &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.prompt_tuning.entities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.prompt_tuning.entities</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">graphragzen.async_tools</span> <span class="kn">import</span> <span class="n">async_loop</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm.base_llm</span> <span class="kn">import</span> <span class="n">LLM</span>
+<span class="kn">from</span> <span class="nn">graphragzen.merge</span> <span class="kn">import</span> <span class="n">_num_tokens_from_string</span>
+<span class="kn">from</span> <span class="nn">graphragzen.prompts.prompt_tuning</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">entity_categories</span><span class="p">,</span>
+    <span class="n">entity_extraction</span><span class="p">,</span>
+    <span class="n">entity_relationship</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pydantic._internal._model_construction</span> <span class="kn">import</span> <span class="n">ModelMetaclass</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">.llm_output_structures</span> <span class="kn">import</span> <span class="n">ExtractedCategories</span>
+
+
+<div class="viewcode-block" id="generate_entity_categories">
+<a class="viewcode-back" href="../../../api/graphragzen.prompt_tuning.entities.generate_entity_categories.html#graphragzen.prompt_tuning.entities.generate_entity_categories">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_entity_categories</span><span class="p">(</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+    <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">persona</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">entity_categories</span><span class="o">.</span><span class="n">GENERATE_ENTITY_CATEGORIES_PROMPT</span><span class="p">,</span>
+    <span class="n">output_structure</span><span class="p">:</span> <span class="n">ModelMetaclass</span> <span class="o">=</span> <span class="n">ExtractedCategories</span><span class="p">,</span>
+    <span class="n">entity_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate entity categories from a given set of (small) documents.</span>
+
+<span class="sd">    Example Output</span>
+<span class="sd">    [&#39;military unit&#39;, &#39;organization&#39;, &#39;person&#39;, &#39;location&#39;, &#39;event&#39;, &#39;date&#39;, &#39;equipment&#39;]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        llm (LLM):</span>
+<span class="sd">        documents (List[str]): Sample of documents that later will be used to create a graph.</span>
+<span class="sd">            You likely want this to be chunks of the whole documents.</span>
+<span class="sd">        domain (str): Relevant to the documents</span>
+<span class="sd">        persona (str): Relevant to the domain</span>
+<span class="sd">        prompt (str, optional): Prompt to use for generating entity categories.</span>
+<span class="sd">            Defaults to `graphragzen.prompts.prompt_tuning.entity_categories.GENERATE_ENTITY_CATEGORIES_PROMPT`</span>
+<span class="sd">            If `entity_categories` is not specified this will be used to infer the entity categories.</span>
+<span class="sd">        output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars</span>
+<span class="sd">            from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the</span>
+<span class="sd">            reference.</span>
+<span class="sd">            Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">            Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            Defaults to graphragzen.prompt_tuning.llm_output_structures.ExtractedCategories</span>
+<span class="sd">        entity_categories (List[str], optional): The entity categories relevant to a set of documents.</span>
+<span class="sd">            If not specified, the `prompt` will be used to infer the entity categories. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: entity categories</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+    <span class="k">if</span> <span class="n">entity_categories</span><span class="p">:</span>
+        <span class="c1"># User provided entity categories, no need to generate them</span>
+        <span class="k">return</span> <span class="n">entity_categories</span>
+
+    <span class="n">docs_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+    <span class="n">entity_categories_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="n">docs_str</span><span class="p">)</span>
+
+    <span class="n">chat</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">format_chat</span><span class="p">([(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">persona</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">entity_categories_prompt</span><span class="p">)])</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">run_chat</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">output_structure</span><span class="o">=</span><span class="n">output_structure</span><span class="p">)</span>
+
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">return</span> <span class="n">categories</span></div>
+
+
+
+<div class="viewcode-block" id="generate_entity_relationship_examples">
+<a class="viewcode-back" href="../../../api/graphragzen.prompt_tuning.entities.generate_entity_relationship_examples.html#graphragzen.prompt_tuning.entities.generate_entity_relationship_examples">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_entity_relationship_examples</span><span class="p">(</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+    <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">persona</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">entity_categories</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">entity_relationship</span><span class="o">.</span><span class="n">ENTITY_RELATIONSHIPS_GENERATION_PROMPT</span><span class="p">,</span>
+    <span class="n">example_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">entity_relationship</span><span class="o">.</span><span class="n">EXAMPLE_RELATION_TEMPLATE</span><span class="p">,</span>
+    <span class="n">max_examples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">async_llm_calls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a list of entity/relationships examples for use in generating an entity</span>
+<span class="sd">    extraction prompt.</span>
+
+<span class="sd">    Will return in tuple_delimiter format depending</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        llm (LLM):</span>
+<span class="sd">        documents (List[str]): Sample of documents that later will be used to create a graph.</span>
+<span class="sd">            You likely want this to be chunks of the whole documents.</span>
+<span class="sd">        persona (str): Relevant to the domain</span>
+<span class="sd">        entity_categories (list[str]): Generated from the documents by `generate_entity_categories`</span>
+<span class="sd">        prompt (str, optional): Prompt to use for generating entity/relationships examples.</span>
+<span class="sd">            Defaults to `graphragzen.prompts.prompt_tuning.entity_relationship.ENTITY_RELATIONSHIPS_GENERATION_PROMPT`</span>
+<span class="sd">        example_template (str, optional): The template of example extracted entities that will</span>
+<span class="sd">            be formatted using, among others, the entity relationships extracted using the</span>
+<span class="sd">            prompt. Defaults to `graphragzen.prompts.prompt_tuning.entity_relationship.EXAMPLE_EXTRACTION_TEMPLATE`</span>
+<span class="sd">        max_examples (int, optional): Number of examples to create. Defaults to 5.</span>
+<span class="sd">        async_llm_calls: If True will call the LLM asynchronously. Only applies to communication</span>
+<span class="sd">            with an LLM using `OpenAICompatibleClient`, in-memory LLM&#39;s loaded using</span>
+<span class="sd">            llama-cpp-python will always be called synchronously. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: Entity relationship examples</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+    <span class="n">entity_categories_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity_categories</span><span class="p">)</span>
+    <span class="n">sampled_documents</span> <span class="o">=</span> <span class="n">documents</span><span class="p">[:</span><span class="n">max_examples</span><span class="p">]</span>
+
+    <span class="n">history</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">format_chat</span><span class="p">([(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">persona</span><span class="p">)])</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">entity_categories</span><span class="o">=</span><span class="n">entity_categories_str</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">sampled_documents</span>
+    <span class="p">]</span>
+
+    <span class="n">chats</span> <span class="o">=</span> <span class="p">[</span><span class="n">llm</span><span class="o">.</span><span class="n">format_chat</span><span class="p">([(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)],</span> <span class="n">history</span><span class="p">)</span> <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">async_llm_calls</span><span class="p">:</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="n">entity_relations</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span>
+            <span class="n">async_loop</span><span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">a_run_chat</span><span class="p">,</span> <span class="n">chats</span><span class="p">,</span> <span class="s2">&quot;generating example entity relations asynchronously&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">entity_relations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">llm</span><span class="o">.</span><span class="n">run_chat</span><span class="p">(</span><span class="n">chat</span><span class="p">)</span> <span class="k">for</span> <span class="n">chat</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">chats</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;generating example entity relations&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># Format the examples and return</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">example_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_text</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span> <span class="n">entity_categories</span><span class="o">=</span><span class="n">entity_categories_str</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">entity_relation</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">entity_relation</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sampled_documents</span><span class="p">,</span> <span class="n">entity_relations</span><span class="p">))</span>
+    <span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="create_entity_extraction_prompt">
+<a class="viewcode-back" href="../../../api/graphragzen.prompt_tuning.entities.create_entity_extraction_prompt.html#graphragzen.prompt_tuning.entities.create_entity_extraction_prompt">[docs]</a>
+<span class="k">def</span> <span class="nf">create_entity_extraction_prompt</span><span class="p">(</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+    <span class="n">entity_categories</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">entity_relationship_examples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">prompt_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">ENTITY_EXTRACTION_TEMPLATE</span><span class="p">,</span>
+    <span class="n">prompt_max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a prompt for entity extraction.</span>
+
+<span class="sd">    This does not use an LLM but simply formats a string using the inputs and makes sure the resulting</span>
+<span class="sd">    prompt is not too large.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        llm (LLM):</span>
+<span class="sd">        entity_categories (List[str]): The categories of entities to extract</span>
+<span class="sd">            (e.g. [&#39;person&#39;, &#39;profession&#39;, &#39;location&#39;])</span>
+<span class="sd">        entity_relationship_examples (List[str]): Generated by</span>
+<span class="sd">            `generate_entity_relationship_examples`</span>
+<span class="sd">        prompt_template (str, optional): The template that will be formatted to the final prompt.</span>
+<span class="sd">            Defaults to `graphragzen.prompts.prompt_tuning.entity_extraction.ENTITY_EXTRACTION_PROMPT`</span>
+<span class="sd">        prompt_max_tokens (int, optional): Maximum number of tokens the final prompt is allowed to be.</span>
+<span class="sd">            Defaults to 3000</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Prompt to use for entity extraction</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">prompt_template</span>
+    <span class="n">entity_categories_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">entity_categories</span><span class="p">)</span>
+
+    <span class="n">tokens_left</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">prompt_max_tokens</span>
+        <span class="o">-</span> <span class="n">_num_tokens_from_string</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">llm</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">)</span>
+        <span class="o">-</span> <span class="n">_num_tokens_from_string</span><span class="p">(</span><span class="n">entity_categories_string</span><span class="p">,</span> <span class="n">llm</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">examples_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Iterate over examples, while we have tokens left or examples left</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">entity_relationship_examples</span><span class="p">):</span>
+        <span class="n">example_tokens</span> <span class="o">=</span> <span class="n">_num_tokens_from_string</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">llm</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">)</span>
+
+        <span class="c1"># Squeeze in at least one example</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">example_tokens</span> <span class="o">&gt;</span> <span class="n">tokens_left</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">examples_prompt</span> <span class="o">+=</span> <span class="n">example</span>
+        <span class="n">tokens_left</span> <span class="o">-=</span> <span class="n">example_tokens</span>
+
+    <span class="c1"># Format prompt and return</span>
+    <span class="k">return</span> <span class="n">prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">entity_categories</span><span class="o">=</span><span class="n">entity_categories_string</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="n">examples_prompt</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

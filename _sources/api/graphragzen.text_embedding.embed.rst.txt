@@ -1,0 +1,29 @@
+graphragzen.text\_embedding.embed
+=================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.text_embedding.embed
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      embed_dataframe
+      embed_graph_features
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,31 @@
+graphragzen.text\_embedding.vector\_databases.VectorDatabase
+============================================================
+
+.. currentmodule:: graphragzen.text_embedding.vector_databases
+
+.. autoclass:: VectorDatabase
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~VectorDatabase.distance_measure
+      ~VectorDatabase.vector_size
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~VectorDatabase.add_vectors
+      ~VectorDatabase.search
+   
+   

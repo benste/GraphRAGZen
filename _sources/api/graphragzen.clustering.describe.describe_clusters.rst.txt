@@ -1,0 +1,6 @@
+graphragzen.clustering.describe.describe\_clusters
+==================================================
+
+.. currentmodule:: graphragzen.clustering.describe
+
+.. autofunction:: describe_clusters

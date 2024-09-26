@@ -1,0 +1,28 @@
+graphragzen.examples.generate\_entity\_graph
+============================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.examples.generate_entity_graph
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      entity_graph_pipeline
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

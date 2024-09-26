@@ -1,0 +1,56 @@
+graphragzen.prompt\_tuning.llm\_output\_structures.ExtractedCategories
+======================================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.llm_output_structures
+
+.. autoclass:: ExtractedCategories
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ExtractedCategories.model_computed_fields
+      ~ExtractedCategories.model_config
+      ~ExtractedCategories.model_extra
+      ~ExtractedCategories.model_fields
+      ~ExtractedCategories.model_fields_set
+      ~ExtractedCategories.categories
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExtractedCategories.construct
+      ~ExtractedCategories.copy
+      ~ExtractedCategories.dict
+      ~ExtractedCategories.from_orm
+      ~ExtractedCategories.json
+      ~ExtractedCategories.model_construct
+      ~ExtractedCategories.model_copy
+      ~ExtractedCategories.model_dump
+      ~ExtractedCategories.model_dump_json
+      ~ExtractedCategories.model_json_schema
+      ~ExtractedCategories.model_parametrized_name
+      ~ExtractedCategories.model_post_init
+      ~ExtractedCategories.model_rebuild
+      ~ExtractedCategories.model_validate
+      ~ExtractedCategories.model_validate_json
+      ~ExtractedCategories.model_validate_strings
+      ~ExtractedCategories.parse_file
+      ~ExtractedCategories.parse_obj
+      ~ExtractedCategories.parse_raw
+      ~ExtractedCategories.schema
+      ~ExtractedCategories.schema_json
+      ~ExtractedCategories.update_forward_refs
+      ~ExtractedCategories.validate
+   
+   

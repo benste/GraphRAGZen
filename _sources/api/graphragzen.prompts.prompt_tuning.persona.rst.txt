@@ -1,0 +1,21 @@
+graphragzen.prompts.prompt\_tuning.persona
+==========================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts.prompt_tuning.persona
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

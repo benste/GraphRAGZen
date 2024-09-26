@@ -1,0 +1,30 @@
+graphragzen.prompt\_tuning.entities
+===================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompt_tuning.entities
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_entity_extraction_prompt
+      generate_entity_categories
+      generate_entity_relationship_examples
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

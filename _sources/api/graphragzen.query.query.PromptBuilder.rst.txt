@@ -1,0 +1,23 @@
+graphragzen.query.query.PromptBuilder
+=====================================
+
+.. currentmodule:: graphragzen.query.query
+
+.. autoclass:: PromptBuilder
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PromptBuilder.build_prompt
+   
+   

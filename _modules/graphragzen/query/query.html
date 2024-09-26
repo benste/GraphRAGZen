@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.query.query &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.query.query</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.query.query</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">graphragzen.prompts.default_prompts.local_search_prompts</span> <span class="kn">import</span> <span class="n">LOCAL_SEARCH_PROMPT</span>
+<span class="kn">from</span> <span class="nn">graphragzen.query</span> <span class="kn">import</span> <span class="n">get_context</span>
+<span class="kn">from</span> <span class="nn">graphragzen.text_embedding.embedding_models</span> <span class="kn">import</span> <span class="n">BaseEmbedder</span>
+<span class="kn">from</span> <span class="nn">graphragzen.text_embedding.vector_databases</span> <span class="kn">import</span> <span class="n">VectorDatabase</span>
+
+
+<div class="viewcode-block" id="PromptBuilder">
+<a class="viewcode-back" href="../../../api/graphragzen.query.query.PromptBuilder.html#graphragzen.query.query.PromptBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">PromptBuilder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to build a prompt based on graph data, vector searches, and additional documents or</span>
+<span class="sd">    cluster reports.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        embedding_model (BaseEmbedder): An embedding model used to generate embeddings for text and</span>
+<span class="sd">            queries.</span>
+<span class="sd">        vector_db (VectorDatabase): A client for interacting with the vector database.</span>
+<span class="sd">        graph (nx.Graph): A graph containing nodes and edges that represent entities and their</span>
+<span class="sd">            relationships.</span>
+<span class="sd">        source_documents (Optional[pd.DataFrame]): A DataFrame containing source documents for</span>
+<span class="sd">            additional context.</span>
+<span class="sd">        cluster_report (Optional[pd.DataFrame]): A DataFrame containing cluster reports for</span>
+<span class="sd">            additional context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PromptBuilder.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.query.query.PromptBuilder.html#graphragzen.query.query.PromptBuilder.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embedding_model</span><span class="p">:</span> <span class="n">BaseEmbedder</span><span class="p">,</span>
+        <span class="n">vector_db</span><span class="p">:</span> <span class="n">VectorDatabase</span><span class="p">,</span>
+        <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">source_documents</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cluster_report</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the PromptBuilder instance with the necessary components.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embedding_model (BaseEmbedder): An embedding model to generate embeddings for text and</span>
+<span class="sd">                queries.</span>
+<span class="sd">            vector_db (VectorDatabase):</span>
+<span class="sd">            graph (nx.Graph): A graph containing nodes and edges that represent entities and their</span>
+<span class="sd">                relationships.</span>
+<span class="sd">            source_documents (pd.DataFrame, optional): A DataFrame containing source</span>
+<span class="sd">                documents for additional context. Defaults to None.</span>
+<span class="sd">            cluster_report (pd.DataFrame, optional): A DataFrame containing cluster reports</span>
+<span class="sd">                for additional context. Should contain the columns &#39;cluster&#39; (string identifier of</span>
+<span class="sd">                each cluster), &#39;node_name&#39; (lists of node names that belong to a cluster) and</span>
+<span class="sd">                &#39;description&#39; (a string describing the cluster). Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span> <span class="o">=</span> <span class="n">embedding_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_db</span> <span class="o">=</span> <span class="n">vector_db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_documents</span> <span class="o">=</span> <span class="n">source_documents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_report</span> <span class="o">=</span> <span class="n">cluster_report</span></div>
+
+
+<div class="viewcode-block" id="PromptBuilder.build_prompt">
+<a class="viewcode-back" href="../../../api/graphragzen.query.query.PromptBuilder.html#graphragzen.query.query.PromptBuilder.build_prompt">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_prompt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">LOCAL_SEARCH_PROMPT</span><span class="p">,</span>
+        <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">top_k_similar_entities</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">top_k_inside_edges</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">top_k_outside_edges</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">top_k_cluster_descriptions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">top_k_source_documents</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">source_documents_id_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk_id&quot;</span><span class="p">,</span>
+        <span class="n">source_documents_source_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chunk&quot;</span><span class="p">,</span>
+        <span class="n">source_documents_feature_delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a prompt based on the query, graph data, vector searches, and additional documents or</span>
+<span class="sd">        cluster reports.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query (str): The query for which a prompt is being constructed.</span>
+<span class="sd">            prompt (str, optional): The base prompt template to be filled with the context data and</span>
+<span class="sd">                query. Defaults to LOCAL_SEARCH_PROMPT.</span>
+<span class="sd">            score_threshold (float, optional): The minimum score threshold for including vector</span>
+<span class="sd">                search results. Entities with scores below this threshold are excluded. Defaults to</span>
+<span class="sd">                0.0.</span>
+<span class="sd">            top_k_similar_entities (int, optional): The number of top similar entities</span>
+<span class="sd">                from the graph (retreived through vector search) to include in the prompt.</span>
+<span class="sd">                Defaults to 10.</span>
+<span class="sd">            top_k_inside_edges (int, optional): The number of inside edges by weight related to the</span>
+<span class="sd">                similar entities to include in the prompt.</span>
+<span class="sd">                An iside edge is defined as an edge whom&#39;s both nodes are already in the entities</span>
+<span class="sd">                retrieved through vector search. Defaults to 3.</span>
+<span class="sd">            top_k_outside_edges (int, optional): The top number of outside edges by weight related</span>
+<span class="sd">                to the similar entities to include in the prompt.</span>
+<span class="sd">                An outside edge is defined as an edge of whom&#39;s nodes extactly 1 is already in the</span>
+<span class="sd">                entities retrieved through vector search. Defaults to 3.</span>
+<span class="sd">            top_k_cluster_descriptions (int, optional): The number of top cluster descriptions by</span>
+<span class="sd">                occurence, followed by rank, to include in the prompt. Defaults to 3.</span>
+<span class="sd">            top_k_source_documents (int, optional): The number of top source documents by occurence</span>
+<span class="sd">                to include in the prompt. Defaults to 3.</span>
+<span class="sd">            source_documents_id_key (str): The column name in `source_documents` that represents</span>
+<span class="sd">                unique document IDs. Defaults to &quot;chunk_id&quot;.</span>
+<span class="sd">            source_documents_source_key (str): The column name in `source_documents` containing the</span>
+<span class="sd">                source text. Defaults to &quot;chunk&quot;.</span>
+<span class="sd">            source_documents_feature_delimiter (str): The delimiter used to split the &quot;source_id&quot;</span>
+<span class="sd">                values in the Graph metadata. Default is newline.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The final constructed prompt with context data and the original query formatted</span>
+<span class="sd">            within the prompt template.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">similar_entities</span> <span class="o">=</span> <span class="n">get_context</span><span class="o">.</span><span class="n">semantic_similar_entities</span><span class="p">(</span>
+            <span class="n">embedding_model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_model</span><span class="p">,</span>
+            <span class="n">vector_db</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_db</span><span class="p">,</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">k</span><span class="o">=</span><span class="n">top_k_similar_entities</span><span class="p">,</span>
+            <span class="n">score_threshold</span><span class="o">=</span><span class="n">score_threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">similar_entities</span> <span class="o">+=</span> <span class="n">get_context</span><span class="o">.</span><span class="n">extra_inside_edges</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+            <span class="n">similar_entities</span><span class="p">,</span>
+            <span class="n">k</span><span class="o">=</span><span class="n">top_k_inside_edges</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">similar_entities</span> <span class="o">+=</span> <span class="n">get_context</span><span class="o">.</span><span class="n">extra_outside_edges</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">similar_entities</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">top_k_outside_edges</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_documents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_texts</span> <span class="o">=</span> <span class="n">get_context</span><span class="o">.</span><span class="n">source_texts</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">source_documents</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+                <span class="n">similar_entities</span><span class="p">,</span>
+                <span class="n">k</span><span class="o">=</span><span class="n">top_k_source_documents</span><span class="p">,</span>
+                <span class="n">id_key</span><span class="o">=</span><span class="n">source_documents_id_key</span><span class="p">,</span>
+                <span class="n">source_key</span><span class="o">=</span><span class="n">source_documents_source_key</span><span class="p">,</span>
+                <span class="n">feature_delimiter</span><span class="o">=</span><span class="n">source_documents_feature_delimiter</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_texts</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_report</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cluster_summaries</span> <span class="o">=</span> <span class="n">get_context</span><span class="o">.</span><span class="n">cluster_summaries</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cluster_report</span><span class="p">,</span>
+                <span class="n">similar_entities</span><span class="p">,</span>
+                <span class="n">k</span><span class="o">=</span><span class="n">top_k_cluster_descriptions</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cluster_summaries</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># BUILD PROMPT</span>
+        <span class="n">context_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">source_texts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_table</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;SOURCE </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source_texts</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="n">context_data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-----------SPECIFIC SOURCES-----------</span><span class="se">\n</span><span class="si">{</span><span class="n">source_table</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">cluster_summaries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cluster_table</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="sa">f</span><span class="s2">&quot;SOURCE </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">cs</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">cs</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_summaries</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">context_data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-----------GLOBAL SOURCES-----------</span><span class="se">\n</span><span class="si">{</span><span class="n">cluster_table</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">node_table</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">edge_table</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">similar_entities</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;node&quot;</span><span class="p">:</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">]]</span>
+                <span class="n">node_table</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">entity</span><span class="p">[</span><span class="s1">&#39;entity_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">elif</span> <span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;edge&quot;</span><span class="p">:</span>
+                <span class="n">edge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="n">entity</span><span class="p">[</span><span class="s2">&quot;entity_name&quot;</span><span class="p">]]</span>
+                <span class="n">edge_table</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">entity</span><span class="p">[</span><span class="s1">&#39;entity_name&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;-&gt; </span><span class="si">{</span><span class="n">entity</span><span class="p">[</span><span class="s1">&#39;entity_name&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: E501</span>
+
+        <span class="n">context_data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-----------ENTITIES-----------</span><span class="se">\n</span><span class="si">{</span><span class="n">node_table</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">context_data</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-----------RELATIONSHIPS-----------</span><span class="se">\n</span><span class="si">{</span><span class="n">edge_table</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">context_data</span><span class="o">=</span><span class="n">context_data</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

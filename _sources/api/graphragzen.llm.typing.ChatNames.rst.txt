@@ -1,0 +1,62 @@
+graphragzen.llm.typing.ChatNames
+================================
+
+.. currentmodule:: graphragzen.llm.typing
+
+.. autoclass:: ChatNames
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ChatNames.model_computed_fields
+      ~ChatNames.model_config
+      ~ChatNames.model_extra
+      ~ChatNames.model_fields
+      ~ChatNames.model_fields_set
+      ~ChatNames.system
+      ~ChatNames.user
+      ~ChatNames.model
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ChatNames.construct
+      ~ChatNames.copy
+      ~ChatNames.dict
+      ~ChatNames.from_orm
+      ~ChatNames.get
+      ~ChatNames.items
+      ~ChatNames.json
+      ~ChatNames.keys
+      ~ChatNames.model_construct
+      ~ChatNames.model_copy
+      ~ChatNames.model_dump
+      ~ChatNames.model_dump_json
+      ~ChatNames.model_json_schema
+      ~ChatNames.model_parametrized_name
+      ~ChatNames.model_post_init
+      ~ChatNames.model_rebuild
+      ~ChatNames.model_validate
+      ~ChatNames.model_validate_json
+      ~ChatNames.model_validate_strings
+      ~ChatNames.parse_file
+      ~ChatNames.parse_obj
+      ~ChatNames.parse_raw
+      ~ChatNames.schema
+      ~ChatNames.schema_json
+      ~ChatNames.update_forward_refs
+      ~ChatNames.validate
+      ~ChatNames.values
+   
+   

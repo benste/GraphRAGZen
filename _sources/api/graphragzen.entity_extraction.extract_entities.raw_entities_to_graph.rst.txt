@@ -1,0 +1,6 @@
+graphragzen.entity\_extraction.extract\_entities.raw\_entities\_to\_graph
+=========================================================================
+
+.. currentmodule:: graphragzen.entity_extraction.extract_entities
+
+.. autofunction:: raw_entities_to_graph

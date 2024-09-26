@@ -1,0 +1,6 @@
+graphragzen.examples.autotune\_custom\_prompts.create\_custom\_prompts
+======================================================================
+
+.. currentmodule:: graphragzen.examples.autotune_custom_prompts
+
+.. autofunction:: create_custom_prompts

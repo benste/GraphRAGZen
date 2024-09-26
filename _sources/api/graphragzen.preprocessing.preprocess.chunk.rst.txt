@@ -1,0 +1,6 @@
+graphragzen.preprocessing.preprocess.chunk
+==========================================
+
+.. currentmodule:: graphragzen.preprocessing.preprocess
+
+.. autofunction:: chunk

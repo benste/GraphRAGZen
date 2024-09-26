@@ -1,0 +1,6 @@
+graphragzen.load\_documents.load\_documents.load\_text\_documents
+=================================================================
+
+.. currentmodule:: graphragzen.load_documents.load_documents
+
+.. autofunction:: load_text_documents

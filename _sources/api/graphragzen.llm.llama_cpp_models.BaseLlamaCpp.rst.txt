@@ -1,0 +1,43 @@
+graphragzen.llm.llama\_cpp\_models.BaseLlamaCpp
+===============================================
+
+.. currentmodule:: graphragzen.llm.llama_cpp_models
+
+.. autoclass:: BaseLlamaCpp
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseLlamaCpp.cache_persistent
+      ~BaseLlamaCpp.chatnames
+      ~BaseLlamaCpp.context_size
+      ~BaseLlamaCpp.model_name
+      ~BaseLlamaCpp.persistent_cache_file
+      ~BaseLlamaCpp.tokenizer
+      ~BaseLlamaCpp.use_cache
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseLlamaCpp.a_run_chat
+      ~BaseLlamaCpp.check_cache
+      ~BaseLlamaCpp.format_chat
+      ~BaseLlamaCpp.num_chat_tokens
+      ~BaseLlamaCpp.print_streamed
+      ~BaseLlamaCpp.run_chat
+      ~BaseLlamaCpp.tokenize
+      ~BaseLlamaCpp.untokenize
+      ~BaseLlamaCpp.write_item_to_cache
+   
+   

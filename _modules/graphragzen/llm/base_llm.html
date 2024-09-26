@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.llm.base_llm &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.llm.base_llm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.llm.base_llm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">pydantic._internal._model_construction</span> <span class="kn">import</span> <span class="n">ModelMetaclass</span>
+
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">ChatNames</span>
+
+
+<div class="viewcode-block" id="LLM">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">LLM</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class to communicate with local or remote LLM&#39;s</span>
+
+<span class="sd">    Be carefull when using the same persistent cache file while switching or updating models or</span>
+<span class="sd">    tokenizers. The LLM will search for cached llm-in -&gt; llm-out in in the cache file and not</span>
+<span class="sd">    re-process input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">context_size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">use_cache</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">cache_persistent</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">persistent_cache_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">tokenizer</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">chatnames</span><span class="p">:</span> <span class="n">ChatNames</span> <span class="o">=</span> <span class="n">ChatNames</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LLM.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initiate_cache</span><span class="p">()</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">output_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the LLM as you would llm(input)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input (Any): Any input you would normally pass to llm(input, kwargs)</span>
+<span class="sd">            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to</span>
+<span class="sd">                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference</span>
+<span class="sd">                should be passed.</span>
+<span class="sd">                Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">                Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="LLM.run_chat">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.run_chat">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">run_chat</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">output_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs a chat through the LLM</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[dict]): in form [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...</span>
+<span class="sd">            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.</span>
+<span class="sd">            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to</span>
+<span class="sd">                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference</span>
+<span class="sd">                should be passed.</span>
+<span class="sd">                Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">                Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            stream (bool, optional): If True, streams the results to console. Defaults to False.</span>
+<span class="sd">            kwargs (Any): Any keyword arguments to add to the lmm call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Generated content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="LLM.tokenize">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.tokenize">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tokenize a string</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content (str): String to tokenize</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str]: Tokenized string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="LLM.untokenize">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.untokenize">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">untokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a string from a list of tokens</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tokens (List[str]): Tokenized string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Untokenized string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="LLM.num_chat_tokens">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.num_chat_tokens">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">num_chat_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the length of the tokenized chat</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[dict]): in form [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: number of tokens</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="LLM.a_run_chat">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.a_run_chat">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">a_run_chat</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">output_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs a chat through the LLM asynchonously</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[dict]): in form [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...</span>
+<span class="sd">            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to None</span>
+<span class="sd">            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to</span>
+<span class="sd">                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference</span>
+<span class="sd">                should be passed.</span>
+<span class="sd">                Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">                Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            stream (bool, optional): Placeholder for compatibility with sync version, not used.</span>
+<span class="sd">            kwargs (Any): Any keyword arguments to add to the lmm call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Generated content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_chat</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">max_tokens</span><span class="p">,</span> <span class="n">output_structure</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LLM.print_streamed">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.print_streamed">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_streamed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Streams the generated tokens to the terminal and returns the full generated text.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stream (Iterator)</span>
+<span class="sd">            timeit (bool, optional): If True display the number of tokens generated / sec.</span>
+<span class="sd">                Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Generated text</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">num_tokens</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># llama-cpp-python output</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="c1"># OpenAI compatible output</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">token</span><span class="p">:</span>
+                <span class="n">full_text</span> <span class="o">+=</span> <span class="n">token</span>
+            <span class="n">num_tokens</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="k">if</span> <span class="n">timeit</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tokens / sec = </span><span class="si">{</span><span class="n">num_tokens</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">elapsed_time</span><span class="o">.</span><span class="n">seconds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">full_text</span></div>
+
+
+<div class="viewcode-block" id="LLM.format_chat">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.format_chat">[docs]</a>
+    <span class="k">def</span> <span class="nf">format_chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">tuple</span><span class="p">],</span> <span class="n">established_chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;format chat with the correct names ready for `tokenizer.apply_chat_template`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[tuple]): [(role, content), (role, content)]</span>
+<span class="sd">                                - role (str): either &quot;system&quot;, &quot;user&quot; or &quot;model&quot;</span>
+<span class="sd">                                - content (str)</span>
+<span class="sd">            established_chat (List[dict], optional): Already formatted chat to append to.</span>
+<span class="sd">                Defaults to [].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[dict]: [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Make sure we don&#39;t change the input variable</span>
+        <span class="n">formatted_chat</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">established_chat</span><span class="p">)</span>
+
+        <span class="c1"># First role MUST be user or system</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">formatted_chat</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">chat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">]:</span>
+            <span class="c1"># TODO: only show warnings if requested</span>
+            <span class="c1"># warnings.warn(&quot;Chat did not start with &#39;user&#39;, adding `&#39;user&#39;: &#39; &#39;` to the chat&quot;)</span>
+            <span class="n">chat</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)]</span> <span class="o">+</span> <span class="n">chat</span>
+
+        <span class="k">for</span> <span class="n">role</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">chat</span><span class="p">:</span>
+            <span class="n">formatted_chat</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">chatnames</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()[</span><span class="n">role</span><span class="p">],</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">content</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">formatted_chat</span></div>
+
+
+<div class="viewcode-block" id="LLM.check_cache">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.check_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">llm_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks the hash(llm_in) -&gt; llm_out cache and returns stored output if found.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            llm_input (str): To check in cache for existing cached output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[str, None]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sha256</span><span class="p">(</span><span class="n">llm_input</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="LLM.write_item_to_cache">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM.write_item_to_cache">[docs]</a>
+    <span class="k">def</span> <span class="nf">write_item_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">llm_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">llm_output</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If a persistent cache file exists, this function can be used to append llm output to it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            llm_input (str)</span>
+<span class="sd">            llm_output (str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">llm_input</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">hash</span><span class="p">:</span> <span class="n">llm_output</span><span class="p">})</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_persistent</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache_file</span><span class="p">:</span>
+                    <span class="n">cache_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">cache_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="nb">hash</span><span class="p">:</span> <span class="n">llm_output</span><span class="p">}))</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_initiate_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If requested creates an in-memory hash(llm_in) -&gt; llm_out cache. Additionally, if</span>
+<span class="sd">        requested, reads and writes this cache persistently to disk.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_persistent</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="p">:</span>
+                <span class="c1"># Load or create persisten cache file</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+                        <span class="c1"># Might have loaded an empty file</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;LLM initiated with persisten cache but invalid persistent cache file</span>
+<span class="s2">                    provided.</span>
+<span class="s2">                    Persistent cache file provided: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cache_persistent</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

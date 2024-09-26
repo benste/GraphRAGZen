@@ -1,0 +1,28 @@
+graphragzen.load\_documents.load\_documents
+===========================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.load_documents.load_documents
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      load_text_documents
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

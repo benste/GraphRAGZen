@@ -1,0 +1,29 @@
+graphragzen.text\_embedding.embedding\_models.BaseEmbedder
+==========================================================
+
+.. currentmodule:: graphragzen.text_embedding.embedding_models
+
+.. autoclass:: BaseEmbedder
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseEmbedder.vector_size
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseEmbedder.embed
+   
+   

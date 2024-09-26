@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.summarization.create\_description\_summarization\_prompt
+===================================================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.summarization
+
+.. autofunction:: create_description_summarization_prompt

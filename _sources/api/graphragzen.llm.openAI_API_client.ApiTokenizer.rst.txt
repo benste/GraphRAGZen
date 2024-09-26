@@ -1,0 +1,24 @@
+graphragzen.llm.openAI\_API\_client.ApiTokenizer
+================================================
+
+.. currentmodule:: graphragzen.llm.openAI_API_client
+
+.. autoclass:: ApiTokenizer
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ApiTokenizer.convert_tokens_to_string
+      ~ApiTokenizer.tokenize
+   
+   

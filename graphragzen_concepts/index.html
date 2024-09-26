@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concepts &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="TODO" href="../todo/index.html" />
+    <link rel="prev" title="GraphRAGZen ideology" href="../graphzen_ideology/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#entity-extraction">Entity extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#document-size">document size</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#node-merging">Node merging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-merging">Feature merging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clustering">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#text-embedding">Text Embedding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vector-database">Vector Database</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#llm-interaction">LLM interaction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#which-model-to-use">Which model to use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#async-llm-calls">Async LLM calls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-your-own-local-llm-class">Implementing your own local LLM class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#structured-output">Structured Output</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#json-schema">JSON Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prompt-tuning">Prompt tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-local-search">Querying: Local Search</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview-of-the-local-search-process">Overview of the Local Search Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prompt-construction-for-local-search">Prompt Construction for Local Search</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Concepts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/graphragzen_concepts/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="concepts">
+<h1>Concepts<a class="headerlink" href="#concepts" title="Link to this heading"></a></h1>
+<p>Understanding these concepts allow you to use <strong>GraphRAGZen</strong> more efficiently</p>
+<p>If you are not familiar with Graph RAG yet, I found <a class="reference external" href="https://www.analyticsvidhya.com/blog/2024/07/graph-rag/">this to be a good write-up</a></p>
+<section id="entity-extraction">
+<h2>Entity extraction<a class="headerlink" href="#entity-extraction" title="Link to this heading"></a></h2>
+<p>RAG relies on retrieving documents related to a query and adding those to the query to create a final prompt to be send to an LLM.</p>
+<p>GraphRAG differs by first retrieving concepts and relations that are extracted from the documents, and adds the relevant concepts and relations to the query to create a final prompt. These concepts and relations contain denser information and can handle more complex queries.</p>
+<p>A graph consists of entities. Entities are the nodes (concepts) and edges (relationships between the concepts). These are extracted from the documents in advance, not during query-time.</p>
+<p>To extract a graph, documents are fed into an LLM with a prompt that asks it to:</p>
+<ol class="arabic simple">
+<li><p>Extract the entities in the document</p></li>
+<li><p>For each entity say if it’s a node or and relationship (edge)</p></li>
+<li><p>Give the entity a name</p></li>
+<li><p>Give each entity a category (e.g. concept, location or organization)</p></li>
+<li><p>Give the entity a description</p></li>
+<li><p>Format this all in a json string</p></li>
+</ol>
+<p>These steps are in a single prompt. <strong>GraphRAGZen</strong> does query the LLM a few times per document
+to check if all entities have been extracted, so multple json strings can be returned per document.</p>
+<p>see <a class="reference internal" href="../api/graphragzen.entity_extraction.extract_entities.extract_raw_entities.html#graphragzen.entity_extraction.extract_entities.extract_raw_entities" title="graphragzen.entity_extraction.extract_entities.extract_raw_entities"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.entity_extraction.extract_entities.extract_raw_entities()</span></code></a></p>
+<p>The output strings are parsed to an actual graph by simply loading the json strings, doing some
+simple checks on the contents, and using is as input to networkx.</p>
+<p>see <a class="reference internal" href="../api/graphragzen.entity_extraction.extract_entities.raw_entities_to_graph.html#graphragzen.entity_extraction.extract_entities.raw_entities_to_graph" title="graphragzen.entity_extraction.extract_entities.raw_entities_to_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.entity_extraction.extract_entities.raw_entities_to_graph()</span></code></a></p>
+<div class="sphinx_collapse docutils container">
+<input class="sphinx_collapse__input" id="46306040-1554-4422-bdf5-3ad98bb565fe" name="46306040-1554-4422-bdf5-3ad98bb565fe" type="checkbox"><label class="sphinx_collapse__label" for="46306040-1554-4422-bdf5-3ad98bb565fe"><i class="sphinx_collapse__icon"></i>example output</label><div class="sphinx_collapse__content docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">[</span>
+<span class="sd">    {{</span>
+<span class="sd">        &quot;type&quot;: &quot;node&quot;,</span>
+<span class="sd">        &quot;name&quot;: &quot;WASHINGTON&quot;,</span>
+<span class="sd">        &quot;category&quot;: &quot;LOCATION&quot;,</span>
+<span class="sd">        &quot;description&quot;: &quot;Washington is a location where communications are being received, indicating its importance in the decision-making process.&quot;</span>
+<span class="sd">    }},</span>
+<span class="sd">    {{</span>
+<span class="sd">        &quot;type&quot;: &quot;node&quot;,</span>
+<span class="sd">        &quot;name&quot;: &quot;OPERATION: DULCE&quot;,</span>
+<span class="sd">        &quot;category&quot;: &quot;MISSION&quot;,</span>
+<span class="sd">        &quot;description&quot;: &quot;Operation: Dulce is described as a mission that has evolved to interact and prepare, indicating a significant shift in objectives and activities.&quot;</span>
+<span class="sd">    }},</span>
+<span class="sd">    {{</span>
+<span class="sd">        &quot;type&quot;: &quot;node&quot;,</span>
+<span class="sd">        &quot;name&quot;: &quot;THE TEAM&quot;,</span>
+<span class="sd">        &quot;category&quot;: &quot;ORGANIZATION&quot;,</span>
+<span class="sd">        &quot;description&quot;: &quot;The team is portrayed as a group of individuals who have transitioned from passive observers to active participants in a mission, showing a dynamic change in their role.&quot;</span>
+<span class="sd">    }},</span>
+<span class="sd">    {{</span>
+<span class="sd">        &quot;type&quot;: &quot;edge&quot;,</span>
+<span class="sd">        &quot;source&quot;: &quot;THE TEAM&quot;,</span>
+<span class="sd">        &quot;target&quot;: &quot;WASHINGTON&quot;,</span>
+<span class="sd">        &quot;descripton&quot;: &quot;The team receives communications from Washington, which influences their decision-making process.&quot;,</span>
+<span class="sd">        &quot;weight&quot;: 1.0</span>
+<span class="sd">    }},</span>
+<span class="sd">    {{</span>
+<span class="sd">        &quot;type&quot;: &quot;edge&quot;,</span>
+<span class="sd">        &quot;source&quot;: &quot;THE TEAM&quot;,</span>
+<span class="sd">        &quot;target&quot;: &quot;OPERATION: DULCE&quot;,</span>
+<span class="sd">        &quot;descripton&quot;: &quot;The team is directly involved in Operation: Dulce, executing its evolved objectives and activities.&quot;,</span>
+<span class="sd">        &quot;weight&quot;: 1.0</span>
+<span class="sd">    }}</span>
+<span class="sd">]&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The prompt used for extraction can be found here <a class="reference internal" href="../prompts/default_prompts/entity_extraction.html#entity-extraction-prompt-label"><span class="std std-ref">Entity extraction</span></a></p>
+<section id="document-size">
+<h3>document size<a class="headerlink" href="#document-size" title="Link to this heading"></a></h3>
+<p>While extracting a graph, we could feed each document one at a time into the LLM and ask it to extract the entities. However, if documents are large we run the risk of exceeding the LLM context size.</p>
+<p>To overcome this we first split each document into smaller chunks and extract the entities from each chunk.
+It’s a good idea to have overlap between the chunks so no entities spanning two chunks are missed.</p>
+<p>see <a class="reference internal" href="../api/graphragzen.preprocessing.preprocess.chunk_documents.html#graphragzen.preprocessing.preprocess.chunk_documents" title="graphragzen.preprocessing.preprocess.chunk_documents"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.preprocessing.preprocess.chunk_documents()</span></code></a></p>
+</section>
+</section>
+<section id="node-merging">
+<h2>Node merging<a class="headerlink" href="#node-merging" title="Link to this heading"></a></h2>
+<p>It’s not unlikely that the LLM finds nodes in separate documents that are synonymous. For instance, it might find ‘Pierce Brosnan’ and ‘pierce_brosnan’.</p>
+<p><strong>GraphRAGZen</strong> can find and merge nodes that are very similar by text embedding the node name and selected features (e.g. the node description), and merging nodes that have very similar embeddings.</p>
+<p>See <a class="reference internal" href="../api/graphragzen.merge.merge_nodes.merge_similar_graph_nodes.html#graphragzen.merge.merge_nodes.merge_similar_graph_nodes" title="graphragzen.merge.merge_nodes.merge_similar_graph_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.merge.merge_nodes.merge_similar_graph_nodes()</span></code></a></p>
+</section>
+<section id="feature-merging">
+<h2>Feature merging<a class="headerlink" href="#feature-merging" title="Link to this heading"></a></h2>
+<p>When entities are extracted from the documents the same entity (node or edge) can be found multiple
+times in different documents.
+This means that the same entity will have multiple versions of it’s features (e.g. multiple
+descriptions).</p>
+<p>It’s a good idea to consolidate these multiplicated features for the final graph.</p>
+<p><strong>GraphRAGZen</strong> can</p>
+<ul class="simple">
+<li><p>Summarize a list of features</p></li>
+<li><p>Return the most occuring from a list</p></li>
+<li><p>Average a list of features if it’s numeric</p></li>
+</ul>
+<p>For descriptions we can ask the LLM to summarize them, edge weights we can simply average, etc.</p>
+<p>See <a class="reference internal" href="../api/graphragzen.merge.merge_features.merge_graph_features.html#graphragzen.merge.merge_features.merge_graph_features" title="graphragzen.merge.merge_features.merge_graph_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.merge.merge_features.merge_graph_features()</span></code></a></p>
+</section>
+<section id="clustering">
+<h2>Clustering<a class="headerlink" href="#clustering" title="Link to this heading"></a></h2>
+<p>There are latent structures to Graphs that can be usefull when extracting information from them.
+<span class="raw-html"><br /></span>
+For instance, in a graph about vehicles, part of the graph might talk about cars and another about
+bicycles. When we want information about cars we can safely presume to start looking at the car part.</p>
+<p>When <strong>GraphRAGZen</strong> first creates a graph these clusters are not yet known.
+<span class="raw-html"><br /></span>
+We don’t want to go through the graph manually and assign each node to a topic. We rather use
+unsupervised clustering for this, specifically the <a class="reference external" href="https://arxiv.org/abs/1810.08473">leiden algorithm</a>
+see see <code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.clustering.leiden.leiden()</span></code></p>
+<p>This algorithm only assigns a number to each node, indicating to which cluster it belongs.
+The semantic topic of each cluster still needs to be extracted. This can be done using
+<a class="reference internal" href="../api/graphragzen.clustering.describe.describe_clusters.html#graphragzen.clustering.describe.describe_clusters" title="graphragzen.clustering.describe.describe_clusters"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.clustering.describe.describe_clusters()</span></code></a></p>
+</section>
+<section id="text-embedding">
+<h2>Text Embedding<a class="headerlink" href="#text-embedding" title="Link to this heading"></a></h2>
+<p>In order to find the part of the graph that’s relevant to a query text embeddings are used.</p>
+<p>Any feature of a node and edge that is text can be embedded, and during querying these embeddings are compared to the query embedding. The nodes and edges coupled to the <em>k</em> embeddings closest to the query embedding are used to build the final context that’s inject into the prompt.</p>
+<p>Although any feature of a node and edge that is text can be embedded, for retrieving the relevant entities often the embeddings of entity descriptions are used.</p>
+<p>See <a class="reference internal" href="../api/graphragzen.text_embedding.embed.embed_graph_features.html#graphragzen.text_embedding.embed.embed_graph_features" title="graphragzen.text_embedding.embed.embed_graph_features"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.text_embedding.embed.embed_graph_features()</span></code></a> for embedding entity features.</p>
+<section id="vector-database">
+<h3>Vector Database<a class="headerlink" href="#vector-database" title="Link to this heading"></a></h3>
+<p>After a graph is created, and before querying, the vectors of the entity feature embedding are stored in a vector database. <strong>GraphRAGZen</strong> implements local Qdrant as a vector database backend out of the box, but any backend can be used.</p>
+<p>In order to use your own backend, simply make a class that inherits from <a class="reference internal" href="../api/graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase" title="graphragzen.text_embedding.vector_databases.VectorDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphragzen.text_embedding.vector_databases.VectorDatabase</span></code></a> and implement the methods that are &#64;abstractmethods in the VectorDatabase class (click source to see the methods you’ll need to implement)</p>
+</section>
+</section>
+<section id="llm-interaction">
+<span id="llm-interaction-label"></span><h2>LLM interaction<a class="headerlink" href="#llm-interaction" title="Link to this heading"></a></h2>
+<p><strong>GraphRAGZen</strong> uses an LLM for the following:</p>
+<ul class="simple">
+<li><p>Creating custom prompts for extracting graphs. These prompts are specific to the domain of your documents .</p></li>
+<li><p>Extracting a graph from your documents.</p></li>
+<li><p>Summarizing a node or edge feature that has multiple descriptions of that feature. <span class="raw-html"><br /></span> (this happens when a node or edge is found multiple times in your documents. The features assigned to this entity are concatenated when creating the graph, where the entity exists only once.)</p></li>
+<li><p>Creating descriptions of graph clusters.</p></li>
+<li><p>Querying while adding context from the graph.</p></li>
+</ul>
+<p>Two methods are supported to interact with an LLM:</p>
+<ol class="arabic simple">
+<li><p>By loading a model locally in-memory.</p></li>
+<li><p>With an LLM running on a server through an openAI API compatible endpoint.</p></li>
+</ol>
+<p>A server can be remote or deployed locally depending on your own preference.</p>
+<p>Loading a model in-memory uses llama-cpp-python and is unlikely to use your GPU unless configured well. Thus, using locally in-memory is good for development and testing, but for production deployment it is recommended to communicate with an LLM that is properly set-up on a server.</p>
+<p>These examples show how the different ways to initiate interaction with an LLM</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphragzen.llm</span> <span class="kn">import</span> <span class="n">OpenAICompatibleClient</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm</span> <span class="kn">import</span> <span class="n">Phi35MiniGGUF</span>
+
+
+<span class="c1"># Using OpenAI&#39;s API</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">OpenAICompatibleClient</span><span class="p">(</span>
+    <span class="n">api_key_env_variable</span> <span class="o">=</span> <span class="s2">&quot;OPENAI_API_KEY&quot;</span>  <span class="c1"># the env variable, not the actual key!</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span>
+    <span class="n">context_size</span> <span class="o">=</span> <span class="mi">32768</span><span class="p">,</span>
+    <span class="c1"># Caches responses locally, saving time and OpenAI credits if the same request is made twice</span>
+    <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># Append the cache to a file on disk so it can be re-used between runs.</span>
+    <span class="n">cache_persistent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># The file to store the persistent cache.</span>
+    <span class="n">persistent_cache_file</span><span class="o">=</span><span class="s2">&quot;./OpenAI_persistent_cache.yaml&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># If you&#39;re running your own server running an LLM</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">OpenAICompatibleClient</span><span class="p">(</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:8081&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;joeAI/phi3.5:latest&quot;</span>
+    <span class="n">context_size</span> <span class="o">=</span> <span class="mi">32768</span><span class="p">,</span>
+    <span class="c1"># Caches responses locally, saving time and server load if the same request is made twice</span>
+    <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># Append the cache to a file on disk so it can be re-used between runs.</span>
+    <span class="n">cache_persistent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># The file to store the persistent cache.</span>
+    <span class="n">persistent_cache_file</span><span class="o">=</span><span class="s2">&quot;./phi35_mini_instruct_server_persistent_cache.yaml&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Load model locally in-memory using llama-cpp-python</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">Phi35MiniGGUF</span><span class="p">(</span>
+    <span class="n">model_storage_path</span><span class="o">=</span><span class="s2">&quot;path/to/Phi-3.5-mini-instruct-Q4_K_M.gguf&quot;</span><span class="p">,</span>
+    <span class="n">tokenizer_URI</span><span class="o">=</span><span class="s2">&quot;microsoft/Phi-3.5-mini-instruct&quot;</span><span class="p">,</span>
+    <span class="n">context_size</span><span class="o">=</span><span class="mi">32786</span><span class="p">,</span>
+    <span class="n">persistent_cache_file</span><span class="o">=</span><span class="s2">&quot;./phi35_mini_instruct_persistent_cache.yaml&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<section id="which-model-to-use">
+<h3>Which model to use<a class="headerlink" href="#which-model-to-use" title="Link to this heading"></a></h3>
+<p>The latest OpenAI models give very good results, but might be costly; even with a moderate amount of documents the number of LLM calls to create a graph get large.</p>
+<p>For choosing an open-source model, I found Phi 3.5 mini instruct to give good results in my tests. It’s a relatively small model so deployment should be easy and inference fast. When querying your knowledge graph you can switch to a larger, more capable model if desired.</p>
+<p>Though Phi 3.5 mini instruct worked well in my tests, the domain of your documents might show different results. I would advice to extract entities from a small set of your documents, check if the extraction makes sense, and try a different model if it doens’t. Pay attention that not just quality nodes are extracted, but also a good amount of edges.</p>
+<p><a class="reference external" href="https://huggingface.co/bartowski/Phi-3.5-mini-instruct-GGUF/blob/main/Phi-3.5-mini-instruct-Q4_K_M.gguf">Phi 3.5 mini instruct Q4 K M</a></p>
+<p><a class="reference external" href="https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/blob/main/gemma-2-2b-it-Q4_K_M.gguf">Gemma 2 2B it Q4 M</a></p>
+<p><a class="reference external" href="https://huggingface.co/bartowski/gemma-2-9b-it-GGUF/blob/main/gemma-2-9b-it-IQ4_XS.gguf">Gemma 2 9B it Q4 XS</a></p>
+</section>
+<section id="async-llm-calls">
+<h3>Async LLM calls<a class="headerlink" href="#async-llm-calls" title="Link to this heading"></a></h3>
+<p>When interacting with an LLM on a server, aync LLM calls can significantly speed up the graph generation process.</p>
+<p>Functions that make LLM calls have a <cite>async_llm_calls</cite> parameter that, when set to True, will call the LLM async.</p>
+<p>The follow functions support this feature:</p>
+<ul class="simple">
+<li><p>extract_raw_entities (<a class="reference internal" href="../api/graphragzen.entity_extraction.extract_entities.extract_raw_entities.html#graphragzen.entity_extraction.extract_entities.extract_raw_entities" title="graphragzen.entity_extraction.extract_entities.extract_raw_entities"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.entity_extraction.extract_entities.extract_raw_entities()</span></code></a>)</p></li>
+<li><p>describe_clusters (<a class="reference internal" href="../api/graphragzen.clustering.describe.describe_clusters.html#graphragzen.clustering.describe.describe_clusters" title="graphragzen.clustering.describe.describe_clusters"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.clustering.describe.describe_clusters()</span></code></a>)</p></li>
+<li><p>generate_entity_relationship_examples (<a class="reference internal" href="../api/graphragzen.prompt_tuning.entities.generate_entity_relationship_examples.html#graphragzen.prompt_tuning.entities.generate_entity_relationship_examples" title="graphragzen.prompt_tuning.entities.generate_entity_relationship_examples"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.prompt_tuning.entities.generate_entity_relationship_examples()</span></code></a>)</p></li>
+</ul>
+<p>Of the LLM classes, only the <cite>OpenAICompatibleClient</cite> has async implemented, since it’s the only class that interacts with an LLM on a server.</p>
+<p>When calling it directly for text completion, i.e. llm(‘input text to complete’), the class checks if it is called in an async context and calls the server async or sync accordingly.</p>
+<p>For chat functionality there is an async version, see <a class="reference internal" href="../api/graphragzen.llm.openAI_API_client.OpenAICompatibleClient.html#graphragzen.llm.openAI_API_client.OpenAICompatibleClient.a_run_chat" title="graphragzen.llm.openAI_API_client.OpenAICompatibleClient.a_run_chat"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.llm.openAI_API_client.OpenAICompatibleClient.a_run_chat()</span></code></a></p>
+</section>
+<section id="implementing-your-own-local-llm-class">
+<h3>Implementing your own local LLM class<a class="headerlink" href="#implementing-your-own-local-llm-class" title="Link to this heading"></a></h3>
+<p>If the server does not have an OpenAI API compatible endpoint, or you want to load an LLM locally without using llama-cpp-python, you can implement a custom LLM class.</p>
+<p><strong>GraphRAGZen</strong> expects certain methods when calling an LLM. The abstract base class <cite>LLM</cite> defines
+the required methods using &#64;abstractmethod; you should inherit from this class when implementing your own LLM implementation.</p>
+<p>See <a class="reference internal" href="../api/graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM" title="graphragzen.llm.base_llm.LLM"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphragzen.llm.base_llm.LLM</span></code></a> (click source)</p>
+</section>
+</section>
+<section id="structured-output">
+<h2>Structured Output<a class="headerlink" href="#structured-output" title="Link to this heading"></a></h2>
+<p><strong>GraphRAGZen</strong> relies heavily on valid json strings to be produced by the LLM to extract
+information from the provided documents.</p>
+<p>The default prompts asks the LLM to produce a json string, but the chances of this being a valid
+json string can be significantly increased by forcing the LLM to adhere it’s output to a schema</p>
+<section id="json-schema">
+<h3>JSON Schema<a class="headerlink" href="#json-schema" title="Link to this heading"></a></h3>
+<p>Many inference solutions allow a schema to be submitted with the prompt to the LLM. The engine than
+tries to restrict the token generation such that the output adheres to the schema.</p>
+<p>See
+<a class="reference external" href="https://platform.openai.com/docs/guides/structured-outputs/examples">here</a> for examples using the openAI API</p>
+<p>In <strong>GraphRAGZen</strong> both locally loaded LLM’s and the API client can be provided with a pydantic
+class as an output structure for the LLM to adhere to.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The output structure should NOT be passed as an instance of the pydantic model, just the reference.</p>
+<blockquote>
+<div><p>Correct = LLM(“some text”, output_structure=MyPydanticModel)</p>
+<p>Wrong = LLM(“some text”, output_structure=MyPydanticModel())</p>
+</div></blockquote>
+</div>
+<p>For initializing interaction with an LLM see <a class="reference internal" href="#llm-interaction-label"><span class="std std-ref">LLM interaction</span></a></p>
+<p>Extract raw entities using a custom output structure:
+(By default graphragzen.entity_extraction.extract_raw_entities() already uses a build-in output structure
+see <a class="reference internal" href="../api/graphragzen.entity_extraction.llm_output_structures.ExtractedEntities.html#graphragzen.entity_extraction.llm_output_structures.ExtractedEntities" title="graphragzen.entity_extraction.llm_output_structures.ExtractedEntities"><code class="xref py py-class docutils literal notranslate"><span class="pre">graphragzen.entity_extraction.llm_output_structures.ExtractedEntities</span></code></a>)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">graphragzen</span> <span class="kn">import</span> <span class="n">entity_extraction</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span> <span class="nc">ExtractedNode</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;node&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">relevance</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">source_sentence</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">class</span> <span class="nc">ExtractedEdge</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;edge&quot;</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">source_sentence</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span> <span class="nc">ExtractedEntities</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">extracted_nodes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedNode</span><span class="p">]</span>
+    <span class="n">extracted_edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedEdge</span><span class="p">]</span>
+
+
+<span class="n">raw_entities</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">extract_raw_entities</span><span class="p">(</span>
+    <span class="n">chunked_documents</span><span class="p">,</span> <span class="n">llm</span><span class="p">,</span> <span class="n">output_structure</span><span class="p">:</span> <span class="n">ExtractedEntities</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="prompt-tuning">
+<span id="prompt-tuning-explanation-label"></span><h2>Prompt tuning<a class="headerlink" href="#prompt-tuning" title="Link to this heading"></a></h2>
+<p><strong>GraphRAGZen</strong> comes with default prompts to extract entities from documents, summarize features, etc.</p>
+<p>Although these can be used out-of-the-box to extract entities from documents and create a graph,
+they are not tuned to the documents.
+<span class="raw-html"><br /></span>
+Higher quality graphs could be obtained by making
+these prompts more relevant to the domain of the documents.</p>
+<p>Your can provided you own custom prompts, but <strong>GraphRAGZen</strong> does come with functions to create these prompts from a sample of your documents.</p>
+<p>These functions rely on their own prompts that ask the LLM to look at the documents and:</p>
+<ul class="simple">
+<li><p>Create a domain for the documents</p></li>
+<li><p>Create a persona that is an expert in the create domain</p></li>
+<li><p>Define which entity types are present in the documents (e.g. person, location, school of thought)</p></li>
+<li><p>Create some <cite>document-&gt;entities extracted</cite> examples</p></li>
+</ul>
+<p>All of this information is then merged into a prompt that can be used to extract entities.</p>
+<p>A similar method is used to create a description summarization prompt.</p>
+<p>The default prompts: <a class="reference internal" href="../prompts/default_prompts/index.html#default-prompts-label"><span class="std std-ref">Default Prompts</span></a></p>
+<p>The prompts used to create new prompts: <a class="reference internal" href="../prompts/prompt_tuning/index.html#prompt-tuning-prompts-label"><span class="std std-ref">Prompt tuning Prompts</span></a></p>
+<p>See this example on how to create prompts specific to the domain of your documents (click on source)
+<a class="reference internal" href="../api/graphragzen.examples.autotune_custom_prompts.create_custom_prompts.html#graphragzen.examples.autotune_custom_prompts.create_custom_prompts" title="graphragzen.examples.autotune_custom_prompts.create_custom_prompts"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.examples.autotune_custom_prompts.create_custom_prompts()</span></code></a></p>
+</section>
+<section id="querying-local-search">
+<h2>Querying: Local Search<a class="headerlink" href="#querying-local-search" title="Link to this heading"></a></h2>
+<p>The Graph RAG library provides a robust mechanism for querying and retrieving context-relevant information by leveraging graph data, vector searches, and optionally source documents and cluster reports. The querying process is designed to find the most relevant information from a heterogeneous mix of data sources and to format this information into a coherent prompt that’s ready to send to an LLM.</p>
+<p>Querying can be devided in local search (specific information from a small part of the graph) and global search (information from summaries of the whole graph)</p>
+<p>see the following example on how to query using your graph for added context (click on source)
+<a class="reference internal" href="../api/graphragzen.examples.query.question.html#graphragzen.examples.query.question" title="graphragzen.examples.query.question"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.examples.query.question()</span></code></a></p>
+<section id="overview-of-the-local-search-process">
+<h3>Overview of the Local Search Process<a class="headerlink" href="#overview-of-the-local-search-process" title="Link to this heading"></a></h3>
+<p>The querying for local serach process in <strong>GraphRAGZen</strong> integrates several components to construct a comprehensive response to a user’s query. This process involves:</p>
+<ul>
+<li><p>Semantic Vector Search: A semantic search is performed using vector representations of entities and the query. This step retrieves entities from the vector database that are most similar to the query based on their embeddings. The vector search is controlled by parameters like the number of similar entities to retrieve (top_k_similar_entities) and a score threshold (score_threshold) that filters out entities below a certain similarity score.</p></li>
+<li><p>Graph Context Retrieval: Once the initial set of similar entities is identified, additional contextual information can be optionally retrieved from the graph:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Inside Edges: Edges whose both nodes are already present among the similar entities. This helps in identifying strong internal relationships within the group of entities that are relevant to the query.</p></li>
+<li><p>Outside Edges: Edges where exactly one node is present among the similar entities. This step helps to explore peripheral relationships that might add contextual relevance to the retrieved entities.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Source Document Integration: If source documents are provided, they sources of the entities retrieved in the <em>Semantic Vector Search</em> step are added to the context. The number of such texts to include can be controlled by the <cite>top_k_source_documents</cite> parameter.</p></li>
+<li><p>Cluster Report Summaries: These are summarizations of clustered graph nodes. These summaries can help in understanding broader trends or patterns that relate to the query and the retrieved entities. If available, cluster summaries coupled to the entities retrieved in the <em>Semantic Vector Search</em> step are added to the context. The number of cluster descriptions to include can be set using the <cite>top_k_cluster_descriptions`</cite> parameter.</p></li>
+</ul>
+</section>
+<section id="prompt-construction-for-local-search">
+<h3>Prompt Construction for Local Search<a class="headerlink" href="#prompt-construction-for-local-search" title="Link to this heading"></a></h3>
+<p>After gathering all relevant data, a final prompt is constructed. The prompt combines:</p>
+<ul class="simple">
+<li><p>Node Descriptions: Information about nodes retrieved from the graph, including their category and a brief description.</p></li>
+<li><p>Relationship Descriptions: Descriptions of edges (relationships) within and outside the set of similar entities.</p></li>
+<li><p>Specific Source Contexts (optional): Direct excerpts or references from source documents.</p></li>
+<li><p>Global Source Contexts (optional): Summaries from cluster reports.</p></li>
+</ul>
+<p>The prompt is formatted using a base prompt template, which is customized with the contextual data and the original query. This ensures that the constructed prompt is rich with relevant context, enhancing the accuracy and relevance of any subsequent operations, such as generating responses or extracting insights.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../graphzen_ideology/index.html" class="btn btn-neutral float-left" title="GraphRAGZen ideology" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../todo/index.html" class="btn btn-neutral float-right" title="TODO" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

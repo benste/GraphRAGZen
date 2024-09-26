@@ -1,0 +1,30 @@
+graphragzen.merge.typing
+========================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.merge.typing
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      MergeFeaturesPromptConfig
+      MergeFeaturesPromptFormatting
+   
+   
+
+   
+   
+   
+
+
+

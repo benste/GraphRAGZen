@@ -1,0 +1,29 @@
+graphragzen.llm.base\_llm
+=========================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.llm.base_llm
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      LLM
+   
+   
+
+   
+   
+   
+
+
+

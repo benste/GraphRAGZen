@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.clustering.describe &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.clustering.describe</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.clustering.describe</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">graphragzen.async_tools</span> <span class="kn">import</span> <span class="n">async_loop</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm.base_llm</span> <span class="kn">import</span> <span class="n">LLM</span>
+<span class="kn">from</span> <span class="nn">graphragzen.prompts.default_prompts</span> <span class="kn">import</span> <span class="n">cluster_description_prompts</span>
+<span class="kn">from</span> <span class="nn">pydantic._internal._model_construction</span> <span class="kn">import</span> <span class="n">ModelMetaclass</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">.llm_output_structures</span> <span class="kn">import</span> <span class="n">ClusterDescription</span>
+
+
+<div class="viewcode-block" id="describe_clusters">
+<a class="viewcode-back" href="../../../api/graphragzen.clustering.describe.describe_clusters.html#graphragzen.clustering.describe.describe_clusters">[docs]</a>
+<span class="k">def</span> <span class="nf">describe_clusters</span><span class="p">(</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLM</span><span class="p">,</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">cluster_entity_map</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">cluster_description_prompts</span><span class="o">.</span><span class="n">CLUSTER_DESCRIPTION_PROMPT</span><span class="p">,</span>
+    <span class="n">output_structure</span><span class="p">:</span> <span class="n">ModelMetaclass</span> <span class="o">=</span> <span class="n">ClusterDescription</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+    <span class="n">async_llm_calls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe each cluster in the graph using the node descriptions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        llm (LLM):</span>
+<span class="sd">        graph (nx.Graph):</span>
+<span class="sd">        cluster_entity_map (pd.DataFrame): Containing the columns &#39;cluster&#39; (string identifier of</span>
+<span class="sd">            each cluster) and &#39;node_name&#39; (lists of node names that belong to a cluster).</span>
+<span class="sd">        prompt (str, optional): The prompt to use for the LLM to describe a cluster. Defaults to</span>
+<span class="sd">            `graphragzen.prompts.default_prompts.cluster_description_prompts.CLUSTER_DESCRIPTION_PROMPT`</span>
+<span class="sd">        output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammars</span>
+<span class="sd">            from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the</span>
+<span class="sd">            reference.</span>
+<span class="sd">            Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">            Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            Defaults to graphragzen.entity_extraction.ClusterDescription</span>
+<span class="sd">        async_llm_calls: If True will call the LLM asynchronously. Only applies to communication</span>
+<span class="sd">            with an LLM using `OpenAICompatibleClient`, in-memory LLM&#39;s loaded using</span>
+<span class="sd">            llama-cpp-python will always be called synchronously. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame:</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+    <span class="n">cluster_entity_map_with_descriptions</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cluster_entity_map</span><span class="p">)</span>
+    <span class="n">cluster_entity_map_with_descriptions</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># First gather the chats so they can be run against the LLM synchronously or asynchronously</span>
+    <span class="n">chats</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+        <span class="n">cluster_entity_map</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;describing clusters&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster_entity_map</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">cluster_graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">cluster</span><span class="o">.</span><span class="n">node_name</span><span class="p">)</span>
+
+        <span class="nb">id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># First add the nodes to the prompt string</span>
+        <span class="n">input_text</span> <span class="o">=</span> <span class="s2">&quot;Entities</span><span class="se">\n\n</span><span class="s2">id,entity,description</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">cluster_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">input_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="nb">id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Now add the edged to the prompt string</span>
+        <span class="n">input_text</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Relationships</span><span class="se">\n\n</span><span class="s2">id,source,target,description</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cluster_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">input_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">edge</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="nb">id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># format prompt and send to LLM</span>
+        <span class="n">formatted_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_text</span><span class="o">=</span><span class="n">input_text</span><span class="p">)</span>
+        <span class="n">chats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">llm</span><span class="o">.</span><span class="n">format_chat</span><span class="p">([(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">formatted_prompt</span><span class="p">)]))</span>
+
+    <span class="c1"># call the LLM synchronously or asynchronously</span>
+    <span class="k">if</span> <span class="n">async_llm_calls</span><span class="p">:</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="n">raw_descriptions</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span>
+            <span class="n">async_loop</span><span class="p">(</span>
+                <span class="n">llm</span><span class="o">.</span><span class="n">a_run_chat</span><span class="p">,</span>
+                <span class="n">chats</span><span class="p">,</span>
+                <span class="s2">&quot;describing clusters asynchronously&quot;</span><span class="p">,</span>
+                <span class="n">output_structure</span><span class="o">=</span><span class="n">output_structure</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">raw_descriptions</span> <span class="o">=</span> <span class="p">[</span><span class="n">llm</span><span class="o">.</span><span class="n">run_chat</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">output_structure</span><span class="o">=</span><span class="n">output_structure</span><span class="p">)</span> <span class="k">for</span> <span class="n">chat</span> <span class="ow">in</span> <span class="n">chats</span><span class="p">]</span>
+
+    <span class="c1"># Parse the raw descriptions and write to the cluster map</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">raw_description</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cluster_entity_map</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">raw_descriptions</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try json parsing first</span>
+            <span class="n">structured</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw_description</span><span class="p">)</span>
+
+            <span class="c1"># Verify that it adheres to the output structure</span>
+            <span class="k">if</span> <span class="n">output_structure</span><span class="p">:</span>
+                <span class="n">structured</span> <span class="o">=</span> <span class="n">output_structure</span><span class="p">(</span><span class="o">**</span><span class="n">structured</span><span class="p">)</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="ne">Warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Could not parse a cluster description for cluster </span><span class="si">{</span><span class="n">index</span><span class="si">}</span>
+<span class="s2">            The LLM either produced an invalid JSON, or the JSON did not adhere to</span>
+<span class="s2">            the output structure, writing raw llm output for this cluster.</span><span class="se">\n</span>
+<span class="s2">            Note: during querying this cluster cannot be used to generate a context (the individual</span>
+<span class="s2">            nodes in the cluster still can).</span>
+<span class="s2">            Clusters without structured descriptions (i.e. str in stead of dict) should be</span>
+<span class="s2">            identified and fixed before using them with graph querying.&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">structured</span> <span class="o">=</span> <span class="n">raw_description</span>
+
+        <span class="n">cluster_entity_map_with_descriptions</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">structured</span>
+        <span class="c1"># TODO: Findings return the ID that support the findings, couple this back to the</span>
+        <span class="c1"># correct entity</span>
+
+    <span class="k">return</span> <span class="n">cluster_entity_map_with_descriptions</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

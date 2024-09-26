@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.prompt_tuning.utils.generate_domain &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="graphragzen.prompt_tuning.utils.generate_persona" href="graphragzen.prompt_tuning.utils.generate_persona.html" />
+    <link rel="prev" title="graphragzen.prompt_tuning.utils" href="graphragzen.prompt_tuning.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="graphragzen.html">graphragzen</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.async_tools.html">graphragzen.async_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.clustering.html">graphragzen.clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.entity_extraction.html">graphragzen.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.examples.html">graphragzen.examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.llm.html">graphragzen.llm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.load_documents.html">graphragzen.load_documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.merge.html">graphragzen.merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.preprocessing.html">graphragzen.preprocessing</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.prompt_tuning.entities.html">graphragzen.prompt_tuning.entities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.prompt_tuning.llm_output_structures.html">graphragzen.prompt_tuning.llm_output_structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.prompt_tuning.summarization.html">graphragzen.prompt_tuning.summarization</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="graphragzen.prompt_tuning.utils.html">graphragzen.prompt_tuning.utils</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">graphragzen.prompt_tuning.utils.generate_domain</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.prompt_tuning.utils.generate_persona.html">graphragzen.prompt_tuning.utils.generate_persona</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompts.html">graphragzen.prompts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.query.html">graphragzen.query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.text_embedding.html">graphragzen.text_embedding</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="graphragzen.html">graphragzen</a> &raquo;</li>
+        
+          <li><a href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a> &raquo;</li>
+        
+          <li><a href="graphragzen.prompt_tuning.utils.html">graphragzen.prompt_tuning.utils</a> &raquo;</li>
+        
+      <li>graphragzen.prompt_tuning.utils.generate_domain</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/graphragzen.prompt_tuning.utils.generate_domain.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphragzen-prompt-tuning-utils-generate-domain">
+<h1>graphragzen.prompt_tuning.utils.generate_domain<a class="headerlink" href="#graphragzen-prompt-tuning-utils-generate-domain" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphragzen.prompt_tuning.utils.generate_domain">
+<span class="sig-prename descclassname"><span class="pre">graphragzen.prompt_tuning.utils.</span></span><span class="sig-name descname"><span class="pre">generate_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">llm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">documents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\nYou</span> <span class="pre">are</span> <span class="pre">an</span> <span class="pre">intelligent</span> <span class="pre">assistant</span> <span class="pre">that</span> <span class="pre">helps</span> <span class="pre">a</span> <span class="pre">human</span> <span class="pre">to</span> <span class="pre">analyze</span> <span class="pre">the</span> <span class="pre">information</span> <span class="pre">in</span> <span class="pre">a</span> <span class="pre">text</span> <span class="pre">document.\nGiven</span> <span class="pre">a</span> <span class="pre">sample</span> <span class="pre">text,</span> <span class="pre">help</span> <span class="pre">the</span> <span class="pre">user</span> <span class="pre">by</span> <span class="pre">assigning</span> <span class="pre">a</span> <span class="pre">descriptive</span> <span class="pre">domain</span> <span class="pre">that</span> <span class="pre">summarizes</span> <span class="pre">what</span> <span class="pre">the</span> <span class="pre">text</span> <span class="pre">is</span> <span class="pre">about.\nExample</span> <span class="pre">domains</span> <span class="pre">are:</span> <span class="pre">&quot;Social</span> <span class="pre">studies&quot;,</span> <span class="pre">&quot;Algorithmic</span> <span class="pre">analysis&quot;,</span> <span class="pre">&quot;Medical</span> <span class="pre">science&quot;,</span> <span class="pre">among</span> <span class="pre">others.\n\nText:</span> <span class="pre">{input_text}\nDomain:'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/prompt_tuning/utils.html#generate_domain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.prompt_tuning.utils.generate_domain" title="Link to this definition"></a></dt>
+<dd><p>Generate a domain to use for GraphRAG prompts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>llm</strong> (<a class="reference internal" href="graphragzen.llm.base_llm.LLM.html#graphragzen.llm.base_llm.LLM" title="graphragzen.llm.base_llm.LLM"><em>LLM</em></a>)</p></li>
+<li><p><strong>documents</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Sample of documents that later will be used to create a graph.
+You likely want this to be chunks of the whole documents.</p></li>
+<li><p><strong>prompt</strong> (<em>str</em><em>, </em><em>optional</em>) – Prompt to use for generating a domain.
+If <cite>domain</cite> is not specified this will be used to infer the domain.
+Defaults to <cite>graphragzen.prompts.prompt_tuning.domain.GENERATE_DOMAIN_PROMPT</cite>.</p></li>
+<li><p><strong>domain</strong> (<em>str</em><em>, </em><em>optional</em>) – The domain relevant to a set of documents.
+If not specified, the <cite>prompt</cite> will be used to infer the domain. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>domain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graphragzen.prompt_tuning.utils.html" class="btn btn-neutral float-left" title="graphragzen.prompt_tuning.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="graphragzen.prompt_tuning.utils.generate_persona.html" class="btn btn-neutral float-right" title="graphragzen.prompt_tuning.utils.generate_persona" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

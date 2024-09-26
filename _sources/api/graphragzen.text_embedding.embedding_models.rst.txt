@@ -1,0 +1,30 @@
+graphragzen.text\_embedding.embedding\_models
+=============================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.text_embedding.embedding_models
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: autosummary/class.rst
+   
+      BaseEmbedder
+      NomicTextEmbedder
+   
+   
+
+   
+   
+   
+
+
+

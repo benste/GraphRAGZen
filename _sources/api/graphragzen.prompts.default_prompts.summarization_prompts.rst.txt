@@ -1,0 +1,21 @@
+graphragzen.prompts.default\_prompts.summarization\_prompts
+===========================================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts.default_prompts.summarization_prompts
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

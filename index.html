@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GraphRAGZen &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>GraphRAGZen</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <img alt="Graphragzen banner" class="graphragzen-banner align-center" src="_images/project_image_small.png" />
+<section id="graphragzen">
+<h1>GraphRAGZen<a class="headerlink" href="#graphragzen" title="Link to this heading"></a></h1>
+<p><strong>GraphRAGZen</strong> is a functional, common sense, library for developing GraphRAG pipelines.</p>
+<p>A big <strong>thank you</strong> to the team at microsoft that created
+<a class="reference external" href="https://github.com/microsoft/graphrag">GraphRAG</a>, which is the
+foundation for this project</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This project is in Beta and under active development.</p>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#using-graphragzen-as-a-library">Using <strong>GraphRAGZen</strong> as a library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/index.html#llm">LLM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="motivation/index.html">Motivation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="motivation/index.html#but-that-s-just-another-graph-rag-library-right">But that’s just another Graph RAG library, right?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphzen_ideology/index.html">GraphRAGZen ideology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphzen_ideology/index.html#functions-first-class-citizens">Functions: first class citizens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphzen_ideology/index.html#modularity">Modularity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphzen_ideology/index.html#intuitive">Intuitive</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphragzen_concepts/index.html">Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#entity-extraction">Entity extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#node-merging">Node merging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#feature-merging">Feature merging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#clustering">Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#text-embedding">Text Embedding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#llm-interaction">LLM interaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#structured-output">Structured Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#prompt-tuning">Prompt tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen_concepts/index.html#querying-local-search">Querying: Local Search</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="todo/index.html">TODO</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="todo/index.html#necasary-for-v0-1-0">necasary for v0.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todo/index.html#needed-for-full-version">Needed for full version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todo/index.html#quality-improvements">quality improvements</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="motivation">
+<h1>Motivation<a class="headerlink" href="#motivation" title="Link to this heading"></a></h1>
+<p>If you are not familiar with Graph RAG yet, I found <a class="reference external" href="https://www.analyticsvidhya.com/blog/2024/07/graph-rag/">this to be a good write-up</a></p>
+<p><a class="reference external" href="https://github.com/microsoft/graphrag">GraphRAG from Microsoft</a>
+makes it easy to get started with automated Graph RAG.</p>
+<p>Sadly, the codebase is hard to read, difficult to adapt, and dataflow in the pipelines near impossible to follow.</p>
+<p>The work done by the GraphRAG team shouldn’t be in vain, but should allow for developers to create GraphRAG applications that are maintainable, extendable and intuitive.</p>
+<p>And so <strong>GraphRAGZen</strong> was born; the logic given by GraphRAG in a functional, common sense library…</p>
+<section id="but-that-s-just-another-graph-rag-library-right">
+<h2>But that’s just another Graph RAG library, right?<a class="headerlink" href="#but-that-s-just-another-graph-rag-library-right" title="Link to this heading"></a></h2>
+<p><a class="reference external" href="https://xkcd.com/927/">XKCD says it well</a></p>
+<p>It’s early days for GraphRAG technology, and there’s no standard implementation method accepted at
+large. This shows that there’s still a lack of high quality, easy to implement solutions in the
+OSS space.</p>
+<p>From experience I found that most libraries available either provide a limited set
+of abilities with the bulk hiding behind convoluted code (i.e. GraphRAG)
+or are unintuitive and rely heavily on extended documentation.</p>
+<p>This should be easily mitigated by writing a functional library. That
+is, the python function is king, and the functions are named and located intuitively.</p>
+<p>When that is established we have a toolbox that can be used as seen fit
+by developers. It is modular, extendable, maintainable and intuitive.</p>
+</section>
+</section>
+<section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install graphragzen</span>
+</pre></div>
+</div>
+</section>
+<section id="cli">
+<h2>CLI<a class="headerlink" href="#cli" title="Link to this heading"></a></h2>
+<p><strong>GraphRAGZen</strong> is made with developers in mind; it’s modularity allows integration with any backend
+and parts of the library to be used independently as needed. Nevertheless, if you just want to create a knowledge graph of your documents and query them, there is a CLI to do that.</p>
+<p>Create a graph from your documents</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m graphragzen.CLI.make_graph --documents_folder &quot;path/to/folder/with/text/files&quot; --project_folder &quot;graphtest&quot;</span>
+</pre></div>
+</div>
+<p>Query with context from the graph</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m graphragzen.CLI.query --project_folder &quot;graphtest&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="using-graphragzen-as-a-library">
+<h2>Using <strong>GraphRAGZen</strong> as a library<a class="headerlink" href="#using-graphragzen-as-a-library" title="Link to this heading"></a></h2>
+<p>The following examples are rather intuitive and should get you started (click on source)</p>
+<p>Create prompts for extracting graphs that are specific to the domain of your documents:
+<a class="reference internal" href="api/graphragzen.examples.autotune_custom_prompts.create_custom_prompts.html#graphragzen.examples.autotune_custom_prompts.create_custom_prompts" title="graphragzen.examples.autotune_custom_prompts.create_custom_prompts"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.examples.autotune_custom_prompts.create_custom_prompts()</span></code></a></p>
+<p>Create a graph, graph clusters and text embedding vectors:
+<a class="reference internal" href="api/graphragzen.examples.generate_entity_graph.entity_graph_pipeline.html#graphragzen.examples.generate_entity_graph.entity_graph_pipeline" title="graphragzen.examples.generate_entity_graph.entity_graph_pipeline"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.examples.generate_entity_graph.entity_graph_pipeline()</span></code></a></p>
+<p>Query the graph:
+<a class="reference internal" href="api/graphragzen.examples.query.question.html#graphragzen.examples.query.question" title="graphragzen.examples.query.question"><code class="xref py py-func docutils literal notranslate"><span class="pre">graphragzen.examples.query.question()</span></code></a></p>
+</section>
+<section id="llm">
+<h2>LLM<a class="headerlink" href="#llm" title="Link to this heading"></a></h2>
+<p><strong>GraphRAGZen</strong> relies on an LLM to create a graph from documents.</p>
+<p>Two methods are supported to interact with an LLM:</p>
+<ol class="arabic">
+<li><p>With an LLM running on a server through an openAI API compatible endpoint.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This server can be remote or deployed locally depending on your own preference.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>By loading the model locally in-memory.</p></li>
+</ol>
+<p>Loading a model in-memory uses llama-cpp-python and unlikely uses your GPU unless configured well. Thus using in-memory is good for development and testing, but for production deployment it is recommended to communicate with an LLM that is properly set-up on a server.</p>
+<p>For more information see <a class="reference internal" href="graphragzen_concepts/index.html#llm-interaction-label"><span class="std std-ref">LLM interaction</span></a></p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="prompts/default_prompts/index.html">Default Prompts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prompts/default_prompts/entity_extraction.html">Entity extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/default_prompts/summarization_prompt.html">Summarization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/default_prompts/querying.html">Querying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="prompts/prompt_tuning/index.html">Prompt tuning Prompts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/domain.html">Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/persona.html">Persona</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/entity_categories.html">Entity categories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/entity_relationship.html">Entity relationship</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/entity_extraction.html">Entity extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prompts/prompt_tuning/summarization_prompt.html">Summarization</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading"></a></h1>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/graphragzen.html#module-graphragzen" title="graphragzen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graphragzen</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started/index.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

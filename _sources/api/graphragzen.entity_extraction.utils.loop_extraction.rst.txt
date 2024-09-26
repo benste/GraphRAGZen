@@ -1,0 +1,6 @@
+graphragzen.entity\_extraction.utils.loop\_extraction
+=====================================================
+
+.. currentmodule:: graphragzen.entity_extraction.utils
+
+.. autofunction:: loop_extraction

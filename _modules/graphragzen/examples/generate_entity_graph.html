@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.examples.generate_entity_graph &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.examples.generate_entity_graph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.examples.generate_entity_graph</h1><div class="highlight"><pre>
+<span></span><span class="c1"># mypy: ignore-errors</span>
+<span class="c1"># flake8: noqa</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">graphragzen</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">clustering</span><span class="p">,</span>
+    <span class="n">entity_extraction</span><span class="p">,</span>
+    <span class="n">load_documents</span><span class="p">,</span>
+    <span class="n">merge</span><span class="p">,</span>
+    <span class="n">preprocessing</span><span class="p">,</span>
+    <span class="n">text_embedding</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm</span> <span class="kn">import</span> <span class="n">BaseLlamaCpp</span><span class="p">,</span> <span class="n">OpenAICompatibleClient</span><span class="p">,</span> <span class="n">Phi35MiniGGUF</span>
+
+
+<div class="viewcode-block" id="entity_graph_pipeline">
+<a class="viewcode-back" href="../../../api/graphragzen.examples.generate_entity_graph.entity_graph_pipeline.html#graphragzen.examples.generate_entity_graph.entity_graph_pipeline">[docs]</a>
+<span class="k">def</span> <span class="nf">entity_graph_pipeline</span><span class="p">(</span>
+    <span class="n">custom_entity_extraction_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">custom_summarization_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">:</span>
+    <span class="c1"># Note: Each function&#39;s optional args have sane defaults. Check out their</span>
+    <span class="c1"># docstrings for their descriptions and see if you want to overwrite any</span>
+
+    <span class="c1"># Load an LLM locally</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading LLM&quot;</span><span class="p">)</span>
+    <span class="n">llm</span> <span class="o">=</span> <span class="n">Phi35MiniGGUF</span><span class="p">(</span>
+        <span class="n">model_storage_path</span><span class="o">=</span><span class="s2">&quot;/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf&quot;</span><span class="p">,</span>
+        <span class="n">tokenizer_URI</span><span class="o">=</span><span class="s2">&quot;microsoft/Phi-3.5-mini-instruct&quot;</span><span class="p">,</span>
+        <span class="n">context_size</span><span class="o">=</span><span class="mi">32786</span><span class="p">,</span>
+        <span class="n">persistent_cache_file</span><span class="o">=</span><span class="s2">&quot;./phi35_mini_instruct_persistent_cache.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># # Communicate with an LLM running on a server</span>
+    <span class="c1"># llm = OpenAICompatibleClient(</span>
+    <span class="c1">#     base_url=&quot;http://localhost:8081&quot;,</span>
+    <span class="c1">#     context_size=32768,</span>
+    <span class="c1">#     persistent_cache_file=&quot;./v6-Finch_7B_persistent_cache.yaml&quot;,</span>
+    <span class="c1"># )</span>
+
+    <span class="c1"># Load text embedder</span>
+    <span class="n">embedder</span> <span class="o">=</span> <span class="n">text_embedding</span><span class="o">.</span><span class="n">NomicTextEmbedder</span><span class="p">(</span><span class="n">huggingface_URI</span><span class="o">=</span><span class="s2">&quot;nomic-ai/nomic-embed-text-v1.5&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create vector DB (nomic-embed-text-v1.5 creates vectors of size 768)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading vector database&quot;</span><span class="p">)</span>
+    <span class="n">vector_db</span> <span class="o">=</span> <span class="n">text_embedding</span><span class="o">.</span><span class="n">QdrantLocalVectorDatabase</span><span class="p">(</span><span class="n">vector_size</span><span class="o">=</span><span class="n">embedder</span><span class="o">.</span><span class="n">vector_size</span><span class="p">)</span>
+
+    <span class="c1"># Load raw documents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading raw documents&quot;</span><span class="p">)</span>
+    <span class="n">raw_documents</span> <span class="o">=</span> <span class="n">load_documents</span><span class="o">.</span><span class="n">load_text_documents</span><span class="p">(</span>
+        <span class="n">raw_documents_folder</span><span class="o">=</span><span class="s2">&quot;/home/bens/projects/GraphRAGZen/documents/sample-python-3.10.13-documentation&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Split documents into chunks based on tokens</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chunking documents&quot;</span><span class="p">)</span>
+    <span class="n">chunked_documents</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">chunk_documents</span><span class="p">(</span>
+        <span class="n">raw_documents</span><span class="p">,</span>
+        <span class="n">llm</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Extract entities from the chunks</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Extracting raw entities&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom_entity_extraction_prompt</span><span class="p">:</span>
+        <span class="c1"># Custom prompt if available</span>
+        <span class="n">custom_prompts</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">EntityExtractionPrompts</span><span class="p">(</span>
+            <span class="n">entity_extraction_prompt</span><span class="o">=</span><span class="n">custom_entity_extraction_prompt</span>
+        <span class="p">)</span>
+        <span class="n">prompt_config</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">EntityExtractionPromptConfig</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">custom_prompts</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default prompt</span>
+        <span class="n">prompt_config</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">EntityExtractionPromptConfig</span><span class="p">()</span>
+
+    <span class="n">raw_entities</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">extract_raw_entities</span><span class="p">(</span>
+        <span class="n">chunked_documents</span><span class="p">,</span> <span class="n">llm</span><span class="p">,</span> <span class="n">max_gleans</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">prompt_config</span><span class="o">=</span><span class="n">prompt_config</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create a graph from the raw extracted entities</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating graph from raw entities&quot;</span><span class="p">)</span>
+    <span class="n">entity_graph</span> <span class="o">=</span> <span class="n">entity_extraction</span><span class="o">.</span><span class="n">raw_entities_to_graph</span><span class="p">(</span><span class="n">raw_entities</span><span class="p">)</span>
+
+    <span class="c1"># Merge nodes that are very similar to eachother (e.g. &#39;Pierce Brosnan&#39; and &#39;pierce_brosnan&#39;)</span>
+    <span class="n">entity_graph</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">merge</span><span class="o">.</span><span class="n">merge_similar_graph_nodes</span><span class="p">(</span><span class="n">entity_graph</span><span class="p">,</span> <span class="n">embedder</span><span class="p">)</span>
+
+    <span class="c1"># Each node and edge could be found multiple times in the documents and thus have</span>
+    <span class="c1"># multiple descriptions. We&#39;ll summarize these into one description per node and edge</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Summarizing entity descriptions&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">custom_summarization_prompt</span><span class="p">:</span>
+        <span class="c1"># Custom prompt if available</span>
+        <span class="n">prompt_config</span> <span class="o">=</span> <span class="n">merge</span><span class="o">.</span><span class="n">MergeFeaturesPromptConfig</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="n">custom_summarization_prompt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># default prompt</span>
+        <span class="n">prompt_config</span> <span class="o">=</span> <span class="n">merge</span><span class="o">.</span><span class="n">MergeFeaturesPromptConfig</span><span class="p">()</span>
+
+    <span class="n">entity_graph</span> <span class="o">=</span> <span class="n">merge</span><span class="o">.</span><span class="n">merge_graph_features</span><span class="p">(</span>
+        <span class="n">entity_graph</span><span class="p">,</span> <span class="n">llm</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">prompt_config</span><span class="p">,</span> <span class="n">feature</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;LLM&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Let&#39;s cluster the nodes and assign the cluster ID as a property to each node</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Clustering graph&quot;</span><span class="p">)</span>
+    <span class="n">entity_graph</span><span class="p">,</span> <span class="n">cluster_entity_map</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">leiden</span><span class="p">(</span>
+        <span class="n">entity_graph</span><span class="p">,</span>
+        <span class="n">max_comm_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">min_comm_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">levels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Describe each cluster, creating a so-called cluster report</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Describing clusters&quot;</span><span class="p">)</span>
+    <span class="n">cluster_report</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">describe_clusters</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">entity_graph</span><span class="p">,</span> <span class="n">cluster_entity_map</span><span class="p">)</span>
+
+    <span class="c1"># Embed the descriptions of each node and edge</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Embedding entity descriptions&quot;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">text_embedding</span><span class="o">.</span><span class="n">embed_graph_features</span><span class="p">(</span>
+        <span class="n">entity_graph</span><span class="p">,</span> <span class="n">embedder</span><span class="p">,</span> <span class="n">vector_db</span><span class="o">=</span><span class="n">vector_db</span><span class="p">,</span> <span class="n">features_to_embed</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pipeline finished successful </span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">chunked_documents</span><span class="p">,</span>
+        <span class="n">entity_graph</span><span class="p">,</span>
+        <span class="n">cluster_entity_map</span><span class="p">,</span>
+        <span class="n">cluster_report</span><span class="p">,</span>
+        <span class="n">embedder</span><span class="p">,</span>
+        <span class="n">vector_db</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># # Uncomment and run the following to create a knowledge graph</span>
+<span class="c1"># outfol = &quot;graphtest2&quot;</span>
+
+<span class="c1"># Load custom prompts if available</span>
+<span class="c1"># with open(os.path.join(outfol, &quot;Custom_Entity_Extraction_Prompt.txt&quot;), &quot;r&quot;) as text_file:</span>
+<span class="c1">#     entity_extraction_prompt = text_file.read()</span>
+
+<span class="c1"># with open(os.path.join(outfol, &quot;Custom_Summarization_Prompt.txt&quot;), &quot;r&quot;) as text_file:</span>
+<span class="c1">#     summarization_prompt = text_file.read()</span>
+
+<span class="c1"># # Extract entities</span>
+<span class="c1"># chunked_documents, entity_graph, cluster_report, vector_db = entity_graph_pipeline(</span>
+<span class="c1">#     entity_extraction_prompt, summarization_prompt</span>
+<span class="c1"># )</span>
+
+<span class="c1"># # Or use with default prompts</span>
+<span class="c1"># chunked_documents, entity_graph, cluster_report, vector_db = entity_graph_pipeline()</span>
+
+<span class="c1"># # Save everything we need for querying</span>
+<span class="c1"># if not os.path.isdir(outfol):</span>
+<span class="c1">#     os.makedirs(outfol)</span>
+
+<span class="c1"># chunked_documents.to_pickle(os.path.join(outfol, &quot;source_documents.pkl&quot;))</span>
+<span class="c1"># nx.write_graphml(entity_graph, os.path.join(outfol, &quot;entity_graph.graphml&quot;))</span>
+<span class="c1"># cluster_report.to_pickle(os.path.join(outfol, &quot;cluster_report.pkl&quot;))</span>
+<span class="c1"># vector_db.save(os.path.join(outfol, &quot;vector_db&quot;))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

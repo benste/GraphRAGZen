@@ -1,0 +1,57 @@
+graphragzen.clustering.llm\_output\_structures.Finding
+======================================================
+
+.. currentmodule:: graphragzen.clustering.llm_output_structures
+
+.. autoclass:: Finding
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Finding.model_computed_fields
+      ~Finding.model_config
+      ~Finding.model_extra
+      ~Finding.model_fields
+      ~Finding.model_fields_set
+      ~Finding.summary
+      ~Finding.explanation
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Finding.construct
+      ~Finding.copy
+      ~Finding.dict
+      ~Finding.from_orm
+      ~Finding.json
+      ~Finding.model_construct
+      ~Finding.model_copy
+      ~Finding.model_dump
+      ~Finding.model_dump_json
+      ~Finding.model_json_schema
+      ~Finding.model_parametrized_name
+      ~Finding.model_post_init
+      ~Finding.model_rebuild
+      ~Finding.model_validate
+      ~Finding.model_validate_json
+      ~Finding.model_validate_strings
+      ~Finding.parse_file
+      ~Finding.parse_obj
+      ~Finding.parse_raw
+      ~Finding.schema
+      ~Finding.schema_json
+      ~Finding.update_forward_refs
+      ~Finding.validate
+   
+   

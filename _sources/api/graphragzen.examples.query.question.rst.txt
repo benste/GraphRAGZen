@@ -1,0 +1,6 @@
+graphragzen.examples.query.question
+===================================
+
+.. currentmodule:: graphragzen.examples.query
+
+.. autofunction:: question

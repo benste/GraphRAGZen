@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.llm.llama_cpp_models &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.llm.llama_cpp_models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.llm.llama_cpp_models</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">graphragzen.llm.base_llm</span> <span class="kn">import</span> <span class="n">LLM</span>
+<span class="kn">from</span> <span class="nn">llama_cpp</span> <span class="kn">import</span> <span class="n">Llama</span><span class="p">,</span> <span class="n">LlamaGrammar</span>
+<span class="kn">from</span> <span class="nn">pydantic._internal._fields</span> <span class="kn">import</span> <span class="n">PydanticMetadata</span>
+<span class="kn">from</span> <span class="nn">pydantic._internal._model_construction</span> <span class="kn">import</span> <span class="n">ModelMetaclass</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="n">AutoTokenizer</span>
+
+<span class="kn">from</span> <span class="nn">.typing</span> <span class="kn">import</span> <span class="n">ChatNames</span>
+
+<span class="c1"># llama_prompter imports pydantic._internal._fields.PydanticGeneralMetadata</span>
+<span class="c1"># but it should import pydantic._internal._fields.PydanticMetadata</span>
+<span class="c1"># This hack fixes that by creating an alias</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s2">&quot;pydantic._internal._fields&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">PydanticGeneralMetadata</span> <span class="o">=</span> <span class="n">PydanticMetadata</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">llama_prompter</span> <span class="kn">import</span> <span class="n">Prompter</span>  <span class="c1"># noqa: F401, E402</span>
+
+
+<span class="c1"># llama_prompter is used to create the grammar that forces a specific structure to the LLM output.</span>
+<span class="c1"># It calls llama_cpp.llama_grammar.LlamaGrammar.from_string with verbosity to False, but sadly</span>
+<span class="c1"># that function did not implement a verbosity check and still prints to the terminal.</span>
+<span class="c1"># The following function will suppressing sys.stdout</span>
+<div class="viewcode-block" id="suppress_prompter_output">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.suppress_prompter_output.html#graphragzen.llm.llama_cpp_models.suppress_prompter_output">[docs]</a>
+<span class="k">def</span> <span class="nf">suppress_prompter_output</span><span class="p">(</span>
+    <span class="n">output_structure</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">LlamaGrammar</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_structure</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">output_structure</span>
+
+    <span class="c1"># Save the current stdout</span>
+    <span class="n">original_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Redirect stdout to null (suppress output)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="c1"># Call the function</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Prompter</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;{output:output_structure}&quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Restore the original stdout</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">original_stdout</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">_grammar</span></div>
+
+
+
+<div class="viewcode-block" id="BaseLlamaCpp">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseLlamaCpp</span><span class="p">(</span><span class="n">LLM</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads a GGUF model using llama cpp python and it&#39;s corresponding tokenizer from HF&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseLlamaCpp.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_storage_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tokenizer_URI</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">context_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+        <span class="n">n_gpu_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache_persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">persistent_cache_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./llm_persistent_cache.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initiate a llama cpp model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_storage_path (str): Path to the model on the local filesystem</span>
+<span class="sd">            tokenizer_URI (str): URI for the tokenizer</span>
+<span class="sd">            context_size (int, optional): Size of the context window in tokens. Defaults to 8192</span>
+<span class="sd">            use_cache (bool, optional): Use a cache to find output for previously processed inputs</span>
+<span class="sd">                in stead of re-generating output from the input. Default to True.</span>
+<span class="sd">            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all</span>
+<span class="sd">                layers are offloaded. You need to install llama-cpp-python with the correct cuda</span>
+<span class="sd">                support. Out of the box GraphRAGZen&#39;s llama-cpp-python is the CPU version only.</span>
+<span class="sd">                Defaults to -1.</span>
+<span class="sd">            cache_persistent (bool, optional): Append the cache to a file on disk so it can be</span>
+<span class="sd">                re-used between runs. If False will use only in-memory cache. Default to True</span>
+<span class="sd">            persistent_cache_file (str, optional): The file to store the persistent cache.</span>
+<span class="sd">                Defaults to &#39;./llm_persistent_cache.yaml&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">context_size</span> <span class="o">=</span> <span class="n">context_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_cache</span> <span class="o">=</span> <span class="n">use_cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_persistent</span> <span class="o">=</span> <span class="n">cache_persistent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persistent_cache_file</span> <span class="o">=</span> <span class="n">persistent_cache_file</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">Llama</span><span class="p">(</span>
+            <span class="n">model_path</span><span class="o">=</span><span class="n">model_storage_path</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">n_ctx</span><span class="o">=</span><span class="n">context_size</span><span class="p">,</span>
+            <span class="n">n_gpu_layers</span><span class="o">=</span><span class="n">n_gpu_layers</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">tokenizer_URI</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chatnames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chatnames</span> <span class="o">=</span> <span class="n">ChatNames</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">output_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the LLM as you would llm(input), but allow to force an output structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input (Any): Any input you would normally pass to llm(input, kwargs)</span>
+<span class="sd">            output_structure (Optional[Union[ModelMetaclass, dict]], optional): Output structure to</span>
+<span class="sd">                force. e.g. grammars from llama.cpp. When using a pydantic model, only the reference</span>
+<span class="sd">                should be passed.</span>
+<span class="sd">                Correct = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">                Wrong = BaseLlamaCpp(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            kwargs (Any): Any keyword arguments you would normally pass to llm(input, kwargs)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">output_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">grammar</span> <span class="o">=</span> <span class="n">suppress_prompter_output</span><span class="p">(</span><span class="n">output_structure</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;grammar&quot;</span><span class="p">:</span> <span class="n">grammar</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+            <span class="nb">input</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BaseLlamaCpp.run_chat">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.run_chat">[docs]</a>
+    <span class="k">def</span> <span class="nf">run_chat</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">output_structure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ModelMetaclass</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs a chat through the LLM</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[dict]): in form [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...</span>
+<span class="sd">            max_tokens (int, optional): Maximum number of tokens to generate. Defaults to -1.</span>
+<span class="sd">            output_structure (ModelMetaclass, optional): Output structure to force, e.g. grammar</span>
+<span class="sd">                from llama.cpp. This SHOULD NOT be an instance of the pydantic model, just the</span>
+<span class="sd">                reference.</span>
+<span class="sd">                Correct = BaseLlamaCpp.run_chat(&quot;some text&quot;, MyPydanticModel)</span>
+<span class="sd">                Wrong = BaseLlamaCpp.run_chat(&quot;some text&quot;, MyPydanticModel())</span>
+<span class="sd">            stream (bool, optional): If True, streams the results to console. Defaults to False.</span>
+<span class="sd">            kwargs (Any): Any keyword arguments to add to the lmm call.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Generated content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">llm_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span>
+            <span class="n">chat</span><span class="p">,</span> <span class="n">tokenize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">llm_input</span> <span class="o">=</span> <span class="n">llm_input</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s2">&quot;&lt;bos&gt;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check cache first</span>
+        <span class="n">cache_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_cache</span><span class="p">(</span><span class="n">llm_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cache_results</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">cache_results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use LLM if not in cache</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span>
+                <span class="nb">input</span><span class="o">=</span><span class="n">llm_input</span><span class="p">,</span>
+                <span class="n">output_structure</span><span class="o">=</span><span class="n">output_structure</span><span class="p">,</span>
+                <span class="n">stop</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&lt;eos&gt;&quot;</span><span class="p">],</span>
+                <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">max_tokens</span><span class="o">=</span><span class="n">max_tokens</span><span class="p">,</span>
+                <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_streamed</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+
+            <span class="c1"># And add the result to cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_item_to_cache</span><span class="p">(</span><span class="n">llm_input</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="BaseLlamaCpp.num_chat_tokens">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.num_chat_tokens">[docs]</a>
+    <span class="k">def</span> <span class="nf">num_chat_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the length of the tokenized chat</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (List[dict]): in form [{&quot;role&quot;: ..., &quot;content&quot;: ...}, {&quot;role&quot;: ..., &quot;content&quot;: ...</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: number of tokens</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">apply_chat_template</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">tokenize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_generation_prompt</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseLlamaCpp.tokenize">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.tokenize">[docs]</a>
+    <span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tokenize a string</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            content (str): String to tokenize</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[str]: Tokenized string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseLlamaCpp.untokenize">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.BaseLlamaCpp.html#graphragzen.llm.llama_cpp_models.BaseLlamaCpp.untokenize">[docs]</a>
+    <span class="k">def</span> <span class="nf">untokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a string from a list of tokens</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tokens (List[str]): Tokenized string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Untokenized string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">convert_tokens_to_string</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Gemma2GGUF">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.Gemma2GGUF.html#graphragzen.llm.llama_cpp_models.Gemma2GGUF">[docs]</a>
+<span class="k">class</span> <span class="nc">Gemma2GGUF</span><span class="p">(</span><span class="n">BaseLlamaCpp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the GGUF version of a gemma2 model using llama-cpp-python&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Gemma2GGUF.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.Gemma2GGUF.html#graphragzen.llm.llama_cpp_models.Gemma2GGUF.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_storage_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tokenizer_URI</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">context_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+        <span class="n">n_gpu_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache_persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">persistent_cache_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./llm_persistent_cache.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the GGUF version of a gemma2 model using llama-cpp-python and it&#39;s corresponding</span>
+<span class="sd">        tokenizer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_storage_path (str): Path to the model on the local filesystem</span>
+<span class="sd">            tokenizer_URI (str): HuggingFace URI for the tokenizer</span>
+<span class="sd">            context_size (int, optional): Size of the context window in tokens. Defaults to 8192</span>
+<span class="sd">            use_cache (bool, optional): Use a cache to find output for previously processed inputs</span>
+<span class="sd">                in stead of re-generating output from the input. Default to True.</span>
+<span class="sd">            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all</span>
+<span class="sd">                layers are offloaded. You need to install llama-cpp-python with the correct cuda</span>
+<span class="sd">                support. Out of the box GraphRAGZen&#39;s llama-cpp-python is the CPU version only.</span>
+<span class="sd">                Defaults to -1.</span>
+<span class="sd">            cache_persistent (bool, optional): Append the cache to a file on disk so it can be</span>
+<span class="sd">                re-used between runs. If False will use only in-memory cache. Default to True</span>
+<span class="sd">            persistent_cache_file (str, optional): The file to store the persistent cache.</span>
+<span class="sd">                Defaults to &#39;./llm_persistent_cache.yaml&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chatnames</span> <span class="o">=</span> <span class="n">ChatNames</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model_storage_path</span><span class="p">,</span>
+            <span class="n">tokenizer_URI</span><span class="p">,</span>
+            <span class="n">context_size</span><span class="p">,</span>
+            <span class="n">n_gpu_layers</span><span class="p">,</span>
+            <span class="n">use_cache</span><span class="p">,</span>
+            <span class="n">cache_persistent</span><span class="p">,</span>
+            <span class="n">persistent_cache_file</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Phi35MiniGGUF">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.Phi35MiniGGUF.html#graphragzen.llm.llama_cpp_models.Phi35MiniGGUF">[docs]</a>
+<span class="k">class</span> <span class="nc">Phi35MiniGGUF</span><span class="p">(</span><span class="n">BaseLlamaCpp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads the GGUF version of a Phi 3.5 Mini model using llama-cpp-python&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Phi35MiniGGUF.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.llm.llama_cpp_models.Phi35MiniGGUF.html#graphragzen.llm.llama_cpp_models.Phi35MiniGGUF.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_storage_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tokenizer_URI</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">context_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8192</span><span class="p">,</span>
+        <span class="n">n_gpu_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cache_persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">persistent_cache_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./llm_persistent_cache.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the GGUF version of a Phi 3.5 Mini model using llama-cpp-python and it&#39;s</span>
+<span class="sd">        corresponding tokenizer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_storage_path (str): Path to the model on the local filesystem</span>
+<span class="sd">            tokenizer_URI (str): HuggingFace URI for the tokenizer</span>
+<span class="sd">            context_size (int, optional): Size of the context window in tokens. Defaults to 8192</span>
+<span class="sd">            use_cache (bool, optional): Use a cache to find output for previously processed inputs</span>
+<span class="sd">                in stead of re-generating output from the input. Default to True.</span>
+<span class="sd">            n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all</span>
+<span class="sd">                layers are offloaded. You need to install llama-cpp-python with the correct cuda</span>
+<span class="sd">                support. Out of the box GraphRAGZen&#39;s llama-cpp-python is the CPU version only.</span>
+<span class="sd">                Defaults to -1.</span>
+<span class="sd">            cache_persistent (bool, optional): Append the cache to a file on disk so it can be</span>
+<span class="sd">                re-used between runs. If False will use only in-memory cache. Default to True</span>
+<span class="sd">            persistent_cache_file (str, optional): The file to store the persistent cache.</span>
+<span class="sd">                Defaults to &#39;./llm_persistent_cache.yaml&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chatnames</span> <span class="o">=</span> <span class="n">ChatNames</span><span class="p">(</span><span class="n">system</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;assistant&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model_storage_path</span><span class="p">,</span>
+            <span class="n">tokenizer_URI</span><span class="p">,</span>
+            <span class="n">context_size</span><span class="p">,</span>
+            <span class="n">n_gpu_layers</span><span class="p">,</span>
+            <span class="n">use_cache</span><span class="p">,</span>
+            <span class="n">cache_persistent</span><span class="p">,</span>
+            <span class="n">persistent_cache_file</span><span class="p">,</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

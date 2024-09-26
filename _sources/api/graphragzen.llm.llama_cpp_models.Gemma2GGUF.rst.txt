@@ -1,0 +1,43 @@
+graphragzen.llm.llama\_cpp\_models.Gemma2GGUF
+=============================================
+
+.. currentmodule:: graphragzen.llm.llama_cpp_models
+
+.. autoclass:: Gemma2GGUF
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Gemma2GGUF.cache_persistent
+      ~Gemma2GGUF.chatnames
+      ~Gemma2GGUF.context_size
+      ~Gemma2GGUF.model_name
+      ~Gemma2GGUF.persistent_cache_file
+      ~Gemma2GGUF.tokenizer
+      ~Gemma2GGUF.use_cache
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Gemma2GGUF.a_run_chat
+      ~Gemma2GGUF.check_cache
+      ~Gemma2GGUF.format_chat
+      ~Gemma2GGUF.num_chat_tokens
+      ~Gemma2GGUF.print_streamed
+      ~Gemma2GGUF.run_chat
+      ~Gemma2GGUF.tokenize
+      ~Gemma2GGUF.untokenize
+      ~Gemma2GGUF.write_item_to_cache
+   
+   

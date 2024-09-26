@@ -1,0 +1,61 @@
+graphragzen.merge.typing.MergeFeaturesPromptConfig
+==================================================
+
+.. currentmodule:: graphragzen.merge.typing
+
+.. autoclass:: MergeFeaturesPromptConfig
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MergeFeaturesPromptConfig.model_computed_fields
+      ~MergeFeaturesPromptConfig.model_config
+      ~MergeFeaturesPromptConfig.model_extra
+      ~MergeFeaturesPromptConfig.model_fields
+      ~MergeFeaturesPromptConfig.model_fields_set
+      ~MergeFeaturesPromptConfig.prompt
+      ~MergeFeaturesPromptConfig.formatting
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MergeFeaturesPromptConfig.construct
+      ~MergeFeaturesPromptConfig.copy
+      ~MergeFeaturesPromptConfig.dict
+      ~MergeFeaturesPromptConfig.from_orm
+      ~MergeFeaturesPromptConfig.get
+      ~MergeFeaturesPromptConfig.items
+      ~MergeFeaturesPromptConfig.json
+      ~MergeFeaturesPromptConfig.keys
+      ~MergeFeaturesPromptConfig.model_construct
+      ~MergeFeaturesPromptConfig.model_copy
+      ~MergeFeaturesPromptConfig.model_dump
+      ~MergeFeaturesPromptConfig.model_dump_json
+      ~MergeFeaturesPromptConfig.model_json_schema
+      ~MergeFeaturesPromptConfig.model_parametrized_name
+      ~MergeFeaturesPromptConfig.model_post_init
+      ~MergeFeaturesPromptConfig.model_rebuild
+      ~MergeFeaturesPromptConfig.model_validate
+      ~MergeFeaturesPromptConfig.model_validate_json
+      ~MergeFeaturesPromptConfig.model_validate_strings
+      ~MergeFeaturesPromptConfig.parse_file
+      ~MergeFeaturesPromptConfig.parse_obj
+      ~MergeFeaturesPromptConfig.parse_raw
+      ~MergeFeaturesPromptConfig.schema
+      ~MergeFeaturesPromptConfig.schema_json
+      ~MergeFeaturesPromptConfig.update_forward_refs
+      ~MergeFeaturesPromptConfig.validate
+      ~MergeFeaturesPromptConfig.values
+   
+   

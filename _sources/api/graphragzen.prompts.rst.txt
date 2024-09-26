@@ -1,0 +1,30 @@
+graphragzen.prompts
+===================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   default_prompts
+   prompt_tuning
+

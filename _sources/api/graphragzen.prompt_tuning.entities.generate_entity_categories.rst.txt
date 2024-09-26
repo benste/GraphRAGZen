@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.entities.generate\_entity\_categories
+================================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.entities
+
+.. autofunction:: generate_entity_categories

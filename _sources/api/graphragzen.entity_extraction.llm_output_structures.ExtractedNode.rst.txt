@@ -1,0 +1,59 @@
+graphragzen.entity\_extraction.llm\_output\_structures.ExtractedNode
+====================================================================
+
+.. currentmodule:: graphragzen.entity_extraction.llm_output_structures
+
+.. autoclass:: ExtractedNode
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ExtractedNode.model_computed_fields
+      ~ExtractedNode.model_config
+      ~ExtractedNode.model_extra
+      ~ExtractedNode.model_fields
+      ~ExtractedNode.model_fields_set
+      ~ExtractedNode.type
+      ~ExtractedNode.name
+      ~ExtractedNode.category
+      ~ExtractedNode.description
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExtractedNode.construct
+      ~ExtractedNode.copy
+      ~ExtractedNode.dict
+      ~ExtractedNode.from_orm
+      ~ExtractedNode.json
+      ~ExtractedNode.model_construct
+      ~ExtractedNode.model_copy
+      ~ExtractedNode.model_dump
+      ~ExtractedNode.model_dump_json
+      ~ExtractedNode.model_json_schema
+      ~ExtractedNode.model_parametrized_name
+      ~ExtractedNode.model_post_init
+      ~ExtractedNode.model_rebuild
+      ~ExtractedNode.model_validate
+      ~ExtractedNode.model_validate_json
+      ~ExtractedNode.model_validate_strings
+      ~ExtractedNode.parse_file
+      ~ExtractedNode.parse_obj
+      ~ExtractedNode.parse_raw
+      ~ExtractedNode.schema
+      ~ExtractedNode.schema_json
+      ~ExtractedNode.update_forward_refs
+      ~ExtractedNode.validate
+   
+   

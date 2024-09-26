@@ -1,0 +1,6 @@
+graphragzen.clustering.leiden
+=============================
+
+.. currentmodule:: graphragzen.clustering
+
+.. autofunction:: leiden

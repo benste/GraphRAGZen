@@ -1,0 +1,28 @@
+graphragzen.examples.autotune\_custom\_prompts
+==============================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.examples.autotune_custom_prompts
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_custom_prompts
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

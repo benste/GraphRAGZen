@@ -1,0 +1,6 @@
+graphragzen.merge.merge\_nodes.contain\_date
+============================================
+
+.. currentmodule:: graphragzen.merge.merge_nodes
+
+.. autofunction:: contain_date

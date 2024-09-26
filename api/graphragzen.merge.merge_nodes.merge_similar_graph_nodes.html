@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.merge.merge_nodes.merge_similar_graph_nodes &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="graphragzen.merge.typing" href="graphragzen.merge.typing.html" />
+    <link rel="prev" title="graphragzen.merge.merge_nodes.isempty" href="graphragzen.merge.merge_nodes.isempty.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="graphragzen.html">graphragzen</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.async_tools.html">graphragzen.async_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.clustering.html">graphragzen.clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.entity_extraction.html">graphragzen.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.examples.html">graphragzen.examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.llm.html">graphragzen.llm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.load_documents.html">graphragzen.load_documents</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="graphragzen.merge.html">graphragzen.merge</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.merge.merge_features.html">graphragzen.merge.merge_features</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="graphragzen.merge.merge_nodes.html">graphragzen.merge.merge_nodes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.merge.merge_nodes.contain_date.html">graphragzen.merge.merge_nodes.contain_date</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.merge.merge_nodes.find_similar_nodes.html">graphragzen.merge.merge_nodes.find_similar_nodes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.merge.merge_nodes.isempty.html">graphragzen.merge.merge_nodes.isempty</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">graphragzen.merge.merge_nodes.merge_similar_graph_nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.merge.typing.html">graphragzen.merge.typing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.merge.utils.html">graphragzen.merge.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.preprocessing.html">graphragzen.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompts.html">graphragzen.prompts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.query.html">graphragzen.query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.text_embedding.html">graphragzen.text_embedding</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="graphragzen.html">graphragzen</a> &raquo;</li>
+        
+          <li><a href="graphragzen.merge.html">graphragzen.merge</a> &raquo;</li>
+        
+          <li><a href="graphragzen.merge.merge_nodes.html">graphragzen.merge.merge_nodes</a> &raquo;</li>
+        
+      <li>graphragzen.merge.merge_nodes.merge_similar_graph_nodes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/graphragzen.merge.merge_nodes.merge_similar_graph_nodes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphragzen-merge-merge-nodes-merge-similar-graph-nodes">
+<h1>graphragzen.merge.merge_nodes.merge_similar_graph_nodes<a class="headerlink" href="#graphragzen-merge-merge-nodes-merge-similar-graph-nodes" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphragzen.merge.merge_nodes.merge_similar_graph_nodes">
+<span class="sig-prename descclassname"><span class="pre">graphragzen.merge.merge_nodes.</span></span><span class="sig-name descname"><span class="pre">merge_similar_graph_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">graph,</span> <span class="pre">embedding_model,</span> <span class="pre">merge_report=None,</span> <span class="pre">extra_features_to_compare=['description'],</span> <span class="pre">min_similarity=0.95,</span> <span class="pre">filter_functions=[&lt;function</span> <span class="pre">contain_date&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">isempty&gt;],</span> <span class="pre">feature_delimiter='\n',</span> <span class="pre">dry_run=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/merge/merge_nodes.html#merge_similar_graph_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.merge.merge_nodes.merge_similar_graph_nodes" title="Link to this definition"></a></dt>
+<dd><p>Merge nodes in a graph that are very similar to each other, using text embeddings of the node
+names and selected features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>nx.Graph</em>) – The graph to check for similar nodes.</p></li>
+<li><p><strong>embedding_model</strong> (<a class="reference internal" href="graphragzen.text_embedding.embedding_models.BaseEmbedder.html#graphragzen.text_embedding.embedding_models.BaseEmbedder" title="graphragzen.text_embedding.embedding_models.BaseEmbedder"><em>BaseEmbedder</em></a>) – The model to embed text features of the nodes.</p></li>
+<li><p><strong>merge_report</strong> (<em>Optional</em><em>[</em><em>pd.DataFrame</em><em>]</em><em>, </em><em>optional</em>) – If dry_run is set to True this function
+returns a report stating which nodes would me merged. When supplying this report it will
+be used to merge nodes, no new similar nodes will be searched. This is usefull if you
+want to check what nodes will be merges beforehand and make adjustments if necessary.
+Defaults to None.</p></li>
+<li><p><strong>extra_features_to_compare</strong> (<em>list</em><em>, </em><em>optional</em>) – Other than the name of the nodes, which features
+should be text embedded and compared for similarity. Defaults to [“description”].</p></li>
+<li><p><strong>min_similarity</strong> (<em>float</em><em>, </em><em>optional</em>) – The minimum similarity to consider two nodes similar.
+Defaults to 0.95.</p></li>
+<li><p><strong>filter_functions</strong> (<em>list</em><em>, </em><em>optional</em>) – These function determine per node, per feature, if it
+should be concidered for comparing to other nodes for similarity.
+When any of these functions, supplied with the node feature, returns True, the feature
+for this node will not be used to find similar nodes.
+Defaults to [contain_date, isempty].</p></li>
+<li><p><strong>feature_delimiter</strong> (<em>str</em><em>, </em><em>optional</em>) – When nodes are merged features are concatenated using
+this delimiter. Defaults to ‘n’.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, will return the original, unmodified graph, with a report
+stating which nodes would me merged if dry_run was False. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(graph, report stating which nodes were merged)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[nx.graph, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graphragzen.merge.merge_nodes.isempty.html" class="btn btn-neutral float-left" title="graphragzen.merge.merge_nodes.isempty" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="graphragzen.merge.typing.html" class="btn btn-neutral float-right" title="graphragzen.merge.typing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.utils.generate\_domain
+=================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.utils
+
+.. autofunction:: generate_domain

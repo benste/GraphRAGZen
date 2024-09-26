@@ -1,0 +1,6 @@
+graphragzen.merge.merge\_nodes.merge\_similar\_graph\_nodes
+===========================================================
+
+.. currentmodule:: graphragzen.merge.merge_nodes
+
+.. autofunction:: merge_similar_graph_nodes

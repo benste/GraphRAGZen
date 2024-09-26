@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.text_embedding.vector_databases &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.text_embedding.vector_databases</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.text_embedding.vector_databases</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">qdrant_client</span> <span class="kn">import</span> <span class="n">QdrantClient</span>
+<span class="kn">from</span> <span class="nn">qdrant_client.http.models</span> <span class="kn">import</span> <span class="n">PointStruct</span><span class="p">,</span> <span class="n">VectorParams</span>
+<span class="kn">from</span> <span class="nn">qdrant_client.models</span> <span class="kn">import</span> <span class="n">FieldCondition</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">MatchAny</span><span class="p">,</span> <span class="n">MatchValue</span>
+
+
+<div class="viewcode-block" id="VectorDatabase">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase">[docs]</a>
+<span class="k">class</span> <span class="nc">VectorDatabase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+    <span class="n">distance_measure</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">vector_size</span><span class="p">:</span> <span class="nb">int</span>
+
+<div class="viewcode-block" id="VectorDatabase.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase.__init__">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the client to communicate to the vector DB backend of your choice&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VectorDatabase.add_vectors">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase.add_vectors">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add vectors to the database</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vectors (List[dict]): Each dict containing {&quot;uuid&quot;: ..., &quot;vector&quot;: ...}. Each dict may</span>
+<span class="sd">                also contain the key and values {&quot;metadata&quot;: ...}, which will be store with the</span>
+<span class="sd">                vector and retrieved upon search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="VectorDatabase.search">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.VectorDatabase.html#graphragzen.text_embedding.vector_databases.VectorDatabase.search">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_vectors</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Similarity search for each of the query vectors</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query_vectors (np.ndarray): Vectors for n queries, shaped (n x embedding_size)</span>
+<span class="sd">            k (int): Max number of results to return per query vector.</span>
+<span class="sd">            score_threshold (float, optional): Exclude all vector search results with a score worse</span>
+<span class="sd">                than his. Defaults to 0.0</span>
+<span class="sd">            filters (dict, optional): {&quot;key&quot;: &quot;value_it_should_have&quot;, &quot;key2&quot;: &quot;value_it .....</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[List[dict]]: Per query List[dict] with each dict containing</span>
+<span class="sd">                {&quot;uuid&quot;: ..., &quot;score&quot;: ..., &quot;metadata&quot;: ...}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QdrantLocalVectorDatabase">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html#graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase">[docs]</a>
+<span class="k">class</span> <span class="nc">QdrantLocalVectorDatabase</span><span class="p">(</span><span class="n">VectorDatabase</span><span class="p">):</span>
+<div class="viewcode-block" id="QdrantLocalVectorDatabase.__init__">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html#graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vector_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">database_location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">overwrite_existing_db</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">distance_measure</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Cosine&quot;</span><span class="p">,</span> <span class="s2">&quot;Euclid&quot;</span><span class="p">,</span> <span class="s2">&quot;Dot&quot;</span><span class="p">,</span> <span class="s2">&quot;Manhattan&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Cosine&quot;</span><span class="p">,</span>
+        <span class="n">on_disk</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create or load a local Qdrant vector database and a client for interaction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vector_size (int, optional): Length of the vectors to store. If a new database is</span>
+<span class="sd">                created this must be provided. If a database if loaded this will be read from that</span>
+<span class="sd">                database and the value provided here ignored.</span>
+<span class="sd">            database_location (str, optional): Location to load the DB from or store a new DB.</span>
+<span class="sd">                If not provided a new database will be created in `qdrant/databases/`.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            overwrite_existing_db (str, optional): If True and a database is found at</span>
+<span class="sd">                `database_location` it will be overwritten by a new database, otherwise the database</span>
+<span class="sd">                found at `database_location` will be loaded. Defaults to False.</span>
+<span class="sd">            distance_measure (Literal[&#39;Cosine&#39;, &#39;Euclid&#39;, &#39;Dot&#39;, &#39;Manhattan&#39;], optional): Method to</span>
+<span class="sd">                calculate distances between vectors. Defaults to &#39;Cosine&#39;</span>
+<span class="sd">            on_disk (bool, optional): If true, vectors are served from disk, improving RAM usage at</span>
+<span class="sd">                the cost of latency. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If no db location is provided, set a temporary location</span>
+        <span class="k">if</span> <span class="n">database_location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base_location</span> <span class="o">=</span> <span class="s2">&quot;qdrant/databases&quot;</span>
+            <span class="n">location_postfix</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">database_location</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_location</span><span class="si">}{</span><span class="n">location_postfix</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">database_location</span><span class="p">):</span>
+                <span class="n">location_postfix</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">database_location</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_location</span><span class="si">}{</span><span class="n">location_postfix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No location provided for vector database, creating a new database in </span><span class="si">{</span><span class="n">database_location</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: E501</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Check if there&#39;s already a database at `database_location` and if we should overwrite it</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">database_location</span><span class="p">)</span> <span class="ow">and</span> <span class="n">overwrite_existing_db</span><span class="p">:</span>
+            <span class="c1"># Remove the database already there</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">database_location</span><span class="p">,</span> <span class="s2">&quot;collection&quot;</span><span class="p">),</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">database_location</span><span class="p">,</span> <span class="s2">&quot;.lock&quot;</span><span class="p">))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">database_location</span><span class="p">,</span> <span class="s2">&quot;meta.json&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Create the client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">QdrantClient</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">database_location</span><span class="p">)</span>
+
+        <span class="c1"># Save some variables internally</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vector_size</span> <span class="o">=</span> <span class="n">vector_size</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_measure</span> <span class="o">=</span> <span class="n">distance_measure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_location</span> <span class="o">=</span> <span class="n">database_location</span>
+
+        <span class="c1"># Qdrant databases need a collection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_collection_to_db</span><span class="p">(</span><span class="n">on_disk</span><span class="p">)</span>
+
+        <span class="c1"># Make sure vector size is set correct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_collection</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># type: ignore # noqa:E501</span></div>
+
+
+<div class="viewcode-block" id="QdrantLocalVectorDatabase.add_vectors">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html#graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.add_vectors">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add vectors to the database</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vectors (List[dict]): Each dict containing {&quot;uuid&quot;: ..., &quot;vector&quot;: ...}. Each dict may</span>
+<span class="sd">                also contain the key and values {&quot;metadata&quot;: ...}, which will be store with the</span>
+<span class="sd">                vector and retrieved upon search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Prepare dicts for Qdrant PointStructs</span>
+        <span class="n">qdrant_compatible_vectors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="s2">&quot;uuid&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;vector&quot;</span><span class="p">:</span> <span class="n">vector</span><span class="p">[</span><span class="s2">&quot;vector&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;payload&quot;</span><span class="p">:</span> <span class="n">vector</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">vectors</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Add to client</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointStruct</span><span class="p">(</span><span class="o">**</span><span class="n">vector</span><span class="p">)</span> <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">qdrant_compatible_vectors</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">upsert</span><span class="p">(</span>
+            <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+            <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantLocalVectorDatabase.search">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html#graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.search">[docs]</a>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_vectors</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Similarity search for each of the query vectors</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query_vectors (np.ndarray): Vectors for n queries, shaped (n x embedding_size)</span>
+<span class="sd">            k (int): Max number of results to return per query vector.</span>
+<span class="sd">            score_threshold (float, optional): Exclude all vector search results with a score worse</span>
+<span class="sd">                than his. Defaults to 0.0</span>
+<span class="sd">            filters (dict, optional): {&quot;key&quot;: &quot;value_it_should_have&quot;, &quot;key2&quot;: &quot;value_it .....</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[List[dict]]: Per query List[dict] with each dict containing</span>
+<span class="sd">                {&quot;uuid&quot;: ..., &quot;score&quot;: ..., &quot;metadata&quot;: ...}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Format the filters for qdrant</span>
+        <span class="n">query_filter_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">query_filter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FieldCondition</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">MatchAny</span><span class="p">(</span><span class="nb">any</span><span class="o">=</span><span class="n">value</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query_filter_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FieldCondition</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">MatchValue</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="n">query_filter</span> <span class="o">=</span> <span class="n">Filter</span><span class="p">(</span><span class="n">must</span><span class="o">=</span><span class="n">query_filter_list</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="n">query_vectors</span><span class="p">:</span>
+            <span class="n">similar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+                <span class="n">query_vector</span><span class="o">=</span><span class="n">vector</span><span class="p">,</span>
+                <span class="n">query_filter</span><span class="o">=</span><span class="n">query_filter</span><span class="p">,</span>
+                <span class="n">limit</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+                <span class="n">score_threshold</span><span class="o">=</span><span class="n">score_threshold</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Format normalized according to the VectorDatabase class</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;uuid&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">score</span><span class="p">,</span>
+                        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">payload</span><span class="p">,</span>
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">similar</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="QdrantLocalVectorDatabase.save">
+<a class="viewcode-back" href="../../../api/graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html#graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.save">[docs]</a>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is specific to the Qdrant local VectorDatabae. This function just copies the DB to a</span>
+<span class="sd">        new location. Does not work for :memory: qdrant client instances since they life in RAM.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            location (str): path to store the DB</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">location</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">location</span><span class="p">):</span>
+                <span class="c1"># Database already exists at this location</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trying to save vector DB to </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">, but path already exists.&quot;</span><span class="p">)</span>
+
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">location</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">location</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_add_collection_to_db</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">on_disk</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initiate a new collection in the DB.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            on_disk (bool, optional): If true, vectors are served from disk, improving RAM usage at</span>
+<span class="sd">                the cost of latency. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">collection_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">vectors_config</span> <span class="o">=</span> <span class="n">VectorParams</span><span class="p">(</span>
+            <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vector_size</span><span class="p">,</span>
+            <span class="n">distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">distance_measure</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">on_disk</span><span class="o">=</span><span class="n">on_disk</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span>
+            <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+            <span class="n">vectors_config</span><span class="o">=</span><span class="n">vectors_config</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.examples.autotune_custom_prompts &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>graphragzen.examples.autotune_custom_prompts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for graphragzen.examples.autotune_custom_prompts</h1><div class="highlight"><pre>
+<span></span><span class="c1"># mypy: ignore-errors</span>
+<span class="c1"># flake8: noqa</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">sample</span>
+
+<span class="kn">from</span> <span class="nn">graphragzen</span> <span class="kn">import</span> <span class="n">load_documents</span><span class="p">,</span> <span class="n">preprocessing</span><span class="p">,</span> <span class="n">prompt_tuning</span>
+<span class="kn">from</span> <span class="nn">graphragzen.llm</span> <span class="kn">import</span> <span class="n">OpenAICompatibleClient</span><span class="p">,</span> <span class="n">Phi35MiniGGUF</span>
+
+
+<div class="viewcode-block" id="create_custom_prompts">
+<a class="viewcode-back" href="../../../api/graphragzen.examples.autotune_custom_prompts.create_custom_prompts.html#graphragzen.examples.autotune_custom_prompts.create_custom_prompts">[docs]</a>
+<span class="k">def</span> <span class="nf">create_custom_prompts</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use an LLM to generate a prompt for entity extraction comprises the following steps.</span>
+<span class="sd">    1. Domain: We fist ask the LLM to create the domains that the documents span</span>
+<span class="sd">    2. Persona: with the domains the LLM can create a persona (e.g. You are an expert {{role}}.</span>
+<span class="sd">        You are skilled at {{relevant skills}})</span>
+<span class="sd">    3. Entity categories: using the domain and persona we ask the LLM to extract from the documents</span>
+<span class="sd">        the categories a node could get (e.g. person, school of thought, ML)</span>
+<span class="sd">    4. Examples: Using all of the above we ask the LLM to create some example document-&gt;entities</span>
+<span class="sd">        extracted</span>
+<span class="sd">    5. Entity extraction prompt: We merge all of the above information in a prompt that can be</span>
+<span class="sd">        used to extract entities</span>
+
+<span class="sd">    Note: Each function&#39;s optional parameters have sane defaults. Check out their</span>
+<span class="sd">    docstrings for their desrciptions and see if you want to overwrite any</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Load an LLM locally</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading LLM&quot;</span><span class="p">)</span>
+    <span class="n">llm</span> <span class="o">=</span> <span class="n">Phi35MiniGGUF</span><span class="p">(</span>
+        <span class="n">model_storage_path</span><span class="o">=</span><span class="s2">&quot;/home/bens/projects/GraphRAGZen/models/Phi-3.5-mini-instruct-Q4_K_M.gguf&quot;</span><span class="p">,</span>
+        <span class="n">tokenizer_URI</span><span class="o">=</span><span class="s2">&quot;microsoft/Phi-3.5-mini-instruct&quot;</span><span class="p">,</span>
+        <span class="n">context_size</span><span class="o">=</span><span class="mi">32786</span><span class="p">,</span>
+        <span class="n">persistent_cache_file</span><span class="o">=</span><span class="s2">&quot;./phi35_mini_instruct_persistent_cache.yaml&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># # Communicate with an LLM running on a server</span>
+    <span class="c1"># llm = OpenAICompatibleClient(</span>
+    <span class="c1">#     base_url = &quot;http://localhost:8081&quot;,</span>
+    <span class="c1">#     context_size = 32768,</span>
+    <span class="c1">#     persistent_cache_file=&quot;./phi35_mini_instruct_persistent_cache.yaml&quot;</span>
+    <span class="c1"># )</span>
+
+    <span class="c1"># Load raw documents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading raw documents&quot;</span><span class="p">)</span>
+    <span class="n">raw_documents</span> <span class="o">=</span> <span class="n">load_documents</span><span class="o">.</span><span class="n">load_text_documents</span><span class="p">(</span>
+        <span class="n">raw_documents_folder</span><span class="o">=</span><span class="s2">&quot;/home/bens/projects/GraphRAGZen/documents/sample-python-3.10.13-documentation&quot;</span>  <span class="c1"># noqa: E501</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Split documents into chunks based on tokens</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chunking documents&quot;</span><span class="p">)</span>
+    <span class="n">chunked_documents</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">chunk_documents</span><span class="p">(</span><span class="n">raw_documents</span><span class="p">,</span> <span class="n">llm</span><span class="p">)</span>
+
+    <span class="c1"># Let&#39;s not use all documents, that&#39;s not neccessary and too slow</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling documents&quot;</span><span class="p">)</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="n">chunked_documents</span><span class="o">.</span><span class="n">chunk</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">sampled_documents</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="nb">min</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">),</span> <span class="mi">15</span><span class="p">]))</span>
+
+    <span class="c1"># Get the domain representing the documents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating domain&quot;</span><span class="p">)</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">generate_domain</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">sampled_documents</span><span class="p">)</span>
+
+    <span class="c1"># Get the persona representing the documents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating persona&quot;</span><span class="p">)</span>
+    <span class="n">persona</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">generate_persona</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">domain</span><span class="p">)</span>
+
+    <span class="c1"># Get the entity categories present the documents</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating entity categories&quot;</span><span class="p">)</span>
+    <span class="n">entity_categories</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">generate_entity_categories</span><span class="p">(</span>
+        <span class="n">llm</span><span class="p">,</span> <span class="n">sampled_documents</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span> <span class="n">persona</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Generate some entity relationship examples</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating entity relationship examples&quot;</span><span class="p">)</span>
+    <span class="n">entity_relationship_examples</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">generate_entity_relationship_examples</span><span class="p">(</span>
+        <span class="n">llm</span><span class="p">,</span> <span class="n">sampled_documents</span><span class="p">,</span> <span class="n">persona</span><span class="p">,</span> <span class="n">entity_categories</span><span class="p">,</span> <span class="n">max_examples</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Create the actual entity extraction prompt</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating entity extraction prompt&quot;</span><span class="p">)</span>
+    <span class="n">entity_extraction_prompt</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">create_entity_extraction_prompt</span><span class="p">(</span>
+        <span class="n">llm</span><span class="p">,</span> <span class="n">entity_categories</span><span class="p">,</span> <span class="n">entity_relationship_examples</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Also create a prompt to summarize the descriptions of the entities</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating description summarization prompt&quot;</span><span class="p">)</span>
+    <span class="n">summarization_prompt</span> <span class="o">=</span> <span class="n">prompt_tuning</span><span class="o">.</span><span class="n">create_description_summarization_prompt</span><span class="p">(</span><span class="n">persona</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">entity_extraction_prompt</span><span class="p">,</span> <span class="n">summarization_prompt</span></div>
+
+
+
+<span class="c1">## Uncomment and run the following to create custom prompts</span>
+
+<span class="c1"># entity_extraction_prompt, summarization_prompt = create_custom_prompts()</span>
+
+<span class="c1"># # Save the prompts</span>
+<span class="c1"># outfol = &quot;graphtest&quot;</span>
+
+<span class="c1"># if not os.path.isdir(outfol):</span>
+<span class="c1">#     os.makedirs(outfol)</span>
+
+<span class="c1"># with open(os.path.join(outfol, &quot;Custom_Entity_Extraction_Prompt.txt&quot;), &quot;w&quot;) as text_file:</span>
+<span class="c1">#     text_file.write(entity_extraction_prompt)</span>
+
+<span class="c1"># with open(os.path.join(outfol, &quot;Custom_Summarization_Prompt.txt&quot;), &quot;w&quot;) as text_file:</span>
+<span class="c1">#     text_file.write(summarization_prompt)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

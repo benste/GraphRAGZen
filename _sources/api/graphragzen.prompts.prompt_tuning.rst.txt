@@ -1,0 +1,34 @@
+graphragzen.prompts.prompt\_tuning
+==================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts.prompt_tuning
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   domain
+   entity_categories
+   entity_extraction
+   entity_relationship
+   entity_summarization
+   persona
+

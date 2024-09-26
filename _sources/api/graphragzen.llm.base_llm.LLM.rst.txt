@@ -1,0 +1,43 @@
+graphragzen.llm.base\_llm.LLM
+=============================
+
+.. currentmodule:: graphragzen.llm.base_llm
+
+.. autoclass:: LLM
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LLM.cache_persistent
+      ~LLM.chatnames
+      ~LLM.context_size
+      ~LLM.model_name
+      ~LLM.persistent_cache_file
+      ~LLM.tokenizer
+      ~LLM.use_cache
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LLM.a_run_chat
+      ~LLM.check_cache
+      ~LLM.format_chat
+      ~LLM.num_chat_tokens
+      ~LLM.print_streamed
+      ~LLM.run_chat
+      ~LLM.tokenize
+      ~LLM.untokenize
+      ~LLM.write_item_to_cache
+   
+   

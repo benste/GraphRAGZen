@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>graphragzen.text_embedding.vector_databases.VectorDatabase &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase" href="graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/default_prompts/index.html">Default Prompts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prompts/prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="graphragzen.html">graphragzen</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.async_tools.html">graphragzen.async_tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.clustering.html">graphragzen.clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.entity_extraction.html">graphragzen.entity_extraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.examples.html">graphragzen.examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.llm.html">graphragzen.llm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.load_documents.html">graphragzen.load_documents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.merge.html">graphragzen.merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.preprocessing.html">graphragzen.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompt_tuning.html">graphragzen.prompt_tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.prompts.html">graphragzen.prompts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphragzen.query.html">graphragzen.query</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="graphragzen.text_embedding.html">graphragzen.text_embedding</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.text_embedding.embed.html">graphragzen.text_embedding.embed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graphragzen.text_embedding.embedding_models.html">graphragzen.text_embedding.embedding_models</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="graphragzen.text_embedding.vector_databases.html">graphragzen.text_embedding.vector_databases</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html">graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">graphragzen.text_embedding.vector_databases.VectorDatabase</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="graphragzen.html">graphragzen</a> &raquo;</li>
+        
+          <li><a href="graphragzen.text_embedding.html">graphragzen.text_embedding</a> &raquo;</li>
+        
+          <li><a href="graphragzen.text_embedding.vector_databases.html">graphragzen.text_embedding.vector_databases</a> &raquo;</li>
+        
+      <li>graphragzen.text_embedding.vector_databases.VectorDatabase</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/graphragzen.text_embedding.vector_databases.VectorDatabase.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="graphragzen-text-embedding-vector-databases-vectordatabase">
+<h1>graphragzen.text_embedding.vector_databases.VectorDatabase<a class="headerlink" href="#graphragzen-text-embedding-vector-databases-vectordatabase" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphragzen.text_embedding.vector_databases.</span></span><span class="sig-name descname"><span class="pre">VectorDatabase</span></span><a class="reference internal" href="../_modules/graphragzen/text_embedding/vector_databases.html#VectorDatabase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase" title="Link to this definition"></a></dt>
+<dd><p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.distance_measure" title="graphragzen.text_embedding.vector_databases.VectorDatabase.distance_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance_measure</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.vector_size" title="graphragzen.text_embedding.vector_databases.VectorDatabase.vector_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vector_size</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.add_vectors" title="graphragzen.text_embedding.vector_databases.VectorDatabase.add_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_vectors</span></code></a>(vectors)</p></td>
+<td><p>Add vectors to the database</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.search" title="graphragzen.text_embedding.vector_databases.VectorDatabase.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code></a>(query_vectors, k[, score_threshold, ...])</p></td>
+<td><p>Similarity search for each of the query vectors</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase.__init__">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/text_embedding/vector_databases.html#VectorDatabase.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the client to communicate to the vector DB backend of your choice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase.add_vectors">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vectors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/text_embedding/vector_databases.html#VectorDatabase.add_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.add_vectors" title="Link to this definition"></a></dt>
+<dd><p>Add vectors to the database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vectors</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Each dict containing {“uuid”: …, “vector”: …}. Each dict may
+also contain the key and values {“metadata”: …}, which will be store with the
+vector and retrieved upon search.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase.distance_measure">
+<span class="sig-name descname"><span class="pre">distance_measure</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.distance_measure" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase.search">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphragzen/text_embedding/vector_databases.html#VectorDatabase.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.search" title="Link to this definition"></a></dt>
+<dd><p>Similarity search for each of the query vectors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query_vectors</strong> (<em>np.ndarray</em>) – Vectors for n queries, shaped (n x embedding_size)</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Max number of results to return per query vector.</p></li>
+<li><p><strong>score_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Exclude all vector search results with a score worse
+than his. Defaults to 0.0</p></li>
+<li><p><strong>filters</strong> (<em>dict</em><em>, </em><em>optional</em>) – {“key”: “value_it_should_have”, “key2”: “value_it …..</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Per query List[dict] with each dict containing</dt><dd><p>{“uuid”: …, “score”: …, “metadata”: …}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[List[dict]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphragzen.text_embedding.vector_databases.VectorDatabase.vector_size">
+<span class="sig-name descname"><span class="pre">vector_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphragzen.text_embedding.vector_databases.VectorDatabase.vector_size" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase.html" class="btn btn-neutral float-left" title="graphragzen.text_embedding.vector_databases.QdrantLocalVectorDatabase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

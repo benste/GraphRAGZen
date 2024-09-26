@@ -1,0 +1,61 @@
+graphragzen.merge.typing.MergeFeaturesPromptFormatting
+======================================================
+
+.. currentmodule:: graphragzen.merge.typing
+
+.. autoclass:: MergeFeaturesPromptFormatting
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MergeFeaturesPromptFormatting.model_computed_fields
+      ~MergeFeaturesPromptFormatting.model_config
+      ~MergeFeaturesPromptFormatting.model_extra
+      ~MergeFeaturesPromptFormatting.model_fields
+      ~MergeFeaturesPromptFormatting.model_fields_set
+      ~MergeFeaturesPromptFormatting.entity_name
+      ~MergeFeaturesPromptFormatting.description_list
+   
+   
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MergeFeaturesPromptFormatting.construct
+      ~MergeFeaturesPromptFormatting.copy
+      ~MergeFeaturesPromptFormatting.dict
+      ~MergeFeaturesPromptFormatting.from_orm
+      ~MergeFeaturesPromptFormatting.get
+      ~MergeFeaturesPromptFormatting.items
+      ~MergeFeaturesPromptFormatting.json
+      ~MergeFeaturesPromptFormatting.keys
+      ~MergeFeaturesPromptFormatting.model_construct
+      ~MergeFeaturesPromptFormatting.model_copy
+      ~MergeFeaturesPromptFormatting.model_dump
+      ~MergeFeaturesPromptFormatting.model_dump_json
+      ~MergeFeaturesPromptFormatting.model_json_schema
+      ~MergeFeaturesPromptFormatting.model_parametrized_name
+      ~MergeFeaturesPromptFormatting.model_post_init
+      ~MergeFeaturesPromptFormatting.model_rebuild
+      ~MergeFeaturesPromptFormatting.model_validate
+      ~MergeFeaturesPromptFormatting.model_validate_json
+      ~MergeFeaturesPromptFormatting.model_validate_strings
+      ~MergeFeaturesPromptFormatting.parse_file
+      ~MergeFeaturesPromptFormatting.parse_obj
+      ~MergeFeaturesPromptFormatting.parse_raw
+      ~MergeFeaturesPromptFormatting.schema
+      ~MergeFeaturesPromptFormatting.schema_json
+      ~MergeFeaturesPromptFormatting.update_forward_refs
+      ~MergeFeaturesPromptFormatting.validate
+      ~MergeFeaturesPromptFormatting.values
+   
+   

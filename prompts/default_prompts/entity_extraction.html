@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entity extraction &mdash; GraphRAGZen 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/sphinx_rtd_size.css?v=8f58cd29" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx_collapse.css?v=226d88b4" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Summarization" href="summarization_prompt.html" />
+    <link rel="prev" title="Default Prompts" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GraphRAGZen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../motivation/index.html">Motivation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graphzen_ideology/index.html">GraphRAGZen ideology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../graphragzen_concepts/index.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo/index.html">TODO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Prompts</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Default Prompts</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Entity extraction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#entity-extraction-prompt">ENTITY_EXTRACTION_PROMPT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continue-prompt">CONTINUE_PROMPT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#loop-prompt">LOOP_PROMPT</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="summarization_prompt.html">Summarization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="querying.html">Querying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../prompt_tuning/index.html">Prompt tuning Prompts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/graphragzen.html">graphragzen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GraphRAGZen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Default Prompts</a> &raquo;</li>
+        
+      <li>Entity extraction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/prompts/default_prompts/entity_extraction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="entity-extraction">
+<span id="entity-extraction-prompt-label"></span><h1>Entity extraction<a class="headerlink" href="#entity-extraction" title="Link to this heading"></a></h1>
+<section id="entity-extraction-prompt">
+<h2>ENTITY_EXTRACTION_PROMPT<a class="headerlink" href="#entity-extraction-prompt" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+You are an intelligent assistant that helps a human to analyze the information in a text document and extract a knowledg graph from it. A knowledge graph consists of nodes and their edges (relationships between the nodes in the graph).
+
+-Goal-
+Given a text document that is potentially relevant to this activity and a list of categories, identify all nodes of those categories from the text and all edges among the identified nodes.
+
+-Steps-
+1. Identify all nodes. For each identified node, extract the following information:
+- name: Name of the node, capitalized
+- category: One of the following categories: [{entity_categories}]
+- description: Short, comprehensive description of the node&#39;s attributes and activities
+Format each node as a JSON with the following format:
+{{&quot;type&quot;: &quot;node&quot;, &quot;name&quot;: &lt;name&gt;, &quot;category&quot;: &lt;category&gt;, &quot;description&quot;: &lt;description&gt;}}
+
+2. From the nodes identified in step 1, identify all pairs of (source_node, target_node) that are *clearly related* to each other.
+For each edge, extract the following information:
+- source: name of the source node, as identified in step 1
+- target: name of the target node, as identified in step 1
+- description: Short explanation as to why you think the source node and the target node are related to each other
+- weight: a numeric score indicating strength of the edge between the source node and target node
+Format each edge as a JSON with the following format:
+{{&quot;type&quot;: &quot;edge&quot;, &quot;source&quot;: &lt;source&gt;, &quot;target&quot;: &lt;target&gt;, &quot;description&quot;: &lt;description&gt;, &quot;weight&quot;: &lt;weight&gt;}}
+
+3. Return output in English as a single list of all JSON entities and relationships identified in steps 1 and 2.
+
+######################
+-Examples-
+######################
+Example 1:
+
+Entity_categories: [person, technology, mission, organization, location]
+Text:
+while Alex clenched his jaw, the buzz of frustration dull against the backdrop of Taylor&#39;s authoritarian certainty. It was this competitive undercurrent that kept him alert, the sense that his and Jordan&#39;s shared commitment to discovery was an unspoken rebellion against Cruz&#39;s narrowing vision of control and order.
+
+Then Taylor did something unexpected. They paused beside Jordan and, for a moment, observed the device with something akin to reverence. “If this tech can be understood...&quot; Taylor said, their voice quieter, &quot;It could change the game for us. For all of us.”
+
+The underlying dismissal earlier seemed to falter, replaced by a glimpse of reluctant respect for the gravity of what lay in their hands. Jordan looked up, and for a fleeting heartbeat, their eyes locked with Taylor&#39;s, a wordless clash of wills softening into an uneasy truce.
+
+It was a small transformation, barely perceptible, but one that Alex noted with an inward nod. They had all been brought here by different paths
+################
+Output:
+[
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;ALEX&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Alex is a character who experiences frustration and is observant of the dynamics among other characters.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;TAYLOR&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Taylor is portrayed with authoritarian certainty and shows a moment of reverence towards a device, indicating a change in perspective.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;JORDAN&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Jordan shares a commitment to discovery and has a significant interaction with Taylor regarding a device.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;CRUZ&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Cruz is associated with a vision of control and order, influencing the dynamics among other characters.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;THE DEVICE&quot;,
+    &quot;category&quot;: &quot;TECHNOLOGY&quot;,
+    &quot;description&quot;: &quot;The Device is central to the story, with potential game-changing implications, and is revered by Taylor.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;ALEX&quot;,
+    &quot;target&quot;: &quot;TAYLOR&quot;,
+    &quot;descripton&quot;: &quot;Alex is affected by Taylor&#39;s authoritarian certainty and observes changes in Taylor&#39;s attitude towards the device.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;ALEX&quot;,
+    &quot;target&quot;: &quot;JORDAN&quot;,
+    &quot;descripton&quot;: &quot;Alex and Jordan share a commitment to discovery, which contrasts with Cruz&#39;s vision.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;TAYLOR&quot;,
+    &quot;target&quot;: &quot;JORDAN&quot;,
+    &quot;descripton&quot;: &quot;Taylor and Jordan interact directly regarding the device, leading to a moment of mutual respect and an uneasy truce.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;JORDAN&quot;,
+    &quot;target&quot;: &quot;CRUZ&quot;,
+    &quot;descripton&quot;: &quot;Jordan&#39;s commitment to discovery is in rebellion against Cruz&#39;s vision of control and order.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;TAYLOR&quot;,
+    &quot;target&quot;: &quot;THE DEVICE&quot;,
+    &quot;descripton&quot;: &quot;Taylor shows reverence towards the device, indicating its importance and potential impact.&quot;,
+    &quot;weight&quot;: 1.0
+  }}
+]
+#############################
+Example 2:
+
+Entity_categories: [person, technology, mission, organization, location]
+Text:
+They were no longer mere operatives; they had become guardians of a threshold, keepers of a message from a realm beyond stars and stripes. This elevation in their mission could not be shackled by regulations and established protocols—it demanded a new perspective, a new resolve.
+
+Tension threaded through the dialogue of beeps and static as communications with Washington buzzed in the background. The team stood, a portentous air enveloping them. It was clear that the decisions they made in the ensuing hours could redefine humanity&#39;s place in the cosmos or condemn them to ignorance and potential peril.
+
+Their connection to the stars solidified, the group moved to address the crystallizing warning, shifting from passive recipients to active participants. Mercer&#39;s latter instincts gained precedence— the team&#39;s mandate had evolved, no longer solely to observe and report but to interact and prepare. A metamorphosis had begun, and Operation: Dulce hummed with the newfound frequency of their daring, a tone set not by the earthly
+#############
+Output:
+[
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;WASHINGTON&quot;,
+    &quot;category&quot;: &quot;LOCATION&quot;,
+    &quot;description&quot;: &quot;Washington is a location where communications are being received, indicating its importance in the decision-making process.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;OPERATION: DULCE&quot;,
+    &quot;category&quot;: &quot;MISSION&quot;,
+    &quot;description&quot;: &quot;Operation: Dulce is described as a mission that has evolved to interact and prepare, indicating a significant shift in objectives and activities.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;THE TEAM&quot;,
+    &quot;category&quot;: &quot;ORGANIZATION&quot;,
+    &quot;description&quot;: &quot;The team is portrayed as a group of individuals who have transitioned from passive observers to active participants in a mission, showing a dynamic change in their role.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;THE TEAM&quot;,
+    &quot;target&quot;: &quot;WASHINGTON&quot;,
+    &quot;descripton&quot;: &quot;The team receives communications from Washington, which influences their decision-making process.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;THE TEAM&quot;,
+    &quot;target&quot;: &quot;OPERATION: DULCE&quot;,
+    &quot;descripton&quot;: &quot;The team is directly involved in Operation: Dulce, executing its evolved objectives and activities.&quot;,
+    &quot;weight&quot;: 1.0
+  }}
+]
+#############################
+Example 3:
+
+Entity_categories: [person, role, technology, organization, event, location, concept]
+Text:
+their voice slicing through the buzz of activity. &quot;Control may be an illusion when facing an intelligence that literally writes its own rules,&quot; they stated stoically, casting a watchful eye over the flurry of data.
+
+&quot;It&#39;s like it&#39;s learning to communicate,&quot; offered Sam Rivera from a nearby interface, their youthful energy boding a mix of awe and anxiety. &quot;This gives talking to strangers&#39; a whole new meaning.&quot;
+
+Alex surveyed his team—each face a study in concentration, determination, and not a small measure of trepidation. &quot;This might well be our first contact,&quot; he acknowledged, &quot;And we need to be ready for whatever answers back.&quot;
+
+Together, they stood on the edge of the unknown, forging humanity&#39;s response to a message from the heavens. The ensuing silence was palpable—a collective introspection about their role in this grand cosmic play, one that could rewrite human history.
+
+The encrypted dialogue continued to unfold, its intricate patterns showing an almost uncanny anticipation
+#############
+Output:
+[
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;SAM RIVERA&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Sam Rivera is a member of a team working on communicating with an unknown intelligence, showing a mix of awe and anxiety.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;ALEX&quot;,
+    &quot;category&quot;: &quot;PERSON&quot;,
+    &quot;description&quot;: &quot;Alex is the leader of a team attempting first contact with an unknown intelligence, acknowledging the significance of their task.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;CONTROL&quot;,
+    &quot;category&quot;: &quot;CONCEPT&quot;,
+    &quot;description&quot;: &quot;Control refers to the ability to manage or govern, which is challenged by an intelligence that writes its own rules.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;INTELLIGENCE&quot;,
+    &quot;category&quot;: &quot;CONCEPT&quot;,
+    &quot;description&quot;: &quot;Intelligence here refers to an unknown entity capable of writing its own rules and learning to communicate.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;FIRST CONTACT&quot;,
+    &quot;category&quot;: &quot;EVENT&quot;,
+    &quot;description&quot;: &quot;First Contact is the potential initial communication between humanity and an unknown intelligence.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;node&quot;,
+    &quot;name&quot;: &quot;HUMANITY&#39;S RESPONSE&quot;,
+    &quot;category&quot;: &quot;EVENT&quot;,
+    &quot;description&quot;: &quot;Humanity&#39;s Response is the collective action taken by Alex&#39;s team in response to a message from an unknown intelligence.&quot;
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;SAM RIVERA&quot;,
+    &quot;target&quot;: &quot;INTELLIGENCE&quot;,
+    &quot;descripton&quot;: &quot;Sam Rivera is directly involved in the process of learning to communicate with the unknown intelligence.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;ALEX&quot;,
+    &quot;target&quot;: &quot;FIRST CONTACT&quot;,
+    &quot;descripton&quot;: &quot;Alex leads the team that might be making the First Contact with the unknown intelligence.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;ALEX&quot;,
+    &quot;target&quot;: &quot;HUMANITY&#39;S RESPONSE&quot;,
+    &quot;descripton&quot;: &quot;Alex and his team are the key figures in Humanity&#39;s Response to the unknown intelligence.&quot;,
+    &quot;weight&quot;: 1.0
+  }},
+  {{
+    &quot;type&quot;: &quot;edge&quot;,
+    &quot;source&quot;: &quot;CONTROL&quot;,
+    &quot;target&quot;: &quot;INTELLIGENCE&quot;,
+    &quot;descripton&quot;: &quot;The concept of Control is challenged by the Intelligence that writes its own rules.&quot;,
+    &quot;weight&quot;: 1.0
+  }}
+]
+#############################
+-Real Data-
+######################
+Entity_categories: {entity_categories}
+Text: {input_text}
+######################
+Output:
+</pre></div>
+</div>
+</section>
+<section id="continue-prompt">
+<h2>CONTINUE_PROMPT<a class="headerlink" href="#continue-prompt" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MANY</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="n">edges</span> <span class="n">were</span> <span class="n">missed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">last</span> <span class="n">extraction</span><span class="o">.</span>  <span class="n">Add</span> <span class="n">only</span> <span class="n">THE</span> <span class="n">MISSING</span> <span class="n">entities</span>
+
+    
+    <span class="o">-</span><span class="n">Steps</span><span class="o">-</span>
+    <span class="mf">1.</span> <span class="n">Identify</span> <span class="nb">all</span> <span class="n">MISSING</span> <span class="n">nodes</span><span class="o">.</span> <span class="n">For</span> <span class="n">each</span> <span class="n">node</span><span class="p">,</span> <span class="n">extract</span> <span class="n">the</span> <span class="n">following</span> <span class="n">information</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">node</span><span class="p">,</span> <span class="n">capitalized</span>
+    <span class="o">-</span> <span class="n">category</span><span class="p">:</span> <span class="n">One</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">categories</span><span class="p">:</span> <span class="p">[{</span><span class="n">entity_categories</span><span class="p">}]</span>
+    <span class="o">-</span> <span class="n">description</span><span class="p">:</span> <span class="n">Comprehensive</span> <span class="n">description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">node</span><span class="s1">&#39;s attributes and activities</span>
+    <span class="n">Format</span> <span class="n">each</span> <span class="n">node</span> <span class="k">as</span> <span class="n">a</span> <span class="n">JSON</span> <span class="k">with</span> <span class="n">the</span> <span class="n">following</span> <span class="nb">format</span><span class="p">:</span>
+    <span class="p">{{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">category</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">description</span><span class="o">&gt;</span><span class="p">}}</span>
+
+    <span class="mf">2.</span> <span class="n">From</span> <span class="n">the</span> <span class="n">nodes</span> <span class="n">identified</span> <span class="ow">in</span> <span class="n">step</span> <span class="mi">1</span><span class="p">,</span> <span class="n">identify</span> <span class="nb">all</span> <span class="n">MISSING</span> <span class="n">pairs</span> <span class="n">of</span> <span class="p">(</span><span class="n">source_node</span><span class="p">,</span> <span class="n">target_node</span><span class="p">)</span> <span class="n">that</span> <span class="n">are</span> <span class="o">*</span><span class="n">clearly</span> <span class="n">related</span><span class="o">*</span> <span class="n">to</span> <span class="n">each</span> <span class="n">other</span><span class="o">.</span>
+    <span class="n">For</span> <span class="n">each</span> <span class="n">edge</span><span class="p">,</span> <span class="n">extract</span> <span class="n">the</span> <span class="n">following</span> <span class="n">information</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">source</span><span class="p">:</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">source</span> <span class="n">node</span><span class="p">,</span> <span class="k">as</span> <span class="n">identified</span> <span class="ow">in</span> <span class="n">step</span> <span class="mi">1</span>
+    <span class="o">-</span> <span class="n">target</span><span class="p">:</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">target</span> <span class="n">node</span><span class="p">,</span> <span class="k">as</span> <span class="n">identified</span> <span class="ow">in</span> <span class="n">step</span> <span class="mi">1</span>
+    <span class="o">-</span> <span class="n">description</span><span class="p">:</span> <span class="n">explanation</span> <span class="k">as</span> <span class="n">to</span> <span class="n">why</span> <span class="n">you</span> <span class="n">think</span> <span class="n">the</span> <span class="n">source</span> <span class="n">node</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">target</span> <span class="n">node</span> <span class="n">are</span> <span class="n">related</span> <span class="n">to</span> <span class="n">each</span> <span class="n">other</span>
+    <span class="o">-</span> <span class="n">weight</span><span class="p">:</span> <span class="n">a</span> <span class="n">numeric</span> <span class="n">score</span> <span class="n">indicating</span> <span class="n">strength</span> <span class="n">of</span> <span class="n">the</span> <span class="n">edge</span> <span class="n">between</span> <span class="n">the</span> <span class="n">source</span> <span class="n">node</span> <span class="ow">and</span> <span class="n">target</span> <span class="n">node</span>
+    <span class="n">Format</span> <span class="n">each</span> <span class="n">edge</span> <span class="k">as</span> <span class="n">a</span> <span class="n">JSON</span> <span class="k">with</span> <span class="n">the</span> <span class="n">following</span> <span class="nb">format</span><span class="p">:</span>
+    <span class="p">{{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;edge&quot;</span><span class="p">,</span> <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">target</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">description</span><span class="o">&gt;</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">weight</span><span class="o">&gt;</span><span class="p">}}</span>
+</pre></div>
+</div>
+</section>
+<section id="loop-prompt">
+<h2>LOOP_PROMPT<a class="headerlink" href="#loop-prompt" title="Link to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">It</span> <span class="n">appears</span> <span class="n">some</span> <span class="n">nodes</span> <span class="ow">and</span> <span class="n">edges</span> <span class="n">may</span> <span class="n">have</span> <span class="n">still</span> <span class="n">been</span> <span class="n">missed</span><span class="o">.</span>
+<span class="n">Answer</span> <span class="n">YES</span> <span class="o">|</span> <span class="n">NO</span> <span class="k">if</span> <span class="n">there</span> <span class="n">are</span> <span class="n">still</span> <span class="n">nodes</span> <span class="ow">or</span> <span class="n">edges</span> <span class="n">that</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">added</span><span class="o">.</span>
+<span class="n">Do</span> <span class="ow">not</span> <span class="n">explain</span> <span class="n">yourself</span><span class="p">,</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">extract</span> <span class="n">more</span> <span class="n">entities</span><span class="p">,</span> <span class="n">answer</span> <span class="n">only</span> <span class="n">either</span> <span class="n">YES</span> <span class="o">|</span> <span class="n">NO</span><span class="p">:</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Default Prompts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="summarization_prompt.html" class="btn btn-neutral float-right" title="Summarization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ben Steemers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

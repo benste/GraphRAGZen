@@ -1,0 +1,21 @@
+graphragzen.prompts.default\_prompts.entity\_extraction\_prompts
+================================================================
+
+.. rubric:: Description
+
+.. automodule:: graphragzen.prompts.default_prompts.entity_extraction_prompts
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

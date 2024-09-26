@@ -1,0 +1,6 @@
+graphragzen.query.get\_context.semantic\_similar\_entities
+==========================================================
+
+.. currentmodule:: graphragzen.query.get_context
+
+.. autofunction:: semantic_similar_entities

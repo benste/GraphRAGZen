@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.entities.create\_entity\_extraction\_prompt
+======================================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.entities
+
+.. autofunction:: create_entity_extraction_prompt

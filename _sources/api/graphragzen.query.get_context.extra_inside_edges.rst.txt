@@ -1,0 +1,6 @@
+graphragzen.query.get\_context.extra\_inside\_edges
+===================================================
+
+.. currentmodule:: graphragzen.query.get_context
+
+.. autofunction:: extra_inside_edges

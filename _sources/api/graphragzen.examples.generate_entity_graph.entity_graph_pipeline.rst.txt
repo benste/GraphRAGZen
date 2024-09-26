@@ -1,0 +1,6 @@
+graphragzen.examples.generate\_entity\_graph.entity\_graph\_pipeline
+====================================================================
+
+.. currentmodule:: graphragzen.examples.generate_entity_graph
+
+.. autofunction:: entity_graph_pipeline

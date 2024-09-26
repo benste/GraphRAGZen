@@ -1,0 +1,6 @@
+graphragzen.prompt\_tuning.entities.generate\_entity\_relationship\_examples
+============================================================================
+
+.. currentmodule:: graphragzen.prompt_tuning.entities
+
+.. autofunction:: generate_entity_relationship_examples
