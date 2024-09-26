@@ -166,7 +166,7 @@ def find_similar_nodes(
     return merge_report
 
 
-def merge_nodes(
+def _merge_nodes(
     graph: nx.Graph, nodes_to_merge: List[Tuple[str, str]], feature_delimiter: str = "\n"
 ) -> nx.Graph:
     """Merge nodes in a graph; transfers edges from node2 to node1 and appending the features
@@ -238,17 +238,17 @@ def merge_similar_graph_nodes(
     feature_delimiter: str = "\n",
     dry_run: bool = False,
 ) -> Tuple[nx.Graph, pd.DataFrame]:
-    """Merge nodes in a graph that are very similar to eachother, using text embeddings of the node
+    """Merge nodes in a graph that are very similar to each other, using text embeddings of the node
     names and selected features.
 
     Args:
         graph (nx.Graph): The graph to check for similar nodes.
-        embedding_model (BaseEmbedder): The model to embed text features of the nodes
+        embedding_model (BaseEmbedder): The model to embed text features of the nodes.
         merge_report (Optional[pd.DataFrame], optional): If dry_run is set to True this function
-            returns a report stating which nodes would me merged. When supplying this report the
-            nodes in the report will be merged, no new similar nodes will be searched. This is
-            usefull if you want to check what nodes will be merges beforehand and make adjustments
-            if necessary. Defaults to None.
+            returns a report stating which nodes would me merged. When supplying this report it will
+            be used to merge nodes, no new similar nodes will be searched. This is usefull if you
+            want to check what nodes will be merges beforehand and make adjustments if necessary.
+            Defaults to None.
         extra_features_to_compare (list, optional): Other than the name of the nodes, which features
             should be text embedded and compared for similarity. Defaults to ["description"].
         min_similarity (float, optional): The minimum similarity to consider two nodes similar.
@@ -300,6 +300,6 @@ def merge_similar_graph_nodes(
         return graph, merge_report
 
     # Merge nodes
-    graph = merge_nodes(graph, merge_report.nodes.tolist(), feature_delimiter=feature_delimiter)
+    graph = _merge_nodes(graph, merge_report.nodes.tolist(), feature_delimiter=feature_delimiter)
 
     return graph, merge_report
