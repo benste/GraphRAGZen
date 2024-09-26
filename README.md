@@ -35,3 +35,25 @@ is, the python function is king, and the functions are named and located intuiti
 
 When that is established we have a toolbox that can be used as seen fit
 by developers. It is modular, extendable, maintainable and intuitive.
+
+
+# Features
+**Knowledge graph generation**
+- Extract nodes and edges from your supplied documents
+- Merge the nodes and edges that are found multiple times over your documents
+- Create clusters of nodes and describe each cluster
+
+**Text Embedding**
+- Embed any graph feature that is a string, this is used to find the parts of the graph that are relevant to a query
+- Qdrant local vector database for storing and vector search
+
+**LLM interaction**
+- Local in-memory LLM's using llama-cpp-python
+- LLM's running on servers with OpenAI API compatible endpoints
+- Async calls to LLM's running on servers
+- Structured output, i.e. force json output, optionally with a specific structure ([these](https://platform.openai.com/docs/guides/structured-outputs/examples) examples explains it well)
+
+**Querying**
+- Create a prompt from the nodes and edges relevant to a query
+- Optionally add cluster descriptions relevant to the query
+- Optionally add the source documents used to create the most relevant nodes
