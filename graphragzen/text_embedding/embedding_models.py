@@ -8,16 +8,22 @@ from sentence_transformers import SentenceTransformer
 
 class BaseEmbedder(ABC):
 
+    vector_size: float = 0
+
     @abstractmethod
     def embed(
-        self, text: Union[str, List[str]], task: Optional[str] = "embed_document"
+        self,
+        text: Union[str, List[str]],
+        task: Optional[str] = "embed_document",
+        show_progress_bar: bool = False,
     ) -> np.ndarray:
         """Text embed strings
 
         Args:
             text (Union[str, List[str]]): String(s) to embed
-            task (Optional[str], optional): Some embedding models create different vectors for
+            task (str, optional): Some embedding models create different vectors for
                 different tasks.
+            show_progress_bar (bool, optional): If True shows a progress bar. Defaults to False.
 
         Returns:
             np.array
@@ -26,6 +32,9 @@ class BaseEmbedder(ABC):
 
 
 class NomicTextEmbedder(BaseEmbedder):
+
+    vector_size: float = 768
+
     def __init__(self, huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5"):
         """Initialize the nomic text embedder.
 
@@ -48,16 +57,20 @@ class NomicTextEmbedder(BaseEmbedder):
         }
 
     def embed(
-        self, text: Union[str, List[str]], task: Optional[str] = "embed_document"
+        self,
+        text: Union[str, List[str]],
+        task: Optional[str] = "embed_document",
+        show_progress_bar: bool = False,
     ) -> np.ndarray:
         """Text embed strings for a specific task.
 
         Args:
             text (Union[str, List[str]]): String(s) to embed
-            task (Optional[str], optional): Should be any of the following, the nomic embedder will
+            task (str, optional): Should be any of the following, the nomic embedder will
                 create vector appropriate to the task:
                 ["embed_document", "embed_query", "clustering", "classification"]. Defaults to
                 "embed_document".
+            show_progress_bar (bool, optional): If True shows a progress bar. Defaults to False.
 
         Returns:
             np.array
@@ -79,4 +92,4 @@ specific embedding. See https://huggingface.co/nomic-ai/nomic-embed-text-v1.5
 """
             )
 
-        return self.model.encode(text)  # type: ignore
+        return self.model.encode(text, show_progress_bar=True)  # type: ignore

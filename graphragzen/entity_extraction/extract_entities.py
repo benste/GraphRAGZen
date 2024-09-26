@@ -156,7 +156,7 @@ def raw_entities_to_graph(
     ):
         source_id = str(source_id)
 
-        # This should return a list of dictionaries, on dict for each entity in the string
+        # This should return a list of dictionaries, one dict for each entity in the string
         structured_data = raw_entities_to_structure(raw_extraction_strings)
 
         for entity in structured_data:

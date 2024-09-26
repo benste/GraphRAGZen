@@ -6,12 +6,12 @@ import networkx as nx
 from graphragzen import (
     clustering,
     entity_extraction,
-    feature_merging,
     load_documents,
+    merge,
     preprocessing,
     text_embedding,
 )
-from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
+from graphragzen.llm import BaseLlamaCpp, OpenAICompatibleClient, Phi35MiniGGUF
 
 
 def entity_graph_pipeline(
@@ -32,9 +32,9 @@ def entity_graph_pipeline(
 
     # # Communicate with an LLM running on a server
     # llm = OpenAICompatibleClient(
-    #     base_url = "http://localhost:8081",
-    #     context_size = 32768,
-    #     persistent_cache_file="./phi35_mini_instruct_persistent_cache.yaml"
+    #     base_url="http://localhost:8081",
+    #     context_size=32768,
+    #     persistent_cache_file="./v6-Finch_7B_persistent_cache.yaml",
     # )
 
     # Load text embedder
@@ -42,7 +42,7 @@ def entity_graph_pipeline(
 
     # Create vector DB (nomic-embed-text-v1.5 creates vectors of size 768)
     print("Loading vector database")
-    vector_db = text_embedding.QdrantLocalVectorDatabase(vector_size=768)
+    vector_db = text_embedding.QdrantLocalVectorDatabase(vector_size=embedder.vector_size)
 
     # Load raw documents
     print("Loading raw documents")
@@ -77,19 +77,20 @@ def entity_graph_pipeline(
     print("Creating graph from raw entities")
     entity_graph = entity_extraction.raw_entities_to_graph(raw_entities)
 
+    # Merge nodes that are very similar to eachother (e.g. 'Pierce Brosnan' and 'pierce_brosnan')
+    entity_graph, _ = merge.merge_similar_graph_nodes(entity_graph, embedder)
+
     # Each node and edge could be found multiple times in the documents and thus have
     # multiple descriptions. We'll summarize these into one description per node and edge
     print("Summarizing entity descriptions")
     if custom_summarization_prompt:
         # Custom prompt if available
-        prompt_config = feature_merging.MergeFeaturesPromptConfig(
-            prompt=custom_summarization_prompt
-        )
+        prompt_config = merge.MergeFeaturesPromptConfig(prompt=custom_summarization_prompt)
     else:
         # default prompt
-        prompt_config = feature_merging.MergeFeaturesPromptConfig()
+        prompt_config = merge.MergeFeaturesPromptConfig()
 
-    entity_graph = feature_merging.merge_graph_features(
+    entity_graph = merge.merge_graph_features(
         entity_graph, llm, prompt=prompt_config, feature="description", how="LLM"
     )
 
@@ -124,9 +125,9 @@ def entity_graph_pipeline(
 
 
 # # Uncomment and run the following to create a knowledge graph
-
-# # Load custom prompts if available
 # outfol = "graphtest2"
+
+# Load custom prompts if available
 # with open(os.path.join(outfol, "Custom_Entity_Extraction_Prompt.txt"), "r") as text_file:
 #     entity_extraction_prompt = text_file.read()
 
