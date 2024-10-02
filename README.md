@@ -40,7 +40,8 @@ by developers. It is modular, extendable, maintainable and intuitive.
 # Features
 **Knowledge graph generation**
 - Extract nodes and edges from your supplied documents
-- Merge the nodes and edges that are found multiple times over your documents
+- Merge nodes that are semantically similar, e.g. 'small stone' and 'little stone'
+- Merge the nodes and edges that are found multiple times between different documents
 - Create clusters of nodes and describe each cluster
 
 **Text Embedding**
