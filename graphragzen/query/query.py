@@ -2,13 +2,16 @@ from typing import Optional
 
 import networkx as nx
 import pandas as pd
-from graphragzen.prompts.default_prompts.local_search_prompts import LOCAL_SEARCH_PROMPT
+from graphragzen.prompts.default_prompts.local_graphrag_search_prompts import (
+    LOCAL_GRAPHRAG_SEARCH_PROMPT,
+)
+from graphragzen.prompts.default_prompts.local_rag_search_prompts import LOCAL_RAG_SEARCH_PROMPT
 from graphragzen.query import get_context
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
 from graphragzen.text_embedding.vector_databases import VectorDatabase
 
 
-class PromptBuilder:
+class GraphRAGPromptBuilder:
     """
     A class used to build a prompt based on graph data, vector searches, and additional documents or
     cluster reports.
@@ -58,7 +61,7 @@ class PromptBuilder:
     def build_prompt(
         self,
         query: str,
-        prompt: str = LOCAL_SEARCH_PROMPT,
+        prompt: str = LOCAL_GRAPHRAG_SEARCH_PROMPT,
         score_threshold: float = 0.0,
         top_k_similar_entities: int = 10,
         top_k_inside_edges: int = 3,
@@ -95,12 +98,12 @@ class PromptBuilder:
                 occurence, followed by rank, to include in the prompt. Defaults to 3.
             top_k_source_documents (int, optional): The number of top source documents by occurence
                 to include in the prompt. Defaults to 3.
-            source_documents_id_key (str): The column name in `source_documents` that represents
-                unique document IDs. Defaults to "chunk_id".
-            source_documents_source_key (str): The column name in `source_documents` containing the
-                source text. Defaults to "chunk".
-            source_documents_feature_delimiter (str): The delimiter used to split the "source_id"
-                values in the Graph metadata. Default is newline.
+            source_documents_id_key (str, optional): The column name in `source_documents` that
+                represents unique document IDs. Defaults to "chunk_id".
+            source_documents_source_key (str, optional): The column name in `source_documents`
+                containing the source text. Defaults to "chunk".
+            source_documents_feature_delimiter (str, optional): The delimiter used to split the
+                "source_id" values in the Graph metadata. Default is newline.
 
         Returns:
             str: The final constructed prompt with context data and the original query formatted
@@ -176,5 +179,92 @@ class PromptBuilder:
 
         context_data += f"-----------ENTITIES-----------\n{node_table}"
         context_data += f"-----------RELATIONSHIPS-----------\n{edge_table}"
+
+        return prompt.format(context_data=context_data, query=query)
+
+
+class RAGPromptBuilder:
+    """
+    A class used to build a prompt based on graph data, vector searches, and additional documents or
+    cluster reports.
+
+    Attributes:
+        embedding_model (BaseEmbedder): An embedding model used to generate embeddings for text and
+            queries.
+        vector_db (VectorDatabase): A client for interacting with the vector database.
+        graph (nx.Graph): A graph containing nodes and edges that represent entities and their
+            relationships.
+        source_documents (Optional[pd.DataFrame]): A DataFrame containing source documents for
+            additional context.
+        cluster_report (Optional[pd.DataFrame]): A DataFrame containing cluster reports for
+            additional context.
+    """
+
+    def __init__(
+        self,
+        embedding_model: BaseEmbedder,
+        vector_db: VectorDatabase,
+    ) -> None:
+        """Initializes the PromptBuilder instance with the necessary components.
+
+        Args:
+            embedding_model (BaseEmbedder): An embedding model to generate embeddings for text and
+                queries.
+            vector_db (VectorDatabase):
+        """
+
+        self.embedding_model = embedding_model
+        self.vector_db = vector_db
+
+    def build_prompt(
+        self,
+        query: str,
+        prompt: str = LOCAL_RAG_SEARCH_PROMPT,
+        score_threshold: float = 0.0,
+        top_k_similar_documents: int = 5,
+        vector_database_entity_type_key: str = "source_document",
+        vector_database_documents_key: str = "source_document",
+    ) -> str:
+        """
+        Builds a prompt based on the query, graph data, vector searches, and additional documents or
+        cluster reports.
+
+        Args:
+            query (str): The query for which a prompt is being constructed.
+            prompt (str, optional): The base prompt template to be filled with the context data and
+                query. Defaults to LOCAL_SEARCH_PROMPT.
+            score_threshold (float, optional): The minimum score threshold for including vector
+                search results. Entities with scores below this threshold are excluded. Defaults to
+                0.0.
+            top_k_similar_documents (int, optional): The number of top similar documents (retreived
+                through vector search) to include in the prompt. Defaults to 5.
+            vector_database_entity_type_key (str, optional): The 'entity_type' value used in the
+                vector database to identify which vecotr belongs to the source documents.
+                Defaults to 'source_document'.
+            vector_database_documents_key (str, optional): The key that contains the source document
+                in the vector's metadata in the vector database. Defaults to 'source_document'.
+
+        Returns:
+            str: The final constructed prompt with context data and the original query formatted
+            within the prompt template.
+        """
+
+        similar_sources = get_context.semantic_similar_entities(
+            embedding_model=self.embedding_model,
+            vector_db=self.vector_db,
+            query=query,
+            k=top_k_similar_documents,
+            entity_types=[vector_database_entity_type_key],
+            features_to_match=[vector_database_entity_type_key],
+            score_threshold=score_threshold,
+        )
+
+        # BUILD PROMPT
+        context_data = "\n".join(
+            [
+                f"SOURCE {i+1}:\n{source[vector_database_documents_key]}\n"
+                for i, source in enumerate(similar_sources)
+            ]
+        )
 
         return prompt.format(context_data=context_data, query=query)
