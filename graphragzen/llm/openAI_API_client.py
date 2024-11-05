@@ -1,13 +1,12 @@
 import asyncio
 import json
 import os
+import time
 from typing import Any, List, Optional, Union
-from urllib.parse import urljoin
 
 import jsonref
-import requests
-import tiktoken
 from graphragzen.llm.base_llm import LLM
+from graphragzen.llm.custom_tokenizers import ApiTokenizer, TikTokenTokenizer
 from openai import AsyncOpenAI, OpenAI
 from pydantic._internal._model_construction import ModelMetaclass
 from transformers import AutoTokenizer
@@ -26,9 +25,10 @@ class OpenAICompatibleClient(LLM):
         openai_project_id: Optional[str] = None,
         hf_tokenizer_URI: Optional[str] = None,
         max_retries: int = 3,
+        rate_limit: float = 8,
         use_cache: bool = True,
         cache_persistent: bool = True,
-        persistent_cache_file: str = "./phi35_mini_persistent_cache.yaml",
+        persistent_cache_file: str = "./llm_persistent_cache.yaml",
     ) -> None:
         """
         Args:
@@ -47,6 +47,7 @@ class OpenAICompatibleClient(LLM):
                 the API will be tested on the ability to tokenize. If that also fails a tiktoken is
                 initiated.
             max_retries (optional, int): Number of times to retry on timeout. Defaults to 3.
+            rate_limit (optional, float): Maximum number of calls per second.
             use_cache (bool, optional): Use a cache to find output for previously processed inputs
                 in stead of re-generating output from the input. Default to True.
             cache_persistent (bool, optional): Append the cache to a file on disk so it can be
@@ -57,6 +58,7 @@ class OpenAICompatibleClient(LLM):
 
         self.context_size = context_size
         self.model_name = model_name
+        self.rate_limit = rate_limit
         self.use_cache = use_cache
         self.cache_persistent = cache_persistent
         self.persistent_cache_file = persistent_cache_file
@@ -218,10 +220,13 @@ class OpenAICompatibleClient(LLM):
             str: Generated content
         """
 
-        cache_results = self.check_cache(str(chat))
+        cache_results = self.check_cache(chat, input_ischat=True)
         if cache_results:  # Check cache first
             results = cache_results
         else:  # Use LLM if not in cache
+            # Make sure we don't exceed the request rate
+            self._sleep_if_rate_limited()
+
             # Make sure max_tokens is set correctly
             if max_tokens < 0:
                 max_tokens = 10**10
@@ -245,7 +250,7 @@ class OpenAICompatibleClient(LLM):
                 results = results.choices[0].message.content  # type: ignore
 
             # And add the result to cache
-            self.write_item_to_cache(str(chat), results)
+            self.write_item_to_cache(chat, results, input_ischat=True)
 
         return results
 
@@ -274,10 +279,13 @@ class OpenAICompatibleClient(LLM):
             str: Generated content
         """
 
-        cache_results = self.check_cache(str(chat))
+        cache_results = self.check_cache(chat, input_ischat=True)
         if cache_results:  # Check cache first
             content = cache_results
         else:  # Use LLM if not in cache
+            # Make sure we don't exceed the rate limit
+            time.sleep(1 / self.rate_limit)
+
             # Make sure max_tokens is set correctly
             if max_tokens < 0:
                 max_tokens = 10**10
@@ -298,7 +306,7 @@ class OpenAICompatibleClient(LLM):
             content = results.choices[0].message.content  # type: ignore
 
             # And add the result to cache
-            self.write_item_to_cache(str(chat), content)
+            self.write_item_to_cache(chat, content, input_ischat=True)
 
         return content
 
@@ -354,6 +362,9 @@ class OpenAICompatibleClient(LLM):
         Returns:
             str: Untokenized string
         """
+
+        if not tokens:
+            return ""
 
         return self.tokenizer.convert_tokens_to_string(tokens)
 
@@ -461,33 +472,3 @@ class OllamaClient(OpenAICompatibleClient):
             output_structure = {"type": "json_object"}
 
         return await super().a_run_chat(chat, max_tokens, output_structure, stream, **kwargs)
-
-
-class ApiTokenizer:
-    """tokenizes and detokenizes using API endpoints"""
-
-    def __init__(self, base_url: str):
-        self.base_url = base_url
-
-    def tokenize(self, content: str, base_url: Optional[str] = None) -> List[int]:
-        base_url = base_url or self.base_url
-        result = requests.post(urljoin(base_url, "tokenize"), json={"content": content})
-        return result.json().get("tokens")
-
-    def convert_tokens_to_string(self, tokens: List[int], base_url: Optional[str] = None) -> str:
-        base_url = base_url or self.base_url
-        result = requests.post(urljoin(base_url, "detokenize"), json={"tokens": tokens})
-        return result.json().get("content")
-
-
-class TikTokenTokenizer:
-    """tokenizes and detokenizes using tiktoken library"""
-
-    def __init__(self, model_name: str):
-        self.encoding = tiktoken.encoding_for_model(model_name)
-
-    def tokenize(self, content: str) -> List[int]:
-        return self.encoding.encode(content)
-
-    def convert_tokens_to_string(self, tokens: List[int]) -> str:
-        return self.encoding.decode(tokens)

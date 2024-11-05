@@ -1,4 +1,5 @@
 import os
+import time
 import warnings
 from abc import ABC, abstractmethod
 from copy import deepcopy
@@ -28,7 +29,10 @@ class LLM(ABC):
     persistent_cache_file = ""
     model_name: Any = None
     tokenizer: Any = None
+    rate_limit: float = 0.0
     chatnames: ChatNames = ChatNames()
+
+    request_time = datetime(1990, 1, 1)
 
     def __init__(self) -> None:
         self._initiate_cache()
@@ -207,29 +211,77 @@ class LLM(ABC):
 
         return formatted_chat
 
-    def check_cache(self, llm_input: str) -> Union[str, None]:
-        """Checks the hash(llm_in) -> llm_out cache and returns stored output if found.
+    def _normalize_chat_for_cache(self, chat: Union[str, list[dict]]) -> Union[list[dict], str]:
+        """Formats the chat with normalized roles so that the cache works between different
+        models.
 
         Args:
-            llm_input (str): To check in cache for existing cached output.
+            chat (Union[str, list[dict]]): in form [{"role": ..., "content": ...},
+                {"role": ..., "content": ... Returns input unchanged if a string is provided
+
+        Returns:
+            Union[list[dict], str]
+        """
+
+        if isinstance(chat, str):
+            return chat
+
+        role_normalization_map = {value: key for key, value in self.chatnames.items()}
+        return [
+            {
+                key: role_normalization_map.get(value, value) if key == "role" else value
+                for key, value in message.items()
+            }
+            for message in chat
+        ]
+
+    def check_cache(
+        self, llm_input: Union[str, list[dict]], input_ischat: bool = False
+    ) -> Union[str, None]:
+        """Checks the hash(llm_input) -> llm_out cache and returns stored output if found.
+
+        Args:
+            llm_input (Union[str, list[dict]]): To check in cache for existing cached output.
+            input_ischat (bool, optional): If the input to check is a chat, the roles are first
+            normalized so that the cache works between different models. Defaults to False.
 
         Returns:
             Union[str, None]
         """
-        if self.cache:
-            return self.cache.get(sha256(llm_input.encode("utf-8")).hexdigest(), None)
+        if isinstance(llm_input, list) and not input_ischat:
+            raise Exception(
+                "Input for cache is not a string, but the input is neither specified as a chat"
+            )
+
+        if input_ischat:
+            llm_input = str(self._normalize_chat_for_cache(llm_input))
+
+        if self.cache and self.use_cache:
+            return self.cache.get(sha256(llm_input.encode("utf-8")).hexdigest(), None)  # type: ignore  # noqa: E501
 
         return None
 
-    def write_item_to_cache(self, llm_input: str, llm_output: str) -> None:
+    def write_item_to_cache(
+        self, llm_input: Union[str, list[dict]], llm_output: str, input_ischat: bool = False
+    ) -> None:
         """If a persistent cache file exists, this function can be used to append llm output to it.
 
         Args:
-            llm_input (str)
-            llm_output (str)
+            llm_input (Union[str, list[dict]]): Input to the LLM
+            llm_output (str): Output of the LLM
+            input_ischat (bool, optional): If the LLM input is provided as a chat, the roles are
+            first normalized so that the cache works between different models. Defaults to False.
         """
-        if self.use_cache:
-            hash = sha256(llm_input.encode("utf-8")).hexdigest()
+        if self.use_cache and self.cache is not None:
+            if isinstance(llm_input, list) and not input_ischat:
+                raise Exception(
+                    "LLM Input for cache is not a string, but input is neither specified as a chat"
+                )
+
+            if input_ischat:
+                llm_input = str(self._normalize_chat_for_cache(llm_input))
+
+            hash = sha256(llm_input.encode("utf-8")).hexdigest()  # type: ignore
             self.cache.update({hash: llm_output})
 
             if self.cache_persistent:
@@ -246,23 +298,37 @@ class LLM(ABC):
         if self.use_cache:
             self.cache = {}
 
-            if self.cache_persistent and self.persistent_cache_file:
-                # Load or create persisten cache file
-                if not os.path.isfile(self.persistent_cache_file):
-                    os.makedirs(os.path.dirname(self.persistent_cache_file) or "./", exist_ok=True)
+            if self.cache_persistent:
+                if self.persistent_cache_file:
+                    # Load or create persisten cache file
+                    if not os.path.isfile(self.persistent_cache_file):
+                        os.makedirs(
+                            os.path.dirname(self.persistent_cache_file) or "./", exist_ok=True
+                        )
+
+                    else:
+                        with open(self.persistent_cache_file, "r") as stream:
+                            self.cache = yaml.safe_load(stream)
+
+                        if not self.cache:
+                            # Might have loaded an empty file
+                            self.cache = {}
 
                 else:
-                    with open(self.persistent_cache_file, "r") as stream:
-                        self.cache = yaml.safe_load(stream)
+                    warnings.warn(
+                        f"""LLM initiated with persisten cache but invalid persistent cache file
+                        provided.
+                        Persistent cache file provided: {self.persistent_cache_file}"""
+                    )
+                    self.cache_persistent = False
 
-                    if not self.cache:
-                        # Might have loaded an empty file
-                        self.cache = {}
-
-            else:
-                warnings.warn(
-                    f"""LLM initiated with persisten cache but invalid persistent cache file
-                    provided.
-                    Persistent cache file provided: {self.persistent_cache_file}"""
-                )
-                self.cache_persistent = False
+    def _sleep_if_rate_limited(self) -> None:
+        """Sleep if the request time is to close to the previous request"""
+        request_time_diff = datetime.now() - self.request_time
+        while (
+            request_time_diff.seconds + (request_time_diff.microseconds / 1000000)
+            < 1 / self.rate_limit
+        ):
+            time.sleep(1 / self.rate_limit / 10)
+            request_time_diff = datetime.now() - self.request_time
+        self.request_time = datetime.now()

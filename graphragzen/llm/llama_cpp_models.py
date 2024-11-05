@@ -50,6 +50,7 @@ class BaseLlamaCpp(LLM):
         tokenizer_URI: str,
         context_size: int = 8192,
         n_gpu_layers: int = -1,
+        rate_limit: float = 0.25,
         use_cache: bool = True,
         cache_persistent: bool = True,
         persistent_cache_file: str = "./llm_persistent_cache.yaml",
@@ -60,12 +61,13 @@ class BaseLlamaCpp(LLM):
             model_storage_path (str): Path to the model on the local filesystem
             tokenizer_URI (str): URI for the tokenizer
             context_size (int, optional): Size of the context window in tokens. Defaults to 8192
-            use_cache (bool, optional): Use a cache to find output for previously processed inputs
-                in stead of re-generating output from the input. Default to True.
             n_gpu_layers (int, optional): Number of layers to offload to GPU (-ngl). If -1, all
                 layers are offloaded. You need to install llama-cpp-python with the correct cuda
                 support. Out of the box GraphRAGZen's llama-cpp-python is the CPU version only.
                 Defaults to -1.
+            rate_limit (optional, float): Maximum number of calls per second.
+            use_cache (bool, optional): Use a cache to find output for previously processed inputs
+                in stead of re-generating output from the input. Default to True.
             cache_persistent (bool, optional): Append the cache to a file on disk so it can be
                 re-used between runs. If False will use only in-memory cache. Default to True
             persistent_cache_file (str, optional): The file to store the persistent cache.
@@ -73,6 +75,7 @@ class BaseLlamaCpp(LLM):
         """
 
         self.context_size = context_size
+        self.rate_limit = rate_limit
         self.use_cache = use_cache
         self.cache_persistent = cache_persistent
         self.persistent_cache_file = persistent_cache_file
@@ -145,17 +148,20 @@ class BaseLlamaCpp(LLM):
             str: Generated content
         """
 
-        llm_input = self.tokenizer.apply_chat_template(
-            chat, tokenize=False, add_generation_prompt=True
-        )
-        llm_input = llm_input.removeprefix("<bos>")
-
         # Check cache first
-        cache_results = self.check_cache(llm_input)
+        cache_results = self.check_cache(chat, input_ischat=True)
         if cache_results:
             results = cache_results
         else:
+            # Make sure we don't exceed the request rate
+            self._sleep_if_rate_limited()
+
             # Use LLM if not in cache
+            llm_input = self.tokenizer.apply_chat_template(
+                chat, tokenize=False, add_generation_prompt=True
+            )
+            llm_input = llm_input.removeprefix("<bos>")
+
             results = self(
                 input=llm_input,
                 output_structure=output_structure,
@@ -172,7 +178,7 @@ class BaseLlamaCpp(LLM):
                 results = results["choices"][0]["text"]  # type: ignore
 
             # And add the result to cache
-            self.write_item_to_cache(llm_input, results)
+            self.write_item_to_cache(chat, results, input_ischat=True)
 
         return results
 
@@ -212,6 +218,9 @@ class BaseLlamaCpp(LLM):
             str: Untokenized string
         """
 
+        if not tokens:
+            return ""
+
         return self.tokenizer.convert_tokens_to_string(tokens)
 
 
@@ -250,13 +259,13 @@ class Gemma2GGUF(BaseLlamaCpp):
         self.chatnames = ChatNames(user="user", model="assistant")
 
         super().__init__(
-            model_storage_path,
-            tokenizer_URI,
-            context_size,
-            n_gpu_layers,
-            use_cache,
-            cache_persistent,
-            persistent_cache_file,
+            model_storage_path=model_storage_path,
+            tokenizer_URI=tokenizer_URI,
+            context_size=context_size,
+            n_gpu_layers=n_gpu_layers,
+            use_cache=use_cache,
+            cache_persistent=cache_persistent,
+            persistent_cache_file=persistent_cache_file,
         )
 
 
@@ -295,11 +304,11 @@ class Phi35MiniGGUF(BaseLlamaCpp):
         self.chatnames = ChatNames(system="system", user="user", model="assistant")
 
         super().__init__(
-            model_storage_path,
-            tokenizer_URI,
-            context_size,
-            n_gpu_layers,
-            use_cache,
-            cache_persistent,
-            persistent_cache_file,
+            model_storage_path=model_storage_path,
+            tokenizer_URI=tokenizer_URI,
+            context_size=context_size,
+            n_gpu_layers=n_gpu_layers,
+            use_cache=use_cache,
+            cache_persistent=cache_persistent,
+            persistent_cache_file=persistent_cache_file,
         )
