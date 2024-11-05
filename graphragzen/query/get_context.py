@@ -1,11 +1,21 @@
 from collections import Counter
 from operator import itemgetter
-from typing import List
+from typing import Any, Callable, Iterable, List
 
 import networkx as nx
 import pandas as pd
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
 from graphragzen.text_embedding.vector_databases import VectorDatabase
+
+
+def _tuple_itemgetter(keys: Iterable) -> Callable:
+    """itemgetter but always return tuple"""
+
+    def my_itemgetter(d: Any) -> tuple:
+        r = itemgetter(*keys)(d)
+        return (r,) if type(r) is not tuple else r
+
+    return my_itemgetter
 
 
 def semantic_similar_entities(
@@ -203,7 +213,7 @@ def source_texts(
             edges.append(entity["entity_name"])
 
     source_ids = []
-    for entity in itemgetter(*nodes)(graph.nodes) + itemgetter(*edges)(graph.edges):
+    for entity in _tuple_itemgetter(nodes)(graph.nodes) + _tuple_itemgetter(edges)(graph.edges):
         source_ids += entity.get("source_id", None).split(feature_delimiter)
     source_ids = [id for id in source_ids if id]  # Get rid of None's
 
@@ -244,8 +254,8 @@ def cluster_summaries(
             nodes.append(entity["entity_name"])
 
     clusters: List[str] = []
-    for entity in itemgetter(*nodes)(graph.nodes):
-        clusters += entity.get("cluster")  # type: ignore
+    for entity in _tuple_itemgetter(nodes)(graph.nodes):
+        clusters.append(entity.get("cluster"))  # type: ignore
 
     # Find the by number of times each cluster was found in a node
     clusters_count = Counter(clusters)
