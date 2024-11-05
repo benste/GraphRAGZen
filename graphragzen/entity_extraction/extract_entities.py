@@ -24,7 +24,7 @@ def extract_raw_entities(
     results_column: str = "raw_entities",
     output_structure: ModelMetaclass = ExtractedEntities,  # type: ignore
     async_llm_calls: bool = False,
-) -> tuple:
+) -> pd.DataFrame:
     """Let the LLM extract entities in the form of strings, output still needs to be
     parsed to extract structured data.
 

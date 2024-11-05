@@ -1,6 +1,7 @@
 # mypy: ignore-errors
 # flake8: noqa
 import os
+from uuid import uuid4
 
 import networkx as nx
 from graphragzen import (
@@ -57,6 +58,28 @@ def entity_graph_pipeline(
         llm,
     )
 
+    # Add source documents to vector database for normal RAG
+    print("Embedding source documents")
+    chunked_documents["vector"] = embedder.embed(
+        chunked_documents.chunk.tolist(), "embed_document", show_progress_bar=True
+    ).tolist()
+    vector_db.add_vectors(
+        [
+            {
+                "uuid": str(uuid4()),
+                "vector": vector,
+                "metadata": {
+                    "entity_type": "source_document",
+                    "feature": "source_document",
+                    "source_document": chunk,
+                },
+            }
+            for vector, chunk in zip(
+                chunked_documents.vector.tolist(), chunked_documents.chunk.tolist()
+            )
+        ]
+    )
+
     # Extract entities from the chunks
     print("Extracting raw entities")
     if custom_entity_extraction_prompt:
@@ -91,7 +114,7 @@ def entity_graph_pipeline(
         prompt_config = merge.MergeFeaturesPromptConfig()
 
     entity_graph = merge.merge_graph_features(
-        entity_graph, llm, prompt=prompt_config, feature="description", how="LLM"
+        entity_graph, prompt=prompt_config, llm=llm, feature="description", how="LLM"
     )
 
     # Let's cluster the nodes and assign the cluster ID as a property to each node

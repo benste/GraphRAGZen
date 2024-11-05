@@ -5,8 +5,8 @@ import networkx as nx
 import pandas as pd
 from graphragzen import text_embedding
 from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
-from graphragzen.prompts.default_prompts.local_search_prompts import LOCAL_SEARCH_PROMPT
-from graphragzen.query.query import PromptBuilder
+from graphragzen.prompts.default_prompts.local_graphrag_search_prompts import LOCAL_SEARCH_PROMPT
+from graphragzen.query.query import GraphRAGPromptBuilder
 
 from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF, Gemma2GGUF, BaseLlamaCpp
 
@@ -109,7 +109,7 @@ if __name__=="__main__":
         cluster_report = None
         
     # Prompt builder initialized once and used in subsequent queries
-    prompt_builder = PromptBuilder(
+    prompt_builder = GraphRAGPromptBuilder(
         embedding_model=embedder,
         vector_db=vector_db,
         graph=graph,

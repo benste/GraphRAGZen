@@ -41,7 +41,7 @@ if __name__=="__main__":
             raise Exception("API_URI provided but not llm_model_name. I need to know which LLM model on the server to call")
         
         llm = OpenAICompatibleClient(
-            base_url=args.api_uri,required=True,
+            base_url=args.api_uri,
             model_name=args.llm_model_name,
             context_size=args.llm_context_size,
             hf_tokenizer_URI=args.tokenizer_uri,
@@ -57,8 +57,6 @@ if __name__=="__main__":
             api_key_env_variable = args.openai_key_env_variable,
             model_name=args.model_name,
             context_size=args.llm_context_size,
-            use_cache=True,
-            cache_persistent=True,
             persistent_cache_file=f"./OpenAI:{args.model_name}_persistent_cache.yaml"
         )
         
@@ -89,7 +87,7 @@ if __name__=="__main__":
 
     # Create vector DB
     print("Loading vector database")
-    vector_db = text_embedding.QdrantLocalVectorDatabase(vector_size=768)
+    vector_db = text_embedding.QdrantLocalVectorDatabase(vector_size=embedder.vector_size)
 
     # Load raw documents
     print("Loading raw documents")

@@ -1,12 +1,13 @@
 # mypy: ignore-errors
 # flake8: noqa
 import os
+from uuid import uuid4
 
 import networkx as nx
 import pandas as pd
 from graphragzen import text_embedding
 from graphragzen.llm import OpenAICompatibleClient, Phi35MiniGGUF
-from graphragzen.query.query import PromptBuilder
+from graphragzen.query.query import GraphRAGPromptBuilder, RAGPromptBuilder
 
 
 def question() -> None:
@@ -14,8 +15,7 @@ def question() -> None:
     print("Do you know the difference between objects and values in python?")
 
 
-# # Uncomment and run the following to run a query against your knowledge graph
-
+# # Uncomment and run the following to run a query using regular RAG and against your knowledge graph
 # graph_output_folder = "graphtest"
 
 # # Load an LLM locally
@@ -44,7 +44,7 @@ def question() -> None:
 #     database_location=os.path.join(graph_output_folder, "vector_db")
 # )
 
-# # Source documents can be added as additional context during qierying
+# # Source documents can be added as additional context during querying
 # print("Loading source documents")
 # source_documents = pd.read_pickle(os.path.join(graph_output_folder, "source_documents.pkl"))
 
@@ -56,8 +56,8 @@ def question() -> None:
 # print("Loading Cluster Report")
 # cluster_report = pd.read_pickle(os.path.join(graph_output_folder, "cluster_report.pkl"))
 
-# # Prompt builder initialized once and used in subsequent queries
-# prompt_builder = PromptBuilder(
+# # GraphRAG Prompt builder initialized once and used in subsequent queries
+# grahrag_prompt_builder = GraphRAGPromptBuilder(
 #     embedding_model=embedder,
 #     vector_db=vector_db,
 #     graph=graph,
@@ -65,12 +65,26 @@ def question() -> None:
 #     cluster_report=cluster_report,
 # )
 
-# # Build prompt and query
-# print("Building prompt")
-# prompt = prompt_builder.build_prompt(
-#     query="What is the difference between objects and values in python?",
+# # Normal RAG Prompt builder initialized once and used in subsequent queries
+# rag_prompt_builder = RAGPromptBuilder(
+#     embedding_model=embedder,
+#     vector_db=vector_db,
 # )
 
-# chat = llm.format_chat([("user", prompt)])
-# response = llm.run_chat(chat=chat)
-# print(response)
+# # Build prompt and query the LLM
+# query = "What is the difference between objects and values in python?"
+
+# print("Building GraphRAG prompt")
+# graphrag_prompt = grahrag_prompt_builder.build_prompt(query)
+# print("Querying LLM using GraphRAG prompt")
+# chat = llm.format_chat([("user", graphrag_prompt)])
+# graphrag_response = llm.run_chat(chat=chat)
+
+# print("Building RAG prompt")
+# rag_prompt = rag_prompt_builder.build_prompt(query)
+# print("Querying LLM using RAG prompt")
+# chat = llm.format_chat([("user", rag_prompt)])
+# rag_response = llm.run_chat(chat=chat)
+
+# print(f"GRAPHRAG RESPONSE:\n{graphrag_response}")
+# print(f"\n\n\nRAG RESPONSE:\n{rag_response}")
