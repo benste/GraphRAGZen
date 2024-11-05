@@ -158,7 +158,7 @@ if __name__=="__main__":
             prompt=summarization_prompt
         )
     entity_graph = merge.merge_graph_features(
-        entity_graph, llm, feature="description", how="LLM", prompt=prompt_config
+        entity_graph, feature="description", llm=llm, how="LLM", prompt=prompt_config
     )
 
     # Let's cluster the nodes and assign the cluster ID as a property to each node

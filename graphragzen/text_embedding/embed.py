@@ -21,7 +21,7 @@ def embed_graph_features(
         embedding_model (BaseEmbedder):
         features_to_embed (List[str]): Features of the entities the embed.
         entities_to_embed (List[str], optional): Which type of entities (node or edge) to look for
-        the features to embed. Defaults to ['edge', 'node'].
+            the features to embed. Defaults to ['edge', 'node'].
         vector_db (VectorDatabase, optional): If provided, will add the embedding to the
             vector database.
 
@@ -65,7 +65,9 @@ def embed_graph_features(
     # Convert to dataframe, embed, and add the embedding to the dataframe
     embeddings_df = pd.DataFrame(embeddings)
     embeddings_df["vector"] = embedding_model.embed(
-        embeddings_df.to_embed, task="embed_document"
+        embeddings_df.to_embed,
+        task="embed_document",
+        show_progress_bar=True,
     ).tolist()
     embeddings_df.drop(columns="to_embed", inplace=True)  # don't need to store this
 
@@ -111,7 +113,11 @@ def embed_dataframe(
         dataframe[to_embed][isna] = "_na_placeholder_"
 
         # Get vectors
-        vectors = embedding_model.embed(dataframe[to_embed])
+        vectors = embedding_model.embed(
+            dataframe[to_embed],
+            task="embed_document",
+            show_progress_bar=True,
+        )
 
         # Make vectors of nan's for the inputs that were originally None
         vectors[isna] = None

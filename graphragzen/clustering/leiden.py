@@ -16,7 +16,7 @@ def leiden(
 ) -> tuple:
     """Graph clustering using the Leiden algorithm (see: https://arxiv.org/abs/1810.08473)
 
-    note: Clusters have levels, i.e. cluster 1 can be subdevided into multiple clusters.
+    note: Clusters have levels, i.e. cluster 1 can be subdivided into multiple clusters.
         This is represented by a comma separated string, where each index is a level. e.g. cluster
         "2, 11" is the 11th subcluster of the 2nd cluster, while cluster "4, 11" is associated with
         main cluster "4" and has no relation with cluster "2, 11".
@@ -31,7 +31,7 @@ def leiden(
             be? Defaults to 2.
 
     Returns:
-        tuple(nx.Graph, cluster_map): nx.Graph has the feature 'cluster' added to the entities.
+        tuple(nx.Graph, DataFrame): nx.Graph has the feature 'cluster' added to the entities.
             cluster_map maps for each cluster the nodes that belong to it.
     """
     clusters = _leiden(
@@ -76,7 +76,7 @@ def _leiden(
         igraph,
         la.ModularityVertexPartition,
         max_comm_size=max_comm_size,
-        n_iterations=20,
+        n_iterations=50,
     )
 
     nodes_list = np.asarray(igraph.vs["_nx_name"])

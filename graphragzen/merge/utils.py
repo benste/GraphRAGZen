@@ -1,7 +1,7 @@
-from typing import Any
+from graphragzen.llm import LLM
 
 
-def _num_tokens_from_string(string: str, tokenizer: Any) -> int:
+def _num_tokens_from_string(string: str, llm: LLM) -> int:
     """Return the number of tokens in a text string.
 
     Args:
@@ -11,4 +11,4 @@ def _num_tokens_from_string(string: str, tokenizer: Any) -> int:
     Returns:
         int: number of tokens
     """
-    return len(tokenizer.tokenize(string))
+    return len(llm.tokenize(string))

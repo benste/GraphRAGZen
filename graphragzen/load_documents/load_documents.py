@@ -18,7 +18,6 @@ def load_text_documents(
     Returns:
         pd.DataFrame: Includes the columns 'document_path' and 'document_id'
     """
-    # config = LoadTextDocumentsConfig(**kwargs)  # type: ignore
 
     # Walk the folder path, find text files and load them
     folder_path = raw_documents_folder

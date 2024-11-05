@@ -17,11 +17,10 @@ async def async_loop(
         loop_description (str, optional): Description of the loop, used for tqdm. Defaults to "".
 
     Returns:
-        _type_: _description_
+        Coroutine
     """
     tasks = [func(item, *args, **kwargs) for item in items]
 
     # Gather all the tasks and run them concurrently
-    # results = await asyncio.gather(*tasks)
     results = await tqdm.gather(*tasks, desc=loop_description)
     return results

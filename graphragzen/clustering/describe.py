@@ -49,27 +49,26 @@ def describe_clusters(
 
     # First gather the chats so they can be run against the LLM synchronously or asynchronously
     chats = []
-    for _, cluster in tqdm(
-        cluster_entity_map.iterrows(), desc="describing clusters", total=len(cluster_entity_map)
-    ):
-        cluster_graph = graph.subgraph(cluster.node_name)
+    for _, cluster in cluster_entity_map.iterrows():
+        if cluster.node_name:
+            cluster_graph = graph.subgraph(cluster.node_name)
 
-        id = 0
-        # First add the nodes to the prompt string
-        input_text = "Entities\n\nid,entity,description\n"
-        for node in cluster_graph.nodes(data=True):
-            input_text += f"{id},{node[0]},{node[1].get('description', '')}\n"
-            id += 1
+            id = 0
+            # First add the nodes to the prompt string
+            input_text = "Entities\n\nid,entity,description\n"
+            for node in cluster_graph.nodes(data=True):
+                input_text += f"{id},{node[0]},{node[1].get('description', '')}\n"
+                id += 1
 
-        # Now add the edged to the prompt string
-        input_text += "\nRelationships\n\nid,source,target,description\n"
-        for edge in cluster_graph.edges(data=True):
-            input_text += f"{id},{edge[0]},{edge[1]},{edge[2].get('description', '')}\n"
-            id += 1
+            # Now add the edged to the prompt string
+            input_text += "\nRelationships\n\nid,source,target,description\n"
+            for edge in cluster_graph.edges(data=True):
+                input_text += f"{id},{edge[0]},{edge[1]},{edge[2].get('description', '')}\n"
+                id += 1
 
-        # format prompt and send to LLM
-        formatted_prompt = prompt.format(input_text=input_text)
-        chats.append(llm.format_chat([("user", formatted_prompt)]))
+            # format prompt and send to LLM
+            formatted_prompt = prompt.format(input_text=input_text)
+            chats.append(llm.format_chat([("user", formatted_prompt)]))
 
     # call the LLM synchronously or asynchronously
     if async_llm_calls:
@@ -83,7 +82,10 @@ def describe_clusters(
             )
         )
     else:
-        raw_descriptions = [llm.run_chat(chat, output_structure=output_structure) for chat in chats]
+        raw_descriptions = [
+            llm.run_chat(chat, output_structure=output_structure)
+            for chat in tqdm(chats, desc="describing clusters")
+        ]
 
     # Parse the raw descriptions and write to the cluster map
     for index, raw_description in zip(cluster_entity_map.index, raw_descriptions):

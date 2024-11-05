@@ -62,7 +62,11 @@ def generate_entity_categories(
     chat = llm.format_chat([("model", persona), ("user", entity_categories_prompt)])
     response = llm.run_chat(chat, output_structure=output_structure)
 
-    categories = json.loads(response).get("categories", [])
+    json_response = json.loads(response)
+    categories = json_response.get("categories", [])
+    if not categories and isinstance(json_response, dict):
+        categories = list(json_response.keys())
+
     return categories
 
 
@@ -163,15 +167,15 @@ def create_entity_extraction_prompt(
 
     tokens_left = (
         prompt_max_tokens
-        - _num_tokens_from_string(prompt, llm.tokenizer)
-        - _num_tokens_from_string(entity_categories_string, llm.tokenizer)
+        - _num_tokens_from_string(prompt, llm)
+        - _num_tokens_from_string(entity_categories_string, llm)
     )
 
     examples_prompt = ""
 
     # Iterate over examples, while we have tokens left or examples left
     for i, example in enumerate(entity_relationship_examples):
-        example_tokens = _num_tokens_from_string(example, llm.tokenizer)
+        example_tokens = _num_tokens_from_string(example, llm)
 
         # Squeeze in at least one example
         if i > 0 and example_tokens > tokens_left:

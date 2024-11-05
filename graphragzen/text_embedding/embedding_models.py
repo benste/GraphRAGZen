@@ -8,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 
 class BaseEmbedder(ABC):
 
-    vector_size: float = 0
+    vector_size: int = 0
 
     @abstractmethod
     def embed(
@@ -33,7 +33,7 @@ class BaseEmbedder(ABC):
 
 class NomicTextEmbedder(BaseEmbedder):
 
-    vector_size: float = 768
+    vector_size: int = 768
 
     def __init__(self, huggingface_URI: str = "nomic-ai/nomic-embed-text-v1.5"):
         """Initialize the nomic text embedder.
@@ -92,4 +92,4 @@ specific embedding. See https://huggingface.co/nomic-ai/nomic-embed-text-v1.5
 """
             )
 
-        return self.model.encode(text, show_progress_bar=True)  # type: ignore
+        return self.model.encode(text, show_progress_bar=show_progress_bar)  # type: ignore

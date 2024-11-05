@@ -6,7 +6,7 @@ from ..typing.MappedBaseModel import MappedBaseModel
 
 
 class MergeFeaturesPromptFormatting(MappedBaseModel):
-    """Values used to format the description summarization prompt
+    """Values used to format the feature merge prompt
 
     Args:
         entity_name (str, optional): Name of the node or edge. Defaults to None.
@@ -19,7 +19,7 @@ class MergeFeaturesPromptFormatting(MappedBaseModel):
 
 
 class MergeFeaturesPromptConfig(MappedBaseModel):
-    """Config for the prompt used to summarize descriptions
+    """Config for the prompt used to summarize mutiple entity features
 
     Args:
         prompt (str, optional): Base prompt.

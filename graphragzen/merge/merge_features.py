@@ -14,8 +14,8 @@ from .utils import _num_tokens_from_string
 
 def merge_graph_features(
     graph: nx.Graph,
-    llm: Optional[LLM],
     feature: str,
+    llm: Optional[LLM] = None,
     prompt: MergeFeaturesPromptConfig = MergeFeaturesPromptConfig(),
     how: Literal["LLM", "count", "mean"] = "LLM",
     feature_delimiter: str = "\n",
@@ -63,23 +63,27 @@ def merge_graph_features(
 
     for node in tqdm(merged_features_graph.nodes(data=True), desc=f"Merging {feature} of nodes"):
         entity_name = node[0]
-        # Split and sort the feature
-        feature_list = sorted(set(node[1].get(feature, "").split(feature_delimiter)))
-        # Merge
-        if feature_list:
-            merged_features_graph.nodes[entity_name][feature] = item_merger(
-                entity_name=entity_name, feature_list=feature_list
-            )
+        extracted_feature = node[1].get(feature, None)
+        if isinstance(extracted_feature, str):
+            # Split and sort the feature
+            feature_list = sorted(set(extracted_feature.split(feature_delimiter)))
+            if feature_list:
+                # Merge
+                merged_features_graph.nodes[entity_name][feature] = item_merger(
+                    entity_name=entity_name, feature_list=feature_list
+                )
 
     for edge in tqdm(merged_features_graph.edges(data=True), desc=f"Merging {feature} of edges"):
         entity_name = edge[:2]
-        # Split and sort the feature
-        feature_list = sorted(set(edge[2].get(feature, "").split(feature_delimiter)))
-        # Merge
-        if feature_list:
-            merged_features_graph.edges[entity_name]["description"] = item_merger(
-                entity_name=entity_name, feature_list=feature_list
-            )
+        extracted_feature = edge[2].get(feature, None)
+        if isinstance(extracted_feature, str):
+            # Split and sort the feature
+            feature_list = sorted(set(extracted_feature.split(feature_delimiter)))
+            if feature_list:
+                # Merge
+                merged_features_graph.edges[entity_name]["description"] = item_merger(
+                    entity_name=str(entity_name), feature_list=feature_list
+                )
 
     return merged_features_graph
 
@@ -199,11 +203,11 @@ def _LLM_merge(
         chat = llm.format_chat([("user", formatted_prompt)])
         return llm.run_chat(chat, max_tokens=max_output_tokens)
 
-    usable_tokens = max_input_tokens - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
+    usable_tokens = max_input_tokens - _num_tokens_from_string(prompt.prompt, llm)
 
     descriptions_collected = []
     for feature in feature_list:
-        usable_tokens -= _num_tokens_from_string(feature, llm.tokenizer)
+        usable_tokens -= _num_tokens_from_string(feature, llm)
         descriptions_collected.append(feature)
 
         # If buffer is full, or all descriptions have been added, summarize
@@ -219,8 +223,8 @@ def _LLM_merge(
             # reset values for a possible next loop
             usable_tokens = (
                 max_input_tokens
-                - _num_tokens_from_string(prompt.prompt, llm.tokenizer)
-                - _num_tokens_from_string(summarized, llm.tokenizer)
+                - _num_tokens_from_string(prompt.prompt, llm)
+                - _num_tokens_from_string(summarized, llm)
             )
 
     if len(descriptions_collected) <= 1:
