@@ -1,23 +1,13 @@
 import re
-from collections import defaultdict
+from collections import Counter, defaultdict
 from copy import deepcopy
 from typing import List, Optional, Tuple
-from uuid import uuid4
 
 import networkx as nx
 import numpy as np
 import pandas as pd
 from graphragzen.text_embedding.embedding_models import BaseEmbedder
-from qdrant_client import QdrantClient
-from qdrant_client.models import (
-    Distance,
-    FieldCondition,
-    Filter,
-    MatchValue,
-    PointStruct,
-    SearchRequest,
-    VectorParams,
-)
+from scipy.spatial.distance import pdist, squareform
 
 
 def contain_date(input: str) -> bool:
@@ -57,109 +47,52 @@ def isempty(input: str) -> bool:
 
 def find_similar_nodes(
     nodes: list[str],
-    feature_names: list[str],
     embedding_vectors: np.ndarray,
-    min_similarity: float = 0.95,
+    min_similarity: float = 0.975,
     embedding_source: Optional[list] = None,
 ) -> pd.DataFrame:
-    """Finds nodes who's embedding vectors are > min_similarity. Does this for each unique feature
-    in feature_names.
+    """Finds nodes who's embedding vectors are > min_similarity.
 
     Args:
         nodes (list[str]): List of node names.
-        feature_names (list[str]): List of the features of the nodes that were imbedded
         embedding_vectors (np.ndarray): The embedding vectors of the features. Should have shape
             (num_nodes, embedding_vector_size).
         min_similarity (float, optional): Minimum similarity for 2 nodes to be concidered similar.
-            Defaults to 0.95.
+            Defaults to 0.975.
         embedding_source (list, optional): The raw text that was used to create the embedding
             vectors. Will be added to the returned report. Defaults to None.
 
     Returns:
         pd.DataFrame: Contains columns
-            - 'nodes': nodes that are similar, tuple, (node1, node2)
-            - 'similarity_score': How similar the feature of the the two nodes is
-            - 'compared_feature': Which feature of the nodes was compared
-            - 'features': Raw text of the feature of each node. Only populated if 'embedding_source'
-                was given as an input.
+            - 'nodes': node pair that exceeds min_similarity. tuple; (node1, node2)
+            - 'similarity_score': How similar the feature of the two nodes are
+            - 'features': Raw text of the features of each node. Only populated if
+                'embedding_source' was given as an input.
     """
 
-    # Use a quick in-memory qdrant client, don't need to save the vectors to DB for this purpose
-    vector_db_client = QdrantClient(":memory:")
-    collection_name = "node_merging"
-    vector_db_client.create_collection(
-        collection_name=collection_name,
-        vectors_config=VectorParams(size=embedding_vectors.shape[1], distance=Distance.COSINE),
-    )
+    if embedding_source is None:
+        embedding_source = [None] * embedding_vectors.shape[0]
 
-    # Add embeddings to vector DB
-    if not embedding_source:
-        embedding_source = [None] * len(nodes)
+    similarity_score = 1 - squareform(pdist(embedding_vectors, metric="cosine"))
+    np.fill_diagonal(similarity_score, 0)
 
-    payloads = [
-        {"node": node, "feature": feature, "source": source}
-        for node, feature, source in zip(nodes, feature_names, embedding_source)
-    ]
+    similar_index = list(zip(*np.where(similarity_score > min_similarity)))
+    similar_index = [tuple(set(pair)) for pair in similar_index]
 
-    points = [
-        PointStruct(
-            id=str(uuid4()),
-            vector=vector,
-            payload=payload,
-        )
-        for vector, payload in zip(embedding_vectors, payloads)
-    ]
-
-    vector_db_client.upsert(collection_name=collection_name, points=points)
-
-    # For each feature, find the nodes that are > min_similarity similar
     merge_nodes_map = defaultdict(list)
-    for feature in set(feature_names):
-        print(f"finding pairs of nodes with similar '{feature}'")
-        query_filter = Filter(must=[FieldCondition(key="feature", match=MatchValue(value=feature))])
-
-        # Only compare vectors that adhere to the feature
-        filtered_points = vector_db_client.scroll(
-            collection_name=collection_name,
-            scroll_filter=query_filter,
-            limit=10**20,  # basically unlimited
-            with_vectors=True,
-        )
-        filtered_payload, filtered_vectors = zip(
-            *[(record.payload, record.vector) for record in filtered_points[0]]
+    for pair in similar_index:
+        merge_nodes_map["nodes"].append([nodes[pair[0]], nodes[pair[1]]])
+        merge_nodes_map["similarity_score"].append(similarity_score[pair[0], pair[1]])
+        merge_nodes_map["features"].append(
+            {  # type: ignore
+                nodes[pair[0]]: embedding_source[pair[0]],
+                nodes[pair[1]]: embedding_source[pair[1]],  # type: ignore
+            }
         )
 
-        requests = [
-            SearchRequest(
-                vector=vector,
-                filter=query_filter,
-                limit=5,
-                score_threshold=min_similarity,
-                with_payload=True,
-            )
-            for vector in filtered_vectors
-        ]
-
-        results = vector_db_client.search_batch(collection_name=collection_name, requests=requests)
-
-        # Create a report on which nodes are similar, the compared feature, and the similarity score
-        for result, base_payload in zip(results, filtered_payload):
-            base_node = base_payload["node"]
-            for match in result:
-                similar_node = match.payload["node"]  # type: ignore
-                if base_node != similar_node:
-                    merge_nodes_map["nodes"].append((base_node, similar_node))
-                    merge_nodes_map["similarity_score"].append(match.score)  # type: ignore
-                    merge_nodes_map["compared_feature"].append(feature)  # type: ignore
-                    merge_nodes_map["features"].append(
-                        {  # type: ignore
-                            base_node: base_payload["source"],
-                            similar_node: match.payload["source"],  # type: ignore
-                        }
-                    )
+    merge_report = pd.DataFrame(merge_nodes_map)
 
     # Drop duplicate similar nodes detected
-    merge_report = pd.DataFrame(merge_nodes_map)
     merge_report["nodes"] = merge_report["nodes"].apply(sorted)
     merge_report.drop_duplicates(subset="nodes", inplace=True)
 
@@ -182,6 +115,7 @@ def _merge_nodes(
         nx.Graph: New graph with merged nodes
     """
     merged_graph = deepcopy(graph)
+    nodes_to_merge = deepcopy(nodes_to_merge)
 
     merge_map: dict = {}  # keeps track of which node has been merged into which other node
     for nodes in nodes_to_merge:
@@ -203,11 +137,11 @@ def _merge_nodes(
             # Merge attributes of similar node into base node
             for feature in base_node.keys():
                 if feature != "type":
-                    base_node[feature] += "\n" + similar_node[feature]
+                    base_node[feature] += feature_delimiter + similar_node[feature]
 
             # Add the edges of similar node to base node
-            base_node_edges = merged_graph.edges([nodes[0]])
-            similar_node_edges = merged_graph.edges([nodes[1]])
+            base_node_edges = list(merged_graph.edges([nodes[0]]))
+            similar_node_edges = list(merged_graph.edges([nodes[1]]))
             for new_edge in similar_node_edges:
                 if new_edge not in base_node_edges:
                     source = nodes[0]
@@ -233,18 +167,18 @@ def merge_similar_graph_nodes(
     embedding_model: BaseEmbedder,
     merge_report: Optional[pd.DataFrame] = None,
     extra_features_to_compare: list = ["description"],
-    min_similarity: float = 0.95,
+    min_similarity: float = 0.975,
     filter_functions: list = [contain_date, isempty],
     feature_delimiter: str = "\n",
     dry_run: bool = False,
 ) -> Tuple[nx.Graph, pd.DataFrame]:
-    """Merge nodes in a graph that are very similar to each other, using text embeddings of the node
-    names and selected features.
+    """Merge nodes in a graph that are very similar to each other. Similarity is judged using text
+    embeddings of the node names and selected features.
 
     Args:
         graph (nx.Graph): The graph to check for similar nodes.
-        embedding_model (BaseEmbedder): The model to embed text features of the nodes.
-        merge_report (Optional[pd.DataFrame], optional): If dry_run is set to True this function
+        embedding_model (BaseEmbedder): The model that embeds text features of the nodes.
+        merge_report (pd.DataFrame, optional): If dry_run is set to True this function
             returns a report stating which nodes would me merged. When supplying this report it will
             be used to merge nodes, no new similar nodes will be searched. This is usefull if you
             want to check what nodes will be merges beforehand and make adjustments if necessary.
@@ -252,7 +186,7 @@ def merge_similar_graph_nodes(
         extra_features_to_compare (list, optional): Other than the name of the nodes, which features
             should be text embedded and compared for similarity. Defaults to ["description"].
         min_similarity (float, optional): The minimum similarity to consider two nodes similar.
-            Defaults to 0.95.
+            Defaults to 0.975.
         filter_functions (list, optional): These function determine per node, per feature, if it
             should be concidered for comparing to other nodes for similarity.
             When any of these functions, supplied with the node feature, returns True, the feature
@@ -269,9 +203,10 @@ def merge_similar_graph_nodes(
 
     if merge_report is None:
         # Create embeddings
-        embeddings_map = defaultdict(list)
         features = ["node_name"] + extra_features_to_compare
+        merge_reports = []
         for feature in features:
+            embeddings_map = defaultdict(list)
             for node in graph.nodes(data=True):
                 if feature == "node_name":
                     to_embed = node[0]
@@ -279,21 +214,37 @@ def merge_similar_graph_nodes(
                     to_embed = node[1][feature]
 
                 # Check if this passes the filters
-                if not any(func(to_embed) for func in filter_functions):
+                if not any(func(to_embed) or func(node[0]) for func in filter_functions):
                     embeddings_map["embedding_source"].append(to_embed)
                     embeddings_map["nodes"].append(node[0])
-                    embeddings_map["feature_names"].append(feature)
 
-        print("text embedding nodes for finding nodes to merge")
-        embeddings_map["embedding_vectors"] = embedding_model.embed(  # type: ignore
-            embeddings_map["embedding_source"], task="embed_document", show_progress_bar=True
-        )
+            # Add nodes who's name are exactly the same if lowered
+            if feature == "node_name":
+                name_counts = Counter([node_name.lower() for node_name in graph.nodes])
+                same_name = [name for name, count in name_counts.items() if count > 1]
+                for node in graph.nodes:
+                    if node.lower() in same_name and node not in embeddings_map["nodes"]:
+                        embeddings_map["embedding_source"].append(node.lower())
+                        embeddings_map["nodes"].append(node)
 
-        # For each feature, find the nodes that are > min_similarity similar
-        merge_report = find_similar_nodes(
-            min_similarity=min_similarity,
-            **embeddings_map,  # type: ignore
-        )
+            # Embed the features
+            print(f"text embedding node {feature}s to find semantically similar nodes to merge")
+            embeddings_map["embedding_vectors"] = embedding_model.embed(  # type: ignore
+                embeddings_map["embedding_source"], task="embed_document", show_progress_bar=True
+            )
+
+            # Find the nodes that are > min_similarity similar
+            merge_reports.append(
+                find_similar_nodes(
+                    min_similarity=min_similarity,
+                    **embeddings_map,  # type: ignore
+                )
+            )
+            merge_reports[-1]["compared_feature"] = feature
+
+        merge_report = pd.concat(merge_reports)
+        merge_report["nodes"] = merge_report["nodes"].apply(sorted)
+        merge_report.drop_duplicates(subset="nodes", inplace=True)
 
     if dry_run:
         # Return the merge report now with the unchanged graph
